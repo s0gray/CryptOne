@@ -1,5 +1,5 @@
-#ifndef SODIUMCRYPTUNIT_H_
-#define SODIUMCRYPTUNIT_H_
+
+#pragma once
 
 #include "CryptUnit.h"
 
@@ -31,9 +31,7 @@ public:
 
 	/// returns used mac length for symmetric data encryption
 	size_t getMacLengthSymmetric();
-	
-	/// returns hash length
-	size_t getHashLength();
+
 
 	/// wipes memory/data on given address and with given length
 	ErrCode wipeData(unsigned char* data, size_t dataLen);
@@ -65,8 +63,6 @@ public:
     /// returns encrypted message length with given plain message length
 	virtual size_t getDecryptedMessageLengthSymmetric(size_t cipherLen) const;
 
-	/// returns hashed password length
-	size_t getHashedPasswordLength();
 
 	/// encrypts plain data asymteric
 	ErrCode encryptData(const unsigned char *plainData, size_t plainDataLen, unsigned char *cipherData,
@@ -93,20 +89,9 @@ public:
 	/// derive secret key from password
 	ErrCode deriveSecretKeyFromPassword(const char *password, size_t passwordLen, unsigned char *secretKey);
 
-	/// hash password
-	virtual ErrCode hashPassword(const char *password, size_t passwordLen, char *hashedPassword);
-	
-	/// hash data
-	virtual ErrCode hashData(const unsigned char *data, size_t dataLen, unsigned char *hashData);
-
-	virtual size_t getHashLength() const;
-
 	/// secure memory compare
 	int secureMemCompare(const unsigned char* dataA, const unsigned char* dataB, size_t dataLen);
 
-	//ErrCode calcOneTimeAuthMac(const Blob& macKey, const Blob& dataToSign, Blob& mac);
-	ErrCode calcOneTimeAuthMac(const unsigned char* data, size_t dataLen, unsigned char* macData, const unsigned char* macKey);
-	ErrCode calcOneTimeAuthMac2(const Blob& macKey, const Blob& dataToSign, Blob& mac);
 	ErrCode deriveSessionAuthKey(const Blob& authKey, const Blob& derivationData, Blob& sessionAuthKey);
 	virtual size_t getSHA256HashLength() const;
 	virtual ErrCode hashDataSHA256(const unsigned char *data, size_t dataLen, unsigned char *hashData);
@@ -114,7 +99,6 @@ public:
 
 private:
 	size_t getOneTimeAuthKeyLength() const;
-	size_t getOneTimeAuthMacLength() const;
+
 };
 
-#endif // SODIUMCRYPTUNIT_H_ 

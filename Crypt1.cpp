@@ -1,5 +1,7 @@
 
-#include "SodiumCryptUnit.h"
+//#include "OpenSslUnit.h"
+#include "SodiumUnit.h"
+
 #include "Logger.h"
 #include "Utils.h"
 #include <iostream>
@@ -7,6 +9,7 @@
 #define NONCE_SIZE  24
 
 SodiumCryptUnit cryptUnit;
+//OpenSslUnit cryptUnit;
 
 
 // load, ask password, decrypt
@@ -316,6 +319,7 @@ int decryptFile(const wchar_t* inputFile, const wchar_t* keyFile, const wchar_t*
 int wmain(int argc, wchar_t* argv[])
 {
     LOG_INIT(2, L"");
+    LOGI("CryptOne v1.0.0");
 
     if (argc < 3) {
         LOGE("Usage: [e|d|g|k] <input file> [<key file>] [output file]");

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 
 enum ErrCode {
@@ -11,7 +12,8 @@ enum ErrCode {
 	eUnknownErr,
 	eBadLen,
 	eBadPubKey,
-	eBadFile
+	eBadFile,
+	eNotImpl
 };
 
 typedef unsigned short	uint16;
@@ -20,7 +22,7 @@ typedef std::string BinaryData;
 typedef unsigned char byte;
 
 typedef std::vector<unsigned char> bytes;
-
+typedef std::map<std::string, std::string>	MapStrStr;
 #define Blob bytes
 
 

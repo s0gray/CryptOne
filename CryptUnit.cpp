@@ -4,27 +4,8 @@
 #include <string.h>
 #include "Logger.h"
 
-/**
-*	Generates random UINT16 value
-*	@return random
-*/
-uint16 CryptUnit::generateUint16()
-{
-	uint16 ret = 0;
-	getRandom((byte*)&ret, 2);
-	return ret;
-}
 
-/**
-*	Generates random BYTE value
-*	@return random
-*/
-byte CryptUnit::generateRndByte()
-{
-	byte ret = 0;
-	getRandom(&ret, 1);
-	return ret;
-}
+
 
 /**
 * Derive session encryption key

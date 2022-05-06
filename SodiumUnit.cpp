@@ -2,7 +2,7 @@
 
 #include <sodium.h> 
 
-#include "SodiumCryptUnit.h"
+#include "SodiumUnit.h"
 #include "Logger.h"
 
 SodiumCryptUnit::SodiumCryptUnit()
@@ -28,15 +28,6 @@ size_t SodiumCryptUnit::getSecretKeyLength()
 	return crypto_secretbox_KEYBYTES;
 }
 
-size_t SodiumCryptUnit::getHashedPasswordLength()
-{
-	return crypto_pwhash_scryptsalsa208sha256_STRBYTES;
-}
-
-size_t SodiumCryptUnit::getHashLength()
-{
-	return crypto_generichash_BYTES;
-}
 
 ErrCode SodiumCryptUnit::wipeData(unsigned char* data, size_t dataLen)
 {
@@ -264,10 +255,6 @@ ErrCode SodiumCryptUnit::deriveSecretKeyFromPassword(const char *password, size_
 	return eOk;
 }
 
-size_t SodiumCryptUnit::getHashLength() const
-{
-	return crypto_generichash_BYTES;
-}
 
 ErrCode SodiumCryptUnit::encryptWithPassword(const char *password, size_t passwordLen, const unsigned char *plainData,
 	size_t plainDataLen, unsigned char *cipherData, unsigned char* nonce)
@@ -313,32 +300,6 @@ ErrCode SodiumCryptUnit::decryptWithPassword(const char *password, size_t passwo
 	return eOk;
 }
 
-ErrCode SodiumCryptUnit::hashPassword(const char *password, size_t passwordLen, char *hashedPassword)
-{
-	if (!password || !hashedPassword)
-		return eBadArg;
-
-	if (crypto_pwhash_scryptsalsa208sha256_str(hashedPassword, password, passwordLen,
-			 crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
-			 crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_SENSITIVE) != 0) {
-		return eUnknownErr;
-	}
-
-	return eOk;
-}
-
-
-ErrCode SodiumCryptUnit::hashData(const unsigned char *data, size_t dataLen, unsigned char *hashData)
-{
-	if (!data || !hashData)
-		return eBadArg;
-
-	if (crypto_generichash(hashData, getHashLength(), data, dataLen, NULL, 0) != 0) {
-		return eUnknownErr;
-	}
-
-	return eOk;
-}
 
 int SodiumCryptUnit::secureMemCompare(const unsigned char* dataA, const unsigned char* dataB, size_t dataLen)
 {
@@ -396,27 +357,6 @@ ErrCode SodiumCryptUnit::deriveSessionAuthKey(const Blob& authKey, const Blob& d
 size_t SodiumCryptUnit::getOneTimeAuthKeyLength() const
 {
 	return crypto_onetimeauth_KEYBYTES;
-}
-
-size_t SodiumCryptUnit::getOneTimeAuthMacLength() const
-{
-	return crypto_onetimeauth_BYTES;
-}
-
-ErrCode SodiumCryptUnit::calcOneTimeAuthMac(const unsigned char* data, size_t dataLen, unsigned char* macData, const unsigned char* macKey)
-{
-	if (!data || !macData || !macKey)
-		return eBadArg;
-
-	crypto_onetimeauth(macData, data, dataLen, macKey);
-
-	return eOk;
-}
-ErrCode SodiumCryptUnit::calcOneTimeAuthMac2(const Blob& macKey, const Blob& dataToSign, Blob& mac)
-{
-	mac.resize(getOneTimeAuthMacLength());
-
-	return calcOneTimeAuthMac(dataToSign.data(), dataToSign.size(), mac.data(), macKey.data());
 }
 
 ErrCode SodiumCryptUnit::decryptDataSymmetric(BinaryData &plainData, const BinaryData &cipherData, const BinaryData& nonce, const BinaryData &secretKey, size_t plainDataLen)
