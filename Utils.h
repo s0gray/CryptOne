@@ -28,7 +28,11 @@ public:
 	static bool		parseIniFile(const byte* data, size_t len, std::map<std::string, std::string>& map);
 	static bool		LoadIniFile(const std::wstring& fileName, std::map<std::string, std::string>& map);
 	static bool		parseIniFileLine(const std::string& str, std::string& key, std::string& value);
-	static std::string trim(const std::string& str);
+	static std::string	trim(const std::string& str);
+	static std::string	hex2bin(const std::string& str);
+	static std::string	 removeChar(const std::string& str1, char c);
+	static byte*	hex2bin2(const std::string& str, size_t& len);
+	static byte		parseChar_(char p);
 
 private:
 	static byte* loadFileW(const wchar_t* fileName, size_t& len);

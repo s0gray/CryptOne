@@ -25,54 +25,53 @@ ErrCode loadEncryptedKeyFromFile(const wchar_t* fileName, std::string& key) {
     std::cout << "Please enter password for encryption of key: ";
     std::cin >> password;
 
-    byte hashed[32];
-    memset(hashed, 0, 32);
-    ret = cryptUnit.hashDataSHA256((const byte*)password.c_str(), password.size(), hashed);
+    std::string hashed;
+    
+    ret = cryptUnit.hashDataSHA256(password, hashed);
     if (ret != eOk) {
         LOGE("Can not Hash password");
         return ret;
     }
-    LOG_DATA(2, "password hash", hashed, 32);
+    LOG_DATA(2, "password hash", hashed.c_str(), hashed.size());
     std::string xored;
-    ret = cryptUnit.xorData(secretEncrypted, std::string((const char*)hashed, 32), 32, xored);
+    ret = cryptUnit.xorData(secretEncrypted, hashed, secretEncrypted.size(), xored);
     if (ret != eOk) {
         LOGE("Can not Xor password");
         return ret;
     }
-    LOG_DATA(2, "xored key (plain key)", xored.c_str(), 32);
+    LOG_DATA(2, "xored key (plain key)", xored.c_str(), xored.size());
     key = xored;
     return eOk;
 }
 
 ErrCode generateKeyWithPass(const wchar_t* outputFileName) {
-    byte secret[32];
-    memset(secret, 0, 32);
+    std::string secret;
     ErrCode ret = cryptUnit.generateSecretKey(secret);
+    ASSERTME(ret);
 
     LOGI("generateSecretKey ret %u, len = %u", ret, cryptUnit.getSecretKeyLength());
-    LOG_DATA(2, "secret", secret, cryptUnit.getSecretKeyLength());
+    LOG_DATA(2, "secret", secret.c_str(), secret.size());
 
     std::string password;
 
     std::cout << "Please enter password for encryption of key: ";
     std::cin >> password;
 
-    byte hashed[32];
-    memset(hashed, 0, 32);
-    ret = cryptUnit.hashDataSHA256((const byte*)password.c_str(), password.size(), hashed);
+    std::string hashed;    
+    ret = cryptUnit.hashDataSHA256(password, hashed);
     if (ret != eOk) {
         LOGE("Can not Hash password");
         return ret;
     }
-    LOG_DATA(2, "password hash", hashed, 32);
+    LOG_DATA(2, "password hash", hashed.c_str(), hashed.size());
 
     std::string xored;
-    ret = cryptUnit.xorData( std::string((const char*)secret,32), std::string((const char*)hashed,32), 32, xored);
+    ret = cryptUnit.xorData( secret, hashed, secret.size(), xored);
     if (ret != eOk) {
         LOGE("Can not Xor password");
         return ret;
     }
-    LOG_DATA(2, "xored key", xored.c_str(), 32);
+    LOG_DATA(2, "xored key", xored.c_str(), xored.size());
 
     ret = Utils::writeFileW(outputFileName, xored);
     if (ret == eOk) {
@@ -86,14 +85,15 @@ ErrCode generateKeyWithPass(const wchar_t* outputFileName) {
 }
 
 ErrCode generateKey(const wchar_t* outputFileName) {
-    byte secret[256];
-    memset(secret, 0, 256);
+    std::string secret;
     ErrCode ret = cryptUnit.generateSecretKey(secret);
 
-    LOGI("generateSecretKey ret %u, len = %u", ret, cryptUnit.getSecretKeyLength());
-    LOG_DATA(2, "secret", secret, cryptUnit.getSecretKeyLength());
+    LOGI("generateSecretKey ret %u, len = %u", ret, secret.size());
+    ASSERTME(ret);
 
-    ret = Utils::writeFileW(outputFileName, std::string((const char*)secret, cryptUnit.getSecretKeyLength()));
+    LOG_DATA(2, "secret", secret.c_str(), secret.size());
+
+    ret = Utils::writeFileW(outputFileName, secret);
 
     if (ret == eOk) {
         LOGI("Written %u bytes to [%ws]", cryptUnit.getSecretKeyLength(), outputFileName);
@@ -122,28 +122,21 @@ int encryptFileWithPassKey(const wchar_t* inputFile, const wchar_t* keyFile, con
     }
 
     size_t encryptedSize = plain.size() + 64;
-    byte* encrypted = (byte*)calloc(encryptedSize, 1);
-    if (!encrypted) {
-        LOGE("Can not allocate memory for %u bytes", encryptedSize);
-        return 1;
-    }
+    std::string encrypted;
 
     CryptHeader header;
-    size_t nonceSize;
     header.plainDataSize = plain.size();
-
-    ret = cryptUnit.encryptDataSymmetric((const byte*)plain.c_str(), plain.size(), encrypted,
-        encryptedSize, header.nonce, nonceSize, (const byte*)plainKey.c_str());
-
-    LOGI("encryptDataSymmetric ret %u, encryptedSize = %u, nonceSize = %u", ret, encryptedSize, nonceSize);
+    std::string nonce;
+    ret = cryptUnit.encryptDataSymmetric(plain, encrypted, nonce, plainKey);
+    LOGI("encryptDataSymmetric ret %u, encryptedSize = %u", ret, encryptedSize);
+    memcpy(header.nonce, nonce.c_str(), nonce.size());
 
     std::string outFileData;
 
     outFileData.assign((const char*)&header, sizeof(header));
-    outFileData += std::string((const char*)encrypted, encryptedSize);
+    outFileData += encrypted;
 
     ret = Utils::writeFileW(outputFileName, outFileData);
-    free(encrypted);
 
     if (ret != eOk) {
         LOGE("Can not write encrypted file [%ws]", outputFileName);
@@ -161,29 +154,6 @@ ErrCode decryptMemoryBlock(const std::string& encrypted, const std::string& key,
     return ret;
 }
 
-ErrCode encryptMemoryBlock(const std::string& plain, const std::string& key, std::string& result, std::string &nonce) {
-    size_t encryptedSize = plain.size() + 64;
-
-    byte* encrypted = (byte*)calloc(encryptedSize, 1);
-    if (!encrypted) {
-        LOGE("Can not allocate memory for %u bytes", encryptedSize);
-        return eFatal;
-    }
-    byte nonceBuffer[24];
-    size_t nonceSize = NONCE_SIZE;
-
-    ErrCode ret = cryptUnit.encryptDataSymmetric((const byte*)plain.c_str(), plain.size(), encrypted,
-        encryptedSize, nonceBuffer, nonceSize, (const byte*)key.c_str());
-
-    LOGI("encryptDataSymmetric ret %u, encryptedSize = %u, nonceSize = %u", ret, encryptedSize, nonceSize);
-    if (ret == eOk) {
-        nonce.assign( (const char*)nonceBuffer, NONCE_SIZE);
-        result.assign((const char*)encrypted, encryptedSize);
-    }
-
-    free(encrypted);
-    return ret;
-}
 
 int encryptFile(const wchar_t *inputFile, const wchar_t *keyFile, const wchar_t *outputFileName) {
     std::string data;
@@ -203,7 +173,7 @@ int encryptFile(const wchar_t *inputFile, const wchar_t *keyFile, const wchar_t 
     }
 
     std::string encrypted, nonce;
-    ret = encryptMemoryBlock(data, secret, encrypted, nonce);
+    ret = cryptUnit.encryptDataSymmetric(data, secret, encrypted, nonce);
 
     if (ret!=eOk) {
         LOGE("Can not encrypt ");
@@ -320,6 +290,15 @@ int wmain(int argc, wchar_t* argv[])
 {
     LOG_INIT(2, L"");
     LOGI("CryptOne v1.0.0");
+
+    ErrCode ret = cryptUnit.selfTest();
+    if (ret == eOk) {
+        LOGI("CryptoUnit self test OK");
+    }
+    else {
+        LOGE("CryptoUnit self test FAILED : %u", ret);
+        return 1;
+    }
 
     if (argc < 3) {
         LOGE("Usage: [e|d|g|k] <input file> [<key file>] [output file]");

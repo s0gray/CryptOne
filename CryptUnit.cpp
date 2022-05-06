@@ -3,37 +3,8 @@
 
 #include <string.h>
 #include "Logger.h"
+#include "Utils.h"
 
-
-
-
-/**
-* Derive session encryption key
-*/
-ErrCode CryptUnit::deriveSessionSecretKey(const Blob& secKey, const Blob& derivationData, Blob& sessionSecKey)
-{
-	ErrCode ret = eOk;
-
-	Blob tmpData1 = secKey;
-	tmpData1.insert(tmpData1.end(), derivationData.begin(), derivationData.end());
-
-	Blob tmpData2(getSHA256HashLength());
-
-	// we repeat two sha256 hash rounds
-	ret = hashDataSHA256(tmpData1.data(), tmpData1.size(), tmpData2.data());
-	if (ret != eOk)
-		return ret;
-
-	ret = hashDataSHA256(tmpData2.data(), tmpData2.size(), tmpData2.data());
-	if (ret != eOk)
-		return ret;
-
-	// take required length as session secret key
-	sessionSecKey.resize(getSecretKeyLength());
-	std::copy(tmpData2.begin(), tmpData2.begin() + getSecretKeyLength(), sessionSecKey.begin());
-
-	return ret;
-}
 
 ErrCode CryptUnit::xorData(const std::string& data1, const std::string& data2, size_t size, std::string& result)
 {
@@ -58,6 +29,61 @@ ErrCode CryptUnit::xorData(const std::string& data1, const std::string& data2, s
 
 	result.assign((const char*)buf, size);
 	free(buf);
+
+	return eOk;
+}
+
+ErrCode CryptUnit::selfTest() {
+
+	// TEST 1. SHA256
+	std::string input = "abc";
+	std::string expectedHash = Utils::hex2bin("ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
+
+	std::string hash;
+	ErrCode ret = this->hashDataSHA256(input, hash);
+	ASSERTME(ret);
+
+	if (hash.compare(expectedHash) != 0) {
+		LOGI("SHA256 self-test failed expected [%s] received [%s]", expectedHash.c_str(), Utils::bin2hex(hash).c_str());
+		return eFatal;
+	}
+
+	// TEST 2. XOR
+	std::string key1, key2;
+	ret = generateSecretKey(key1);
+	ASSERTME(ret);
+	
+	ret = generateSecretKey(key2);
+	ASSERTME(ret);
+
+	std::string xor1, xor2;
+	ret = this->xorData(key1, key2, key1.size(), xor1);
+	ASSERTME(ret);
+
+	ret = this->xorData(xor1, key2, xor1.size(), xor2);
+	ASSERTME(ret);
+
+	if (key1.compare(xor2) != 0) {
+		LOGI("XOR self-test failed expected [%s] received [%s]", Utils::bin2hex(xor1).c_str(), Utils::bin2hex(xor2).c_str());
+		return eFatal;
+	}
+
+	// TEST 3. 
+	std::string key, plain = "abcdefgh1234567890";
+	ret = generateSecretKey(key);
+	ASSERTME(ret);
+
+	std::string encrypted, nonce, decrypted;
+	ret = this->encryptDataSymmetric(plain, encrypted, nonce, key);
+	ASSERTME(ret);
+
+	ret = this->decryptDataSymmetric(decrypted, encrypted, nonce, key, plain.size());
+	ASSERTME(ret);
+
+	if (decrypted.compare(plain) != 0) {
+		LOGI("Symmetrical enc/dec self-test failed expected [%s] received [%s]", Utils::bin2hex(plain).c_str(), Utils::bin2hex(decrypted).c_str());
+		return eFatal;
+	}
 
 	return eOk;
 }

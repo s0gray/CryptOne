@@ -283,3 +283,56 @@ bool Utils::LoadIniFile(const std::wstring& fileName, std::map<std::string, std:
 	free( data );
 	return ret;
 }
+
+// same as hex2bin but std::string as output container of binary data
+std::string Utils::hex2bin(const std::string& str)
+{
+	std::string	 str2 = Utils::removeChar(str, ' ');
+	std::string	 str3 = Utils::removeChar(str2, '\t');
+
+	size_t len;
+	byte* tmp = hex2bin2(str3, len);
+	std::string res;
+	res.assign((const char*)tmp, len);
+	SAFE_FREE(tmp);
+	return res;
+}
+
+std::string	 Utils::removeChar(const std::string& str1, char c) {
+	std::string result = "";
+	for (size_t i = 0; i < str1.size(); i++) {
+		if (str1[i] != c)
+			result += str1[i];
+	}
+	return result;
+}
+
+byte* Utils::hex2bin2(const std::string& str, size_t& len)
+{
+	len = str.length() / 2;
+
+	byte* buf = (byte*)calloc(len, 1);
+
+	size_t ptr = 0;
+	for (size_t pos = 0; pos < str.length(); pos += 2) {
+		byte b = (parseChar_(str[pos]) << 4) + parseChar_(str[pos + 1]);
+		buf[ptr++] = b;
+	}
+
+	return buf;
+}
+
+
+byte Utils::parseChar_(char p)
+{
+	if (p >= '0' && p <= '9')
+		return (byte)(p - '0');
+
+	if (p >= 'a' && p <= 'f')
+		return 10 + (byte)(p - 'a');
+
+	if (p >= 'A' && p <= 'F')
+		return 10 + (byte)(p - 'A');
+
+	return 255;
+}

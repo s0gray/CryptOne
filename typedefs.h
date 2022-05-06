@@ -31,3 +31,6 @@ struct CryptHeader
 	size_t plainDataSize;
 	byte nonce[24];
 };
+
+#define ASSERTME(x)  if(x!=eOk){return x;}
+#define SAFE_FREE(x) if(x!=nullptr){free(x);x=nullptr;}
