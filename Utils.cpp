@@ -4,6 +4,7 @@
 #include <fstream>
 #include <stdarg.h>
 
+#include "Logger.h"
 using namespace std;
 
 std::string Utils::IntToHexString(int value) 
@@ -335,4 +336,17 @@ byte Utils::parseChar_(char p)
 		return 10 + (byte)(p - 'A');
 
 	return 255;
+}
+
+ErrCode Utils::copyFileW(const std::wstring& from, const std::wstring& to) {
+	std::string data;
+	ErrCode ret = Utils::loadFileW(from, data);
+	ASSERTME(ret);
+	LOGI("Loaded %u bytes from [%ws]", data.size(), from.c_str());
+
+	ret = Utils::writeFileW(to, data);
+	if (ret == eOk) {
+		LOGI("Written %u bytes to [%ws]", data.size(), to.c_str());
+	}
+	return ret;
 }

@@ -4,13 +4,125 @@
 
 #include "Logger.h"
 #include "Utils.h"
+#include "ConfigFile.h"
+
 #include <iostream>
 
-#define NONCE_SIZE  24
+#ifndef WIN32
+#include <cstdio>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <array>
+#else
+#include <windows.h>
+#include <atlstr.h>
+#endif
+
+#define NONCE_SIZE      24
+#define KEY_FILENAMEW    L"key001.ekey"
+#define KEY_FILENAME    "key001.ekey"
+
+#define COMPRESSED_FILEW    L"crypt-one-data.tar.gz"
 
 SodiumCryptUnit cryptUnit;
 //OpenSslUnit cryptUnit;
 
+
+ConfigFile configFile;
+
+#ifndef WIN32
+std::string exec(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
+}
+#else
+//
+// Execute a command and get the results. (Only standard output)
+//
+CStringA exec(const wchar_t* cmd              // [in] command to execute
+)
+{
+    CStringA strResult;
+    HANDLE hPipeRead, hPipeWrite;
+
+    SECURITY_ATTRIBUTES saAttr = { sizeof(SECURITY_ATTRIBUTES) };
+    saAttr.bInheritHandle = TRUE; // Pipe handles are inherited by child process.
+    saAttr.lpSecurityDescriptor = NULL;
+
+    // Create a pipe to get results from child's stdout.
+    if (!CreatePipe(&hPipeRead, &hPipeWrite, &saAttr, 0))
+        return strResult;
+
+    STARTUPINFOW si = { sizeof(STARTUPINFOW) };
+    si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
+    si.hStdOutput = hPipeWrite;
+    si.hStdError = hPipeWrite;
+    si.wShowWindow = SW_HIDE; // Prevents cmd window from flashing.
+                              // Requires STARTF_USESHOWWINDOW in dwFlags.
+
+    PROCESS_INFORMATION pi = { 0 };
+
+    BOOL fSuccess = CreateProcessW(NULL, (LPWSTR)cmd, NULL, NULL, TRUE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi);
+    if (!fSuccess)
+    {
+        CloseHandle(hPipeWrite);
+        CloseHandle(hPipeRead);
+        return strResult;
+    }
+
+    bool bProcessEnded = false;
+    for (; !bProcessEnded;)
+    {
+        // Give some timeslice (50 ms), so we won't waste 100% CPU.
+        bProcessEnded = WaitForSingleObject(pi.hProcess, 50) == WAIT_OBJECT_0;
+
+        // Even if process exited - we continue reading, if
+        // there is some data available over pipe.
+        for (;;)
+        {
+            char buf[1024];
+            DWORD dwRead = 0;
+            DWORD dwAvail = 0;
+
+            if (!::PeekNamedPipe(hPipeRead, NULL, 0, NULL, &dwAvail, NULL))
+                break;
+
+            if (!dwAvail) // No data available, return
+                break;
+
+            if (!::ReadFile(hPipeRead, buf, min(sizeof(buf) - 1, dwAvail), &dwRead, NULL) || !dwRead)
+                // Error, the child process might ended
+                break;
+
+            buf[dwRead] = 0;
+            strResult += buf;
+        }
+    } //for
+
+    CloseHandle(hPipeWrite);
+    CloseHandle(hPipeRead);
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+    return strResult;
+} //ExecCmd
+#endif
+
+ErrCode loadConfig() {
+    return (configFile.Load() == 0) ? eOk : eFatal;
+}
+
+ErrCode loadConfig(wchar_t *folder) {
+    return (configFile.Load(folder) == 0) ? eOk : eFatal;
+}
 
 // load, ask password, decrypt
 ErrCode loadEncryptedKeyFromFile(const wchar_t* fileName, std::string& key) {
@@ -80,7 +192,6 @@ ErrCode generateKeyWithPass(const wchar_t* outputFileName) {
     else {
         LOGE("Can not write data to [%ws]", outputFileName);
     }
-
     return ret;
 }
 
@@ -92,7 +203,6 @@ ErrCode generateKey(const wchar_t* outputFileName) {
     ASSERTME(ret);
 
     LOG_DATA(2, "secret", secret.c_str(), secret.size());
-
     ret = Utils::writeFileW(outputFileName, secret);
 
     if (ret == eOk) {
@@ -301,7 +411,7 @@ int wmain(int argc, wchar_t* argv[])
         return 1;
     }
 
-    if (argc < 3) {
+    if (argc < 2) {
         LOGE("Usage: [e|d|g|k] <input file> [<key file>] [output file]");
         LOGI("   e - encrypt file with raw key");
         LOGI("   d - decrypt file with raw key");
@@ -309,7 +419,182 @@ int wmain(int argc, wchar_t* argv[])
         LOGI("   k - generate password protected key");
         LOGI("   x - encrypt file with password protected key");
         LOGI("   l - decrypt file with password protected key");
+
+        LOGE("or Usage: [generate-key | upload | download | decrypt] <folder/file>");
+        LOGI("   generate-key - generate passwrod encrpyted key and store on USB stick");
+        LOGI("   upload - encrypt and upload folder to cloud");
+        LOGI("   download - download and decrypt data from cloud");
+        LOGI("   decrypt - decrypt data from cloud");
+        LOGI("   encrypt - encrypt folder for cloud");
         return 1;
+    }
+
+    if (!wcscmp(argv[1], L"generate-key")) {
+        LOGI("Generate key and store to USB");
+
+        ErrCode ret = loadConfig();
+        if (ret != eOk) {
+            LOGE("Could not load config file");
+            return 1;
+        }
+        std::string keyFolder;
+        int r = configFile.GetValue(KEY_FOLDER_KEY, keyFolder);
+        if (r != 0) {
+            LOGE("Missing key '%s' in config file", KEY_FOLDER_KEY);
+            return 1;
+        }
+        std::string keyFileName = KEY_FILENAME;
+
+        return generateKeyWithPass( Utils::s2ws( keyFolder + "//" + keyFileName ).c_str());
+    }
+    if (!wcscmp(argv[1], L"upload")) {
+        LOGI("Upload folder to cloud");
+        if (argc < 3) {
+            LOGI("Usage: Crypt1 upload <folder>");
+            return 1;
+        }
+
+        ErrCode ret = loadConfig();
+        if (ret != eOk) {
+            LOGE("Could not load config file");
+            return 1;
+        }
+        std::wstring cloudFolder, keyFolder;
+        int r = configFile.GetValueW(CLOUD_FOLDER_KEY, cloudFolder);
+        if (r != 0) {
+            LOGE("Missing key '%s' in config file", CLOUD_FOLDER_KEY);
+            return 1;
+        }
+        r = configFile.GetValueW(KEY_FOLDER_KEY, keyFolder);
+        if (r != 0) {
+            LOGE("Missing key '%s' in config file", KEY_FOLDER_KEY);
+            return 1;
+        }
+        std::wstring compressedFile = COMPRESSED_FILEW;
+
+        LOGI("Compressing folder [%ws] to file [%ws]..", argv[2], compressedFile.c_str());
+        CStringA res = exec( (L"tar -czf " + compressedFile + std::wstring(L" ") + argv[2]).c_str());
+        // encrypt
+
+        LOGI("Encrypting file [%ws]..", compressedFile.c_str());
+
+        r = encryptFileWithPassKey(compressedFile.c_str(),
+           (keyFolder + std::wstring(L"//") +KEY_FILENAMEW).c_str(),
+            L"crypt-one-data.tar.gz.enc");
+
+        if (r != 0) {
+            LOGE("Failed to encrypt compressed folder");
+            return 1;
+        }
+
+        std::wstring encryptedFile = compressedFile + L".enc";
+        // copy
+        LOGI("Uploading file [%ws] to cloud", encryptedFile.c_str());
+        r = Utils::copyFileW(encryptedFile, cloudFolder + L"//crypt-one-data.tar.gz.enc" );
+        if (r != 0) {
+            LOGE("Failed to upload encrypted file to cloud");
+            return 1;
+        }
+        return 0;
+    }
+    if (!wcscmp(argv[1], L"download")) {
+        LOGI("Download folder from cloud");
+
+        std::wstring compressedFile = COMPRESSED_FILEW;
+        std::wstring encryptedFile = compressedFile + L".enc";
+
+       ErrCode ret = loadConfig();
+       if (ret != eOk) {
+           LOGE("Can not load config");
+           return 1;
+       }
+       std::wstring cloudFolder, keyFolder;
+       int r = configFile.GetValueW(CLOUD_FOLDER_KEY, cloudFolder);
+       if (r != 0) {
+           LOGE("Missing key '%s' in config", CLOUD_FOLDER_KEY);
+           return 1;
+       }
+       r = configFile.GetValueW(KEY_FOLDER_KEY, keyFolder);
+       if (r != 0) {
+           LOGE("Missing key '%s' in config", KEY_FOLDER_KEY);
+           return 1;
+       }
+       std::wstring sourceFile = cloudFolder + L"//" + encryptedFile;
+       LOGI("Downloading file [%ws] from cloud ", sourceFile.c_str());
+       ret = Utils::copyFileW(sourceFile, encryptedFile);
+       if (ret != eOk) {
+           LOGE("Can not download file from cloud");
+           return 1;
+       }
+       LOGI("Decrypting file from cloud");
+       r = decryptFileWithPassKey(encryptedFile.c_str(), 
+            (keyFolder + std::wstring(L"//") + KEY_FILENAMEW).c_str(), compressedFile.c_str());
+
+       if (r != 0) {
+           LOGE("Could not decrypt downloaded file [%ws]", encryptedFile.c_str());
+           return 1;
+       }
+       LOGI("Decompressing file [%ws]", compressedFile.c_str());
+       exec((L"tar xf " + compressedFile).c_str());
+       return 0;
+    }
+    if (!wcscmp(argv[1], L"decrypt")) {
+        LOGI("Decrypt file from cloud");
+
+        if (argc < 3) {
+            LOGI("Usage: Crypt1 decrypt <file>");
+            return 1;
+        }
+        std::wstring  keyFolder;
+        int r = configFile.GetValueW(KEY_FOLDER_KEY, keyFolder);
+        if (r != 0) {
+            LOGE("Missing key '%s' in config", KEY_FOLDER_KEY);
+            return 1;
+        }
+        std::wstring compressedFile = COMPRESSED_FILEW;
+        r = decryptFileWithPassKey(argv[2],
+            (keyFolder + std::wstring(L"//") + KEY_FILENAMEW).c_str(), compressedFile.c_str());
+
+        if (r != 0) {
+            LOGE("Could not decrypt file [%ws]", compressedFile.c_str());
+            return 1;
+        }
+        LOGI("Decompressing file [%ws]", compressedFile.c_str());
+        exec((L"tar xf " + compressedFile).c_str());
+        return 0;
+    }
+
+    if (!wcscmp(argv[1], L"encrypt")) {
+        LOGI("Encrypt file for cloud");
+
+        if (argc < 3) {
+            LOGI("Usage: Crypt1 encrypt <folder>");
+            return 1;
+        }
+        std::wstring  keyFolder;
+        int r = configFile.GetValueW(KEY_FOLDER_KEY, keyFolder);
+        if (r != 0) {
+            LOGE("Missing key '%s' in config", KEY_FOLDER_KEY);
+            return 1;
+        }
+
+        std::wstring compressedFile = COMPRESSED_FILEW;
+
+        LOGI("Compressing folder [%ws] to file [%ws]..", argv[2], compressedFile.c_str());
+        CStringA res = exec((L"tar -czf " + compressedFile + std::wstring(L" ") + argv[2]).c_str());
+        // encrypt
+
+        LOGI("Encrypting file [%ws]..", compressedFile.c_str());
+
+        r = encryptFileWithPassKey(compressedFile.c_str(),
+            (keyFolder + std::wstring(L"//") + KEY_FILENAMEW).c_str(),
+            L"crypt-one-data.tar.gz.enc");
+
+        if (r != 0) {
+            LOGE("Failed to encrypt compressed folder");
+            return 1;
+        }
+        return 0;
     }
 
     switch (argv[1][0])
