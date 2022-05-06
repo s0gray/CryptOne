@@ -146,14 +146,6 @@ int encryptFileWithPassKey(const wchar_t* inputFile, const wchar_t* keyFile, con
     return 0;
 }
 
-ErrCode decryptMemoryBlock(const std::string& encrypted, const std::string& key, const std::string& nonce, size_t decryptredSize, std::string &result) {
-
-    ErrCode ret = cryptUnit.decryptDataSymmetric(result, encrypted, nonce, key,
-        decryptredSize);
-
-    return ret;
-}
-
 
 int encryptFile(const wchar_t *inputFile, const wchar_t *keyFile, const wchar_t *outputFileName) {
     std::string data;
@@ -227,8 +219,12 @@ int decryptFileWithPassKey(const wchar_t* inputFile, const wchar_t* keyFile, con
     BinaryData decrypted;
     size_t decryptedSize = header->plainDataSize;
 
-    ret = decryptMemoryBlock(std::string((const char*)encrypted, encryptedSize), plainKey,
-        std::string((const char*)header->nonce, NONCE_SIZE), decryptedSize, decrypted);
+    ret = cryptUnit.decryptDataSymmetric(decrypted, 
+        std::string((const char*)encrypted, encryptedSize),
+        std::string((const char*)header->nonce, NONCE_SIZE), 
+        plainKey,
+        decryptedSize);
+
     if (ret != eOk) {
         LOGE("Can not decrypt file [%ws]", inputFile);
         return 4;
@@ -270,13 +266,18 @@ int decryptFile(const wchar_t* inputFile, const wchar_t* keyFile, const wchar_t*
     BinaryData decrypted;
     size_t decryptedSize = header->plainDataSize;
 
-    ret = decryptMemoryBlock(std::string((const char*)encrypted, encryptedSize), secret, std::string((const char*)header->nonce, NONCE_SIZE),
-        decryptedSize, decrypted);
-   LOGI("decryptMemoryBlock ret %u", ret);
-   if (ret != eOk) {
-       LOGE("Can not decrypt file [%ws]", inputFile);
-       return 4;
-   }
+
+    ret = cryptUnit.decryptDataSymmetric(decrypted, 
+        std::string((const char*)encrypted, encryptedSize),
+        std::string((const char*)header->nonce, NONCE_SIZE),
+        secret,
+        decryptedSize
+        );
+
+       if (ret != eOk) {
+           LOGE("Can not decrypt file [%ws]", inputFile);
+           return 4;
+       }
    
    ret = Utils::writeFileW(outputFileName, decrypted);
    if (ret != eOk) {
