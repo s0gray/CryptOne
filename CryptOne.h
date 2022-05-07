@@ -38,6 +38,7 @@ class CryptOne
 
 		const std::wstring& getKeyFolder() const { return mKeyFolder; }
 		const std::wstring& getCloudFolder() const { return mCloudFolder; }
+		static std::string enterPassword();
 
 #ifdef WIN32
 		static CStringA exec(const wchar_t* cmd);

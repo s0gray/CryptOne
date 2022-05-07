@@ -4,6 +4,7 @@
 #include "Utils.h"
 
 #include <iostream>
+#include <conio.h>
 
 #define NONCE_SIZE      24
 
@@ -42,7 +43,7 @@ ErrCode CryptOne::loadEncryptedKeyFromFile(const std::wstring& fileName, std::st
     std::string password;
 
     std::cout << "Please enter password for encryption of key: ";
-    std::cin >> password;
+    password = enterPassword();
     std::string hashed;
 
     ret = cryptUnit.hashDataSHA256(password, hashed);
@@ -161,7 +162,7 @@ ErrCode CryptOne::generateKeyWithPass(const std::wstring& fileName) {
     std::string password;
 
     std::cout << "Please enter password for encryption of key: ";
-    std::cin >> password;
+    password = enterPassword();
 
     std::string hashed;
     ret = cryptUnit.hashDataSHA256(password, hashed);
@@ -336,4 +337,17 @@ ErrCode  CryptOne::decryptFile(const wchar_t* inputFile, const wchar_t* keyFile,
     ASSERTME( Utils::writeFileW(outputFileName, decrypted));
 
     return eOk;
+}
+
+std::string CryptOne::enterPassword() {
+    std::string pass = "";
+    char ch;
+  //  std::cout << "Enter password: ";
+    ch = _getch();
+    while (ch != 13) {//character 13 is enter
+        pass.push_back(ch);
+        std::cout << '*';
+        ch = _getch();
+    }
+    return pass;
 }
