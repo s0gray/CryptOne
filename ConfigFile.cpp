@@ -60,23 +60,21 @@ int ConfigFile::Store() {
 *	if not found return not 0
 *	@return 0 if found
 */
-int ConfigFile::GetValue(const std::string& key, std::string& value)
-{
+ErrCode ConfigFile::getValue(const std::string& key, std::string& value) {
 	const MapStrStr::iterator it = mData.find(key);
 	if (it == mData.end())
-		return 1;
+		return eFatal;
 
 	value = it->second;
-	return 0;
+	return eOk;
 }
 
-int ConfigFile::GetValueW(const std::string& key, std::wstring& value)
-{
+ErrCode ConfigFile::getValueW(const std::string& key, std::wstring& value) {
 	const MapStrStr::iterator it = mData.find(key);
 	if (it == mData.end())
-		return 1;
+		return eFatal;
 
 	std::string valueA = it->second;
 	value = Utils::s2ws(valueA);
-	return 0;
+	return eOk;
 }

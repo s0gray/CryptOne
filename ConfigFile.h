@@ -17,15 +17,12 @@ class ConfigFile
 
 		int Load(wchar_t* folder);
 
-
 		std::wstring getIniFileName() const {
 			return mIniFileName;
 		}
 
-
-	int		GetValue(const std::string& key, std::string& value);
-	int		GetValueW(const std::string& key, std::wstring& value);
-
+	ErrCode		getValue(const std::string& key, std::string& value);
+	ErrCode		getValueW(const std::string& key, std::wstring& value);
 
 private:
 		MapStrStr mData;
