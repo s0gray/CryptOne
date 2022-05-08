@@ -349,5 +349,6 @@ std::string CryptOne::enterPassword() {
         std::cout << '*';
         ch = _getch();
     }
+    std::cout << "\n";
     return pass;
 }
