@@ -17,7 +17,7 @@
 #ifdef WIN32
 #define GETCH _getch
 #else
-#defin GETCH getch
+#define GETCH getch
 #endif
 
 

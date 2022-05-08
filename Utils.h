@@ -22,8 +22,6 @@ public:
 	static std::string	format_arg_list(const char* fmt, va_list args);
 	static void			getEnvTempPath(std::wstring& value);
 
-	static __int64		strToInt64(const std::string& s);
-
 	static bool		getLine(char** begin, const char* end, std::string& rLine);
 	static bool		parseIniFile(const byte* data, size_t len, std::map<std::string, std::string>& map);
 	static bool		LoadIniFile(const std::wstring& fileName, std::map<std::string, std::string>& map);
@@ -37,6 +35,8 @@ public:
 
 private:
 	static byte* loadFileW(const wchar_t* fileName, size_t& len);
+	static byte* loadFileA(const char* fileName, size_t& len);
+
 
 };
 

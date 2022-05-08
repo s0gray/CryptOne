@@ -49,6 +49,24 @@ byte* Utils::loadFileW(const wchar_t* fileName, size_t& len)
 	return memblock;
 }
 
+byte* Utils::loadFileA(const char* fileName, size_t& len)
+{
+	ifstream::pos_type size;
+	byte* memblock = 0;
+	len = 0;
+
+	ifstream file(fileName, ios::in | ios::binary | ios::ate);
+	if (file.is_open())
+	{
+		size = file.tellg();
+		len = (unsigned int)size;
+		memblock = new byte[len];
+		file.seekg(0, ios::beg);
+		file.read((char*)memblock, size);
+		file.close();
+	}
+	return memblock;
+}
 
 std::string Utils::vectorToString(const std::vector<unsigned char>& data) 
 {
@@ -151,11 +169,6 @@ void Utils::getEnvTempPath(std::wstring& value)
 	}
 }
 
-
-__int64 Utils::strToInt64(const std::string& s)
-{
-	return _strtoi64(s.c_str(), NULL, 16);
-}
 
 // ret true if OK
 bool Utils::parseIniFile(const byte* data, size_t len, std::map<std::string, std::string>& map)
