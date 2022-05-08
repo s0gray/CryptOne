@@ -320,6 +320,7 @@ string Utils::trim(const string& _str)
 	return str;
 }
 
+#ifdef WIN32
 bool Utils::LoadIniFile(const std::wstring& fileName, std::map<std::string, std::string>& map)
 {
 	size_t len = 0;
@@ -332,6 +333,22 @@ bool Utils::LoadIniFile(const std::wstring& fileName, std::map<std::string, std:
 	//LOG(Log::eStream, "config.parse ret %d", ret);
 
 	free( data );
+	return ret;
+}
+#endif
+
+bool Utils::LoadIniFile(const std::string& fileName, std::map<std::string, std::string>& map)
+{
+	size_t len = 0;
+	byte* data = Utils::loadFileA(fileName.c_str(), len);
+	//LOG(Log::eStream, "Loaded %d bytes from %s", len, fileName);
+	if (len == 0 || !data)
+		return false;
+
+	bool ret = parseIniFile(data, len, map);
+	//LOG(Log::eStream, "config.parse ret %d", ret);
+
+	free(data);
 	return ret;
 }
 
