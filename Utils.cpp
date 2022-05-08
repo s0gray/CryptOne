@@ -49,6 +49,7 @@ ErrCode Utils::loadFileA(const std::string& fileName, std::string& result)
 	return eOk;
 }
 
+#ifdef WIN32
 byte* Utils::loadFileW(const wchar_t* fileName, size_t& len)
 {
 	ifstream::pos_type size;
@@ -67,6 +68,7 @@ byte* Utils::loadFileW(const wchar_t* fileName, size_t& len)
 	}
 	return memblock;
 }
+#endif
 
 byte* Utils::loadFileA(const char* fileName, size_t& len)
 {

@@ -43,7 +43,9 @@ public:
 	static ErrCode		copyFileA(const std::string& from, const std::string& to);
 
 private:
+#ifdef WIN32
 	static byte* loadFileW(const wchar_t* fileName, size_t& len);
+#endif
 	static byte* loadFileA(const char* fileName, size_t& len);
 
 
