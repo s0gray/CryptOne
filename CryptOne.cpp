@@ -4,9 +4,21 @@
 #include "Utils.h"
 
 #include <iostream>
-#include <conio.h>
+
+#ifdef WIN32
+    #include <conio.h>
+#else
+    #include <curses.h>
+    #include <string.h>
+#endif
 
 #define NONCE_SIZE      24
+
+#ifdef WIN32
+#define GETCH _getch
+#else
+#defin GETCH getch
+#endif
 
 
 CryptOne::CryptOne() {    
@@ -343,11 +355,11 @@ std::string CryptOne::enterPassword() {
     std::string pass = "";
     char ch;
   //  std::cout << "Enter password: ";
-    ch = _getch();
+    ch = GETCH();
     while (ch != 13) {//character 13 is enter
         pass.push_back(ch);
         std::cout << '*';
-        ch = _getch();
+        ch = GETCH();
     }
     std::cout << "\n";
     return pass;
