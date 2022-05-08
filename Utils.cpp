@@ -7,6 +7,10 @@
 #include "Logger.h"
 using namespace std;
 
+#ifndef WIN32
+#include <string.h>
+#endif
+
 std::string Utils::IntToHexString(int value) 
 {
 	std::stringstream stream;
@@ -17,11 +21,26 @@ std::string Utils::IntToHexString(int value)
 /**
 *	Load file from disk
 */
+#ifdef WIN32
 ErrCode Utils::loadFileW(const std::wstring& fileName, std::string& result)
 {
 	size_t len;
 	byte* buffer = Utils::loadFileW(fileName.c_str(), len);
 	if (!buffer) 
+	{
+		return eBadFile;
+	}
+	result.assign((const char*)buffer, len);
+	free(buffer);
+	return eOk;
+}
+#endif
+
+ErrCode Utils::loadFileA(const std::string& fileName, std::string& result)
+{
+	size_t len;
+	byte* buffer = Utils::loadFileA(fileName.c_str(), len);
+	if (!buffer)
 	{
 		return eBadFile;
 	}
@@ -138,11 +157,26 @@ std::string Utils::format(const char* fmt, ...)
 	return s;
 }
 
+#ifdef WIN32
 ErrCode Utils::writeFileW(const std::wstring& fileName, const std::string& body) noexcept
 {
 	FILE* ptr;
 	errno_t ret = _wfopen_s(&ptr, fileName.c_str(), L"wb+");
 	if (ret == 0) {
+		fwrite(body.c_str(), 1, body.size(), ptr);
+		fclose(ptr);
+	}
+	else {
+		return eBadFile;
+	}
+	return eOk;
+}
+#endif
+
+ErrCode Utils::writeFileA(const std::string& fileName, const std::string& body) noexcept
+{
+	FILE* ptr= fopen( fileName.c_str(), "wb+");
+	if (ptr!=NULL) {
 		fwrite(body.c_str(), 1, body.size(), ptr);
 		fclose(ptr);
 	}

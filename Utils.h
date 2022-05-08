@@ -8,8 +8,13 @@ class Utils
 {
 public:
 	static std::string	IntToHexString(int value);
+
+#ifdef WIN32
 	static ErrCode		loadFileW(const std::wstring& fileName, std::string& result);
 	static ErrCode		writeFileW(const std::wstring& fileName, const std::string& body) noexcept;
+#endif
+	static ErrCode		loadFileA(const std::string& fileName, std::string& result);
+	static ErrCode		writeFileA(const std::string& fileName, const std::string& body) noexcept;
 
 	static std::wstring s2ws(const std::string& value);
 	static std::string	charToString(char ch);
