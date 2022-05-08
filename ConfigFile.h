@@ -14,10 +14,9 @@ class ConfigFile
 
 		int Load();
 		int Store();
+		int Load(const char* folder);
 
-		int Load(wchar_t* folder);
-
-		std::wstring getIniFileName() const {
+		std::string getIniFileName() const {
 			return mIniFileName;
 		}
 
@@ -26,5 +25,5 @@ class ConfigFile
 
 private:
 		MapStrStr mData;
-		std::wstring mIniFileName;
+		std::string mIniFileName;
 };

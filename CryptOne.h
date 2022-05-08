@@ -48,7 +48,7 @@ class CryptOne
 			
 protected:
 		ErrCode loadConfig();
-		ErrCode loadConfig(wchar_t* folder);
+		ErrCode loadConfig(const char* folder);
 
 private:
 		SodiumCryptUnit cryptUnit;

@@ -40,7 +40,7 @@ ErrCode CryptOne::loadConfig() {
     return (configFile.Load() == 0) ? eOk : eFatal;
 }
 
-ErrCode CryptOne::loadConfig(wchar_t* folder) {
+ErrCode CryptOne::loadConfig(const char* folder) {
     return (configFile.Load(folder) == 0) ? eOk : eFatal;
 }
 

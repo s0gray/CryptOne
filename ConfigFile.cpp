@@ -5,15 +5,15 @@
 #include "Utils.h"
 
 
-#define INI_CONFIG_FILE		L"crypt1.ini"
+#define INI_CONFIG_FILE		"crypt1.ini"
 
 
 ConfigFile::ConfigFile()
 {
-	std::wstring configFolder = L"./";
+	std::string configFolder = "./";
 
 	mIniFileName = configFolder;
-	mIniFileName += std::wstring(L"\\") + INI_CONFIG_FILE;
+	mIniFileName += std::string("\\") + INI_CONFIG_FILE;
 
 }
 
@@ -33,8 +33,8 @@ int ConfigFile::Load() {
 	return 0;
 }
 
-int ConfigFile::Load(wchar_t *folder) {
-	const bool ok = Utils::LoadIniFile(folder + std::wstring(L"//") + mIniFileName, mData);
+int ConfigFile::Load(const char *folder) {
+	const bool ok = Utils::LoadIniFile(folder + std::string("//") + mIniFileName, mData);
 	if (!ok) {
 		return 1;
 	}
@@ -51,7 +51,7 @@ int ConfigFile::Store() {
 		content += it->first + "=" + it->second + "\n";
 		it++;
 	}
-	return Utils::writeFileW(mIniFileName, content);
+	return Utils::writeFileA(mIniFileName, content);
 }
 
 
