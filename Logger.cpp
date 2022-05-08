@@ -138,19 +138,24 @@ void Logger::LogArgs(int , const std::string& funcName, const char* format, va_l
 	std::string str = "[";
 
 	time_t t = time(NULL);
-	struct tm tmp;
-	localtime_s(&tmp, &t);
-
 	_INT64 now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	_INT64 secs = (_INT64)(now / 1000);
 	_INT64 now_ms = now - secs * 1000;
-
 	char ts[201] = { 0 };
+
+#ifdef WIN32
+	struct tm tmp;
+	localtime_s(&tmp, &t);
 	strftime(ts, 200, "%Y-%m-%d %H:%M:%S", &tmp);
+
+#else
+	struct tmp* tmp = localtime(&t);
+	strftime(ts, 200, "%Y-%m-%d %H:%M:%S", tmp);
+
+#endif
+
 	str += ts;
-
 	str += Logger::format(".%03u", (unsigned int)now_ms);
-
 	str += "]   ["+funcName+"] ";
 	str += buf;
 	str += "\n";
