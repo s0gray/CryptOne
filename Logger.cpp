@@ -149,7 +149,7 @@ void Logger::LogArgs(int , const std::string& funcName, const char* format, va_l
 	strftime(ts, 200, "%Y-%m-%d %H:%M:%S", &tmp);
 
 #else
-	struct tmp* tmp = localtime(&t);
+	struct tm* tmp = localtime(&t);
 	strftime(ts, 200, "%Y-%m-%d %H:%M:%S", tmp);
 
 #endif
