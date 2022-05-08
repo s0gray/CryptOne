@@ -43,7 +43,7 @@ includes := $(addprefix -I , $(includes))
 
 
 # library
-lib_files :=  -ldl -lpthread -lstdc++ -lrt -lsodium 
+lib_files :=  -ldl -lpthread -lstdc++ -lrt -lsodium -lncurses
 # -lssl -lcrypto
 #-lrt -leXosip2 -lortp -losip2 -losipparser2 -lamr_codec -lcurl
 #lib_files += $(wildcard $(LIB_ROOT)/libsodium/lib/libsodium.a)
