@@ -134,9 +134,9 @@ void Logger::LogArgs(int , const std::string& funcName, const char* format, va_l
 	struct tm tmp;
 	localtime_s(&tmp, &t);
 
-	__int64 now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-	__int64 secs = (__int64)(now / 1000);
-	__int64 now_ms = now - secs * 1000;
+	_INT64 now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+	_INT64 secs = (_INT64)(now / 1000);
+	_INT64 now_ms = now - secs * 1000;
 
 	char ts[201] = { 0 };
 	strftime(ts, 200, "%Y-%m-%d %H:%M:%S", &tmp);

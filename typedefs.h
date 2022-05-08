@@ -34,3 +34,10 @@ struct CryptHeader
 
 #define ASSERTME(x)  if(x!=eOk){return x;}
 #define SAFE_FREE(x) if(x!=nullptr){free(x);x=nullptr;}
+
+
+#ifdef WIN32
+#define _INT64 __int64
+#else
+#define _INT64 __int64_t
+#endif

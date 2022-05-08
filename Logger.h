@@ -1,7 +1,7 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-
+#include "typedefs.h"
 #include <stdarg.h>
 #include <string>
 typedef unsigned char byte;
