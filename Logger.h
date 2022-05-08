@@ -52,7 +52,11 @@ public:
 	virtual ~Logger();
 
 // Implementation
+#ifdef WIN32
 	void	Init(int level, const std::wstring& filename);
+#endif
+	void	Init(int level, const std::string& fileName);
+
 	void	Log(const std::string &funcName, int level, const char* format, ...);
 	void	Data(const std::string &funcName, int level,  const char *title, const char* buf, size_t len);
 	void	Data(const std::string& funcName, int level, const char* title, const byte* buf, size_t len);
@@ -60,8 +64,11 @@ public:
 	void	SetLogLevel(int level);
 	void	SetMode(int mode);
 
-	const std::wstring& GetFileName() const;
+	const std::wstring& GetFileNameW() const;
+	const std::string&	GetFileNameA() const;
+
 	void	SetFileName(const std::wstring& fileName);
+	void	SetFileName(const std::string& fileName);
 
 protected:
 	void	LogArgs(int level,  const std::string &funcName, const char* format, va_list args);
@@ -70,9 +77,10 @@ protected:
 
 private:
 // Members
-	int			mMode;
-	int			mLevel;
-	std::wstring	mFilepath;	/// real full file name
+	int				mMode;
+	int				mLevel;
+	std::wstring		mFilepathW;	/// real full file name
+	std::string			mFilepathA;	/// real full file name
 };
 
 #endif // LOGGER_H

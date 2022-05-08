@@ -6,15 +6,15 @@
 #include <stdarg.h>
 
 #if defined(WIN32) || defined(_WIN64)
-#include <windows.h>
-#include <direct.h>
+	#include <windows.h>
+	#include <direct.h>
 #else
-#include <unistd.h>
+	#include <unistd.h>
+	#include <string.h>
 #endif
 
 #include <chrono>
 #include <iostream>
-
 
 
 #define MAX_LOG_LEN		1024
@@ -30,6 +30,8 @@ Logger Logger::logger;
 */
 Logger::Logger() : mMode(1), mLevel(0)
 {
+	mFilepathA = "";
+	mFilepathW = L"";
 }
 
 /**
@@ -44,6 +46,7 @@ Logger::~Logger()
 *	@param	level		[IN]	level of logger
 *	@param	fileName	[IN]	file name
 */
+#ifdef WIN32
 void Logger::Init(int level, const std::wstring& fileName)
 {
 	mLevel = level;
@@ -53,11 +56,35 @@ void Logger::Init(int level, const std::wstring& fileName)
 		SetFileName(fileName);
 		// check if file can be opened
 		FILE* fp;
-		errno_t ret = _wfopen_s(&fp, mFilepath.c_str(), L"w");
+		errno_t ret = _wfopen_s(&fp, fileName.c_str(), L"w");
 		if (ret==0 && fp!=nullptr) 
 		{
 			fclose(fp);
 			mMode |= LO_FILE;			
+		}
+	}
+}
+#endif
+
+/**
+*	Initiate file logger with level and fileName
+*	@param	level		[IN]	level of logger
+*	@param	fileName	[IN]	file name
+*/
+void Logger::Init(int level, const std::string& fileName)
+{
+	mLevel = level;
+
+	if (!fileName.empty())
+	{
+		SetFileName(fileName);
+		// check if file can be opened
+		FILE* fp;
+		fp = fopen(fileName.c_str(), "w");
+		if ( fp != nullptr)
+		{
+			fclose(fp);
+			mMode |= LO_FILE;
 		}
 	}
 }
@@ -73,7 +100,21 @@ void Logger::SetFileName(const std::wstring& fileName)
 	wchar_t ts[200];
 	wcsftime(ts, 200, L".%y%m%d-%H%M.txt", &tmp);
 
-	mFilepath = fileName + ts;
+	mFilepathW = fileName + ts;
+}
+
+/**
+*	Set file name for logge
+*/
+void Logger::SetFileName(const std::string& fileName)
+{
+	time_t t = time(NULL);
+	struct tm tmp;
+	localtime_s(&tmp, &t);
+	char ts[200];
+	strftime(ts, 200, ".%y%m%d-%H%M.txt", &tmp);
+
+	mFilepathA = fileName + ts;
 }
 
 
@@ -116,8 +157,20 @@ void Logger::LogArgs(int , const std::string& funcName, const char* format, va_l
 	if( mMode & LO_FILE ) 
 	{
 		FILE* fp = nullptr;
-		errno_t ret = _wfopen_s(&fp, mFilepath.c_str(), L"a");
-		if( ret==0 && fp!=nullptr)
+
+#ifdef WIN32
+		if(!mFilepathW.empty())
+			_wfopen_s(&fp, mFilepathW.c_str(), L"a");
+		else
+			fp = fopen(mFilepathA.c_str(), "a");
+
+#else
+		fp = fopen(mFilepathA.c_str(), "a");
+
+#endif
+
+
+		if( fp!=nullptr )
 		{
 			fputs( str.c_str(), fp );
 			fflush(fp);
@@ -221,9 +274,14 @@ std::string Logger::format_arg_list(const char* fmt, va_list args)
 	return s;
 }
 
-const std::wstring& Logger::GetFileName() const
+const std::wstring& Logger::GetFileNameW() const
 { 
-	return mFilepath; 
+	return mFilepathW; 
+}
+
+const std::string& Logger::GetFileNameA() const
+{
+	return mFilepathA;
 }
 
 void	Logger::SetLogLevel(int level) { mLevel = level; }
