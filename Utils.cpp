@@ -192,6 +192,7 @@ std::wstring Utils::s2ws(const std::string& value)
 	return w;
 }
 
+#ifdef WIN32
 void Utils::getEnvTempPath(std::wstring& value) 
 {
 	wchar_t* env_var_buffer = nullptr;
@@ -202,7 +203,7 @@ void Utils::getEnvTempPath(std::wstring& value)
 		value = static_cast<const wchar_t*>(env_var_buffer);
 	}
 }
-
+#endif
 
 // ret true if OK
 bool Utils::parseIniFile(const byte* data, size_t len, std::map<std::string, std::string>& map)
@@ -385,6 +386,7 @@ byte Utils::parseChar_(char p)
 	return 255;
 }
 
+#ifdef WIN32
 ErrCode Utils::copyFileW(const std::wstring& from, const std::wstring& to) {
 	std::string data;
 	ErrCode ret = Utils::loadFileW(from, data);
@@ -392,6 +394,20 @@ ErrCode Utils::copyFileW(const std::wstring& from, const std::wstring& to) {
 	LOGI("Loaded %u bytes from [%ws]", data.size(), from.c_str());
 
 	ret = Utils::writeFileW(to, data);
+	if (ret == eOk) {
+		LOGI("Written %u bytes to [%ws]", data.size(), to.c_str());
+	}
+	return ret;
+}
+#endif
+
+ErrCode Utils::copyFileA(const std::string& from, const std::string& to) {
+	std::string data;
+	ErrCode ret = Utils::loadFileA(from, data);
+	ASSERTME(ret);
+	LOGI("Loaded %u bytes from [%ws]", data.size(), from.c_str());
+
+	ret = Utils::writeFileA(to, data);
 	if (ret == eOk) {
 		LOGI("Written %u bytes to [%ws]", data.size(), to.c_str());
 	}

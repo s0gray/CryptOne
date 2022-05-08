@@ -25,7 +25,10 @@ public:
 	static std::string	ws2s(const std::wstring& ws);
 	static std::string	format(const char* fmt, ...);
 	static std::string	format_arg_list(const char* fmt, va_list args);
+
+#ifdef WIN32
 	static void			getEnvTempPath(std::wstring& value);
+#endif
 
 	static bool		getLine(char** begin, const char* end, std::string& rLine);
 	static bool		parseIniFile(const byte* data, size_t len, std::map<std::string, std::string>& map);
@@ -37,6 +40,7 @@ public:
 	static byte*		hex2bin2(const std::string& str, size_t& len);
 	static byte			parseChar_(char p);
 	static ErrCode		copyFileW(const std::wstring& from, const std::wstring& to);
+	static ErrCode		copyFileA(const std::string& from, const std::string& to);
 
 private:
 	static byte* loadFileW(const wchar_t* fileName, size_t& len);
