@@ -12,7 +12,7 @@
 
 int main(int argc, char* argv[])
 {
-    LOG_INIT(2, L"");
+    LOG_INIT(2, "");
     LOGI("CryptOne v1.0.0");
 
     CryptOne cryptOne;
