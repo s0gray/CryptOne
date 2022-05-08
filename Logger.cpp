@@ -94,13 +94,14 @@ void Logger::Init(int level, const std::string& fileName)
 */
 void Logger::SetFileName(const std::wstring& fileName) 
 { 
+#ifdef WIN32
 	time_t t = time(NULL);
 	struct tm tmp;
 	localtime_s(&tmp, &t);
 	wchar_t ts[200];
 	wcsftime(ts, 200, L".%y%m%d-%H%M.txt", &tmp);
-
 	mFilepathW = fileName + ts;
+#endif
 }
 
 /**
@@ -109,11 +110,17 @@ void Logger::SetFileName(const std::wstring& fileName)
 void Logger::SetFileName(const std::string& fileName)
 {
 	time_t t = time(NULL);
+
+#ifdef WIN32
 	struct tm tmp;
 	localtime_s(&tmp, &t);
 	char ts[200];
 	strftime(ts, 200, ".%y%m%d-%H%M.txt", &tmp);
-
+#else
+	struct tm *tmp = localtime(&t);
+	char ts[200];
+	strftime(ts, 200, ".%y%m%d-%H%M.txt", tmp);
+#endif
 	mFilepathA = fileName + ts;
 }
 
@@ -224,14 +231,14 @@ void Logger::Data(const std::string &funcName, int level, const char *title, con
 #ifdef MAX_DATA_LEN
 	if(sz>MAX_DATA_LEN) sz = MAX_DATA_LEN;
 #endif
-	for(unsigned int i=0; i<sz; i ++)
+	for(size_t i=0; i<sz; i ++)
 	{
 		if(bytesPerLine > 0 && ( bytesPerLine % 16 ) == 0) 
 		{
 			Log( funcName, level, str );
 			pos = bytesPerLine = 0;
 		}
-		int n = sprintf_s( &str[pos], 100, "%02X ", (0xFF & data[i]) );
+		int n = sprintf( &str[pos], "%02X ", (0xFF & data[i]) );
 		pos += n;
 		bytesPerLine ++;
 	}
