@@ -5,6 +5,10 @@
 
 #include "Utils.h"
 
+#ifndef WIN32
+#include <string.h>
+#endif
+
 
 int main(int argc, char* argv[])
 {
