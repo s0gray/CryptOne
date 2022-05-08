@@ -15,11 +15,11 @@
 #endif
 
 
-#define KEY_FILENAMEW    L"key001.ekey"
+#define KEY_FILENAME    "key001.ekey"
 //#define KEY_FILENAME    "key001.ekey"
 
-#define COMPRESSED_FILEW    L"crypt-one-data.tar.gz"
-
+#define COMPRESSED_FILE    "crypt-one-data.tar.gz"
+//#define COMPRESSED_FILEW    L"crypt-one-data.tar.gz"
 
 class CryptOne
 {
@@ -27,21 +27,23 @@ class CryptOne
 		CryptOne();
 		virtual ~CryptOne();
 
-		ErrCode		loadEncryptedKeyFromFile(const std::wstring& fileName, std::string& key);
-		ErrCode		generateKeyWithPass(const std::wstring& fileName);
-		ErrCode		generateKey(const wchar_t* outputFileName);
-		ErrCode		encryptFileWithPassKey(const std::wstring& inputFile, const std::wstring& keyFile, const std::wstring& outputFileName);
-		ErrCode		encryptFile(const wchar_t* inputFile, const wchar_t* keyFile, const wchar_t* outputFileName);
-		ErrCode		decryptFileWithPassKey(const std::wstring& inputFile, const std::wstring& keyFile, const std::wstring& outputFileName);
-		ErrCode		decryptFile(const wchar_t* inputFile, const wchar_t* keyFile, const wchar_t* outputFileName);
+		ErrCode		loadEncryptedKeyFromFile(const std::string& fileName, std::string& key);
+		ErrCode		generateKeyWithPass(const std::string& fileName);
+		ErrCode		generateKey(const char* outputFileName);
+		ErrCode		encryptFileWithPassKey(const std::string& inputFile, const std::string& keyFile, const std::string& outputFileName);
+		ErrCode		encryptFile(const char* inputFile, const char* keyFile, const char* outputFileName);
+		ErrCode		decryptFileWithPassKey(const std::string& inputFile, const std::string& keyFile, const std::string& outputFileName);
+		ErrCode		decryptFile(const char* inputFile, const char* keyFile, const char* outputFileName);
 		ErrCode		initialize();
 
-		const std::wstring& getKeyFolder() const { return mKeyFolder; }
-		const std::wstring& getCloudFolder() const { return mCloudFolder; }
+		const std::string& getKeyFolder() const { return mKeyFolder; }
+		const std::string& getCloudFolder() const { return mCloudFolder; }
 		static std::string enterPassword();
 
 #ifdef WIN32
 		static CStringA exec(const wchar_t* cmd);
+		static CStringA exec(const char* cmd);
+
 #else
 		static std::string exec(const char* cmd);
 #endif
@@ -56,7 +58,7 @@ private:
 
 		ConfigFile configFile;
 
-		std::wstring mKeyFolder;
-		std::wstring mCloudFolder;
+		std::string mKeyFolder;
+		std::string mCloudFolder;
 };
 
