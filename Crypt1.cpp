@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
         std::string compressedFile = COMPRESSED_FILE;
 
         LOGI("Compressing folder [%s] to file [%s]..", argv[2], compressedFile.c_str());
-        CStringA res = CryptOne::exec( ("tar -czf " + compressedFile + std::string(" ") + argv[2]).c_str());
+        std::string res = CryptOne::exec( ("tar -czf " + compressedFile + std::string(" ") + argv[2]).c_str());
         // encrypt
 
         LOGI("Encrypting file [%ws]..", compressedFile.c_str());
@@ -170,7 +170,7 @@ int main(int argc, char* argv[])
 
         std::string compressedFile = COMPRESSED_FILE;
         LOGI("Compressing folder [ws] to file [%s]..", argv[2], compressedFile.c_str());
-        CStringA res = CryptOne::exec(("tar -czf " + compressedFile + std::string(" ") + argv[2]).c_str());
+        std::string res = CryptOne::exec(("tar -czf " + compressedFile + std::string(" ") + argv[2]).c_str());
         // encrypt
 
         LOGI("Encrypting file [%s]..", compressedFile.c_str());

@@ -92,6 +92,7 @@ std::string CryptOne::exec(const char* cmd) {
 //
 // Execute a command and get the results. (Only standard output)
 //
+/*
 CStringA CryptOne::exec(const wchar_t* cmd )
 {
     CStringA strResult;
@@ -157,8 +158,8 @@ CStringA CryptOne::exec(const wchar_t* cmd )
     CloseHandle(pi.hThread);
     return strResult;
 } //ExecCmd
-
-CStringA CryptOne::exec(const char* cmd)
+*/
+std::string CryptOne::exec(const char* cmd)
 {
     CStringA strResult;
     HANDLE hPipeRead, hPipeWrite;
@@ -169,7 +170,7 @@ CStringA CryptOne::exec(const char* cmd)
 
     // Create a pipe to get results from child's stdout.
     if (!CreatePipe(&hPipeRead, &hPipeWrite, &saAttr, 0))
-        return strResult;
+        return std::string( strResult, strResult.GetLength());
 
     STARTUPINFOA si = { sizeof(STARTUPINFOW) };
     si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
@@ -186,7 +187,7 @@ CStringA CryptOne::exec(const char* cmd)
     {
         CloseHandle(hPipeWrite);
         CloseHandle(hPipeRead);
-        return strResult;
+        return std::string(strResult, strResult.GetLength());
     }
 
     bool bProcessEnded = false;
@@ -222,7 +223,7 @@ CStringA CryptOne::exec(const char* cmd)
     CloseHandle(hPipeRead);
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
-    return strResult;
+    return std::string(strResult, strResult.GetLength());
 } //ExecCmd
 #endif
 

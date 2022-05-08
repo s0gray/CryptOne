@@ -41,8 +41,8 @@ class CryptOne
 		static std::string enterPassword();
 
 #ifdef WIN32
-		static CStringA exec(const wchar_t* cmd);
-		static CStringA exec(const char* cmd);
+//		static CStringA exec(const wchar_t* cmd);
+		static std::string exec(const char* cmd);
 
 #else
 		static std::string exec(const char* cmd);
