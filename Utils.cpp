@@ -3,11 +3,23 @@
 #include <sstream>
 #include <fstream>
 #include <stdarg.h>
+#include <iostream>
 
 #include "Logger.h"
 using namespace std;
 
 #ifndef WIN32
+#include <string.h>
+#endif
+
+#ifdef WIN32
+#include <Windows.h>
+#endif
+
+#ifdef WIN32
+#include <conio.h>
+#else
+#include <curses.h>
 #include <string.h>
 #endif
 
@@ -431,4 +443,70 @@ ErrCode Utils::copyFileA(const std::string& from, const std::string& to) {
 		LOGI("Written %u bytes to [%ws]", data.size(), to.c_str());
 	}
 	return ret;
+}
+
+ErrCode Utils::getAvailableDrives(std::vector<std::string>& result) {
+	
+#ifdef WIN32
+	DWORD drives = GetLogicalDrives();
+//	LOGI("LogicalDrives [0x%x]", drives);
+
+	for (unsigned int i = 0; i < 32; i++) {
+		DWORD res = drives & (1 << i);
+		char letter = 'A' + i;
+		bool present = (res != 0);
+
+		if (present) {
+			result.push_back( std::string("") + letter + std::string(":\\"));
+		}
+	}
+#endif
+	return eOk;
+}
+
+ErrCode Utils::getRemovablesDrives(std::vector<std::string>& result) {
+	std::vector<std::string> drives;
+	ASSERTME( Utils::getAvailableDrives(drives) );
+	for (std::vector<std::string>::iterator it = drives.begin(); it != drives.end(); it++) {
+		UINT driveType = GetDriveTypeA(it->c_str());
+//		LOGI("Drive Type of [%s] is [%u]", it->c_str(), driveType);
+		if ( driveType == DRIVE_REMOVABLE) {
+			result.push_back(*it);
+		}
+	}
+	return eOk;
+}
+
+/**
+*	Key folder can be only on removable drive
+*	1. Get list of removable drives
+*	2. if none - return, if more than one - ask
+*/
+ErrCode Utils::getKeyFolder(std::string& folder) {
+	std::vector<std::string> removeableDrives;
+	ASSERTME( Utils::getRemovablesDrives(removeableDrives) );
+
+	if (removeableDrives.empty()) {
+		folder = "";
+		return eNotFound;
+	}
+	if (removeableDrives.size() == 1) {
+		folder = removeableDrives.at(0);
+		return eOk;
+	}
+	// few found - ask
+	std::cout << "Few removable drives found. Please choose the one with key: " << std::endl;
+	for (size_t i = 0; i < removeableDrives.size(); i++) {
+		std::cout << "Press ["  << i << "] to choose drive [" << removeableDrives.at(i) << "]" << std::endl;
+	}
+	char ch = GETCH();
+
+	int choice = ch = '0';
+	if (choice >= 0 && choice < removeableDrives.size()) {
+		folder = removeableDrives.at(choice);
+		return eOk;
+	}
+	std::cout << "Bad input" << std::endl;
+
+	return eFatal;
 }

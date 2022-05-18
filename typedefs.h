@@ -13,7 +13,8 @@ enum ErrCode {
 	eBadLen,
 	eBadPubKey,
 	eBadFile,
-	eNotImpl
+	eNotImpl,
+	eNotFound
 };
 
 typedef unsigned short	uint16;
@@ -41,3 +42,11 @@ struct CryptHeader
 #else
 #define _INT64 __int64_t
 #endif
+
+#ifdef WIN32
+#define GETCH _getch
+#else
+#define GETCH getch
+#endif
+
+

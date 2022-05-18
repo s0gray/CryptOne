@@ -9,14 +9,14 @@
 #include <string.h>
 #endif
 
+#define APP_VERSION     "1.0.1"
 
 int main(int argc, char* argv[])
 {
     LOG_INIT(2, "");
-    LOGI("CryptOne v1.0.0");
+    LOGI("CryptOne v%s", APP_VERSION);
 
     CryptOne cryptOne;
-
     ErrCode ret = cryptOne.initialize();
     if (ret != eOk) {
         LOGE("CryptOne initialize FAILED : %u", ret);

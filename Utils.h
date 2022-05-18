@@ -47,6 +47,9 @@ public:
 	static byte			parseChar_(char p);
 	static ErrCode		copyFileW(const std::wstring& from, const std::wstring& to);
 	static ErrCode		copyFileA(const std::string& from, const std::string& to);
+	static ErrCode		getAvailableDrives(std::vector<std::string>& result);
+	static ErrCode		getRemovablesDrives(std::vector<std::string>& result);
+	static ErrCode		getKeyFolder(std::string& folder);
 
 private:
 #ifdef WIN32

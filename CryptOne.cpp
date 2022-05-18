@@ -14,11 +14,7 @@
 
 #define NONCE_SIZE      24
 
-#ifdef WIN32
-#define GETCH _getch
-#else
-#define GETCH getch
-#endif
+
 
 
 CryptOne::CryptOne() {    
@@ -28,10 +24,43 @@ CryptOne::~CryptOne() {
 }
 
 ErrCode CryptOne::initialize() {
+/*    std::vector<std::string> drives;
+    ErrCode ret = Utils::getRemovablesDrives(drives);
+
+    for (std::vector<std::string>::iterator it = drives.begin(); it != drives.end(); it++) {
+        LOGI("removable drive [%s]", it->c_str());
+    }*/
+
     ASSERTME( cryptUnit.selfTest() );
-    ASSERTME( loadConfig() );
-    ASSERTME( configFile.getValue(KEY_FOLDER_KEY, mKeyFolder) );
-    ASSERTME( configFile.getValue(CLOUD_FOLDER_KEY, mCloudFolder ));
+
+    ErrCode ret = loadConfig(); // not mandatory
+    ErrCode ret1 = eFatal;
+    if (ret == eOk) {
+        LOGI("Loaded config file");
+        ret1 = configFile.getValue(KEY_FOLDER_KEY, mKeyFolder);
+
+        std::vector<std::string> cloudFolders;
+        configFile.getCloudFolders(cloudFolders);
+        for (std::vector<std::string>::iterator it = cloudFolders.begin(); it != cloudFolders.end(); it++) {
+            LOGI("Configured cloud folder: [%s]", it->c_str());
+        }
+
+    }
+    else {
+        LOGI("Not loaded config file");
+    }
+
+
+    if (ret1 != eOk) {
+        // keyFolder was not found in config file or config file was not loaded at all
+        ErrCode ret2 = Utils::getKeyFolder(mKeyFolder);
+        if (ret2 == eNotFound) {
+            LOGE("No removable drives found..");
+            return ret2;
+        }
+    }
+
+    LOGI("Using keyFolder: [%s]", mKeyFolder.c_str());
 
     return eOk;
 }

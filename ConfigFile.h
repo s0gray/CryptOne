@@ -22,6 +22,7 @@ class ConfigFile
 
 	ErrCode		getValue(const std::string& key, std::string& value);
 	ErrCode		getValueW(const std::string& key, std::wstring& value);
+	ErrCode		getCloudFolders(std::vector<std::string>& folders);
 
 private:
 		MapStrStr mData;

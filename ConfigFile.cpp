@@ -3,7 +3,7 @@
 
 #include "ConfigFile.h"
 #include "Utils.h"
-
+#include "Logger.h"
 
 #define INI_CONFIG_FILE		"crypt1.ini"
 
@@ -76,5 +76,19 @@ ErrCode ConfigFile::getValueW(const std::string& key, std::wstring& value) {
 
 	std::string valueA = it->second;
 	value = Utils::s2ws(valueA);
+	return eOk;
+}
+
+ErrCode ConfigFile::getCloudFolders(std::vector<std::string> &folders) {
+	for (MapStrStr::iterator iter = mData.begin(); iter != mData.end(); ++iter)
+	{
+		std::string key = iter->first;
+		size_t off = key.find("cloudFolder");
+	//	LOGI("checking key [%s] off=%u", key.c_str(), off);
+
+		if ( off != std::string::npos) {
+			folders.push_back( iter->second);
+		}
+	}
 	return eOk;
 }
