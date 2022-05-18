@@ -98,10 +98,10 @@ ErrCode SodiumCryptUnit::decryptData(unsigned char *plainData, const unsigned ch
 	return eOk;
 }
 
-ErrCode SodiumCryptUnit::encryptDataSymmetric(	const std::string& plainData, 
-												std::string& encryped,
-												std::string& nonce,
-												const std::string& secretKey)
+ErrCode SodiumCryptUnit::encryptDataSymmetric(	const std::string& plainData,	/// IN
+												std::string& encryped,			/// OUT
+												std::string& nonce,				/// OUT
+												const std::string& secretKey)	/// IN
 {
 	// generate/use random bytes as nonce
 	ASSERTME( generateRandomData(nonce, crypto_secretbox_NONCEBYTES) );

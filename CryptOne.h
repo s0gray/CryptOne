@@ -15,7 +15,7 @@
 #endif
 
 
-#define KEY_FILENAME    "key001.ekey"
+#define KEY_FILENAME		"key0001.ekey"
 //#define KEY_FILENAME    "key001.ekey"
 
 #define COMPRESSED_FILE    "crypt-one-data.tar.gz"

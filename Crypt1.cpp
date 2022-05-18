@@ -9,7 +9,7 @@
 #include <string.h>
 #endif
 
-#define APP_VERSION     "1.0.1"
+#define APP_VERSION     "1.0.2"
 
 int main(int argc, char* argv[])
 {
@@ -33,7 +33,8 @@ int main(int argc, char* argv[])
         LOGI("   l - decrypt file with password protected key");
 
         LOGE("or Usage: [generate-key | upload | download | decrypt] <folder/file>");
-        LOGI("   generate-key - generate passwrod encrpyted key and store on USB stick");
+        LOGI("   generate-key - generate password encrpyted key and store on USB stick");
+
         LOGI("   upload - encrypt and upload folder to cloud");
         LOGI("   download - download and decrypt data from cloud");
         LOGI("   decrypt - decrypt data from cloud");
@@ -63,7 +64,6 @@ int main(int argc, char* argv[])
         // encrypt
 
         LOGI("Encrypting file [%ws]..", compressedFile.c_str());
-
         ErrCode r = cryptOne.encryptFileWithPassKey(compressedFile, KEY_FILENAME, "crypt-one-data.tar.gz.enc");
         if (r != eOk) {
             LOGE("Failed to encrypt compressed folder");
@@ -112,9 +112,9 @@ int main(int argc, char* argv[])
            LOGE("Can not download file from cloud");
            return 1;
        }
-       LOGI("Decrypting file from cloud");
+       LOGI("Decrypting file from cloud %d", argc);
        ret = cryptOne.decryptFileWithPassKey(encryptedFile, 
-             KEY_FILENAME, compressedFile);
+             KEY_FILENAME, (argc>3) ? argv[3] : compressedFile);
 
        if (ret != eOk) {
            LOGE("Could not decrypt downloaded file [%ws]", encryptedFile.c_str());
@@ -146,11 +146,11 @@ int main(int argc, char* argv[])
         LOGI("Decrypt file from cloud");
 
         if (argc < 3) {
-            LOGI("Usage: Crypt1 decrypt <file>");
+            LOGI("Usage: Crypt1 decrypt <file> [<output file>]");
             return 1;
         }
 
-        std::string compressedFile = COMPRESSED_FILE;
+        std::string compressedFile = (argc>3) ? argv[3] : COMPRESSED_FILE;
         ret = cryptOne.decryptFileWithPassKey(argv[2],
              KEY_FILENAME, compressedFile);
 
@@ -171,9 +171,8 @@ int main(int argc, char* argv[])
             return 1;
         }
 
-
         std::string compressedFile = COMPRESSED_FILE;
-        LOGI("Compressing folder [ws] to file [%s]..", argv[2], compressedFile.c_str());
+        LOGI("Compressing folder [%s] to file [%s]..", argv[2], compressedFile.c_str());
         std::string res = CryptOne::exec(("tar -czf " + compressedFile + std::string(" ") + argv[2]).c_str());
         // encrypt
 

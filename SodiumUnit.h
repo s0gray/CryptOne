@@ -7,10 +7,8 @@
 class SodiumCryptUnit : public CryptUnit
 {
 public:
-
 	SodiumCryptUnit();
 	virtual ~SodiumCryptUnit();
-
 
 	/// returns length of secret key
 	size_t getSecretKeyLength();
@@ -20,7 +18,6 @@ public:
 
 	/// returns used nonce length for symmetric data encryption
 	size_t getNonceLengthSymmetric();
-
 
 	/// wipes memory/data on given address and with given length
 	ErrCode wipeData(unsigned char* data, size_t dataLen);
@@ -32,7 +29,6 @@ public:
 	size_t getDecryptedMessageLength(size_t cipherLen) const;
 
 	virtual size_t getDecryptedMessageLengthSymmetric(size_t cipherLen) const;
-
 
 	/// encrypts plain data asymteric
 	ErrCode encryptData(const unsigned char *plainData, size_t plainDataLen, unsigned char *cipherData,
@@ -46,7 +42,6 @@ public:
 	virtual ErrCode encryptDataSymmetric(const std::string& plainData, std::string& encrypted, std::string& nonce, const std::string& secretKey);
 
 	virtual ErrCode generateRandomData(std::string& result, size_t size);
-
 
 	/// returns encrypted message length with given plain message length
 	virtual size_t getEncryptedMessageLength(size_t messageLen) const;
