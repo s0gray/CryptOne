@@ -16,7 +16,6 @@
 
 
 
-
 CryptOne::CryptOne() {    
 }
 
@@ -32,10 +31,11 @@ ErrCode CryptOne::initialize() {
         LOGI("Loaded config file");
         ret1 = configFile.getValue(KEY_FOLDER_KEY, mKeyFolder);
 
-        std::vector<std::string> cloudFolders;
-        configFile.getCloudFolders(cloudFolders);
-        for (std::vector<std::string>::iterator it = cloudFolders.begin(); it != cloudFolders.end(); it++) {
-            LOGI("Configured cloud folder: [%s]", it->c_str());
+        configFile.getCloudFolders(mCloudFolders);
+
+       for(size_t i = 0; i< mCloudFolders.size(); i++) {
+        //for (std::vector<std::string>::iterator it = cloudFolders.begin(); it != cloudFolders.end(); it++) {
+           LOGI("Configured cloud folder: [%u] [%s]", i, mCloudFolders.at(i).c_str() ); //it->c_str());
         }
     }
     else {
@@ -88,7 +88,7 @@ ErrCode CryptOne::loadEncryptedKeyFromFile(const std::string& fileName, std::str
         LOGE("Can not Hash password");
         return ret;
     }
-    LOG_DATA(2, "material hash", hashed.c_str(), hashed.size());
+//    LOG_DATA(2, "material hash", hashed.c_str(), hashed.size());
     std::string xored;
     ret = cryptUnit.xorData(secretEncrypted, hashed, secretEncrypted.size(), xored);
     if (ret != eOk) {
@@ -186,6 +186,8 @@ CStringA CryptOne::exec(const wchar_t* cmd )
 */
 std::string CryptOne::exec(const char* cmd)
 {
+    LOGI("exec [%s]", cmd);
+
     CStringA strResult;
     HANDLE hPipeRead, hPipeWrite;
 
@@ -295,7 +297,7 @@ ErrCode CryptOne::generateKeyWithPass(const std::string& fileName) {
         LOGE("Can not Hash password");
         return ret;
     }
-    LOG_DATA(2, "material hash", hashed.c_str(), hashed.size());
+//    LOG_DATA(2, "material hash", hashed.c_str(), hashed.size());
 
     std::string xored;
     ret = cryptUnit.xorData(secret, hashed, secret.size(), xored);
@@ -411,7 +413,6 @@ ErrCode CryptOne::decryptFileWithPassKey(const std::string& inputFile,
         LOGE("Too small input file : %u bytes", data.size());
         return eBadFile;
     }
-
     std::string plainKey;
     ASSERTME( loadEncryptedKeyFromFile(mKeyFolder + keyFile, plainKey) );
 
@@ -462,7 +463,6 @@ ErrCode  CryptOne::decryptFile(const char* inputFile, const char* keyFile, const
     ));
 
     ASSERTME( Utils::writeFileA(outputFileName, decrypted));
-
     return eOk;
 }
 
@@ -478,4 +478,11 @@ std::string CryptOne::enterPassword() {
     }
     std::cout << "\n";
     return pass;
+}
+
+ std::string CryptOne::getCloudFolder(int index) {     
+     if (index<0 || index >= mCloudFolders.size())
+         return "";
+
+     return mCloudFolders.at(index);
 }

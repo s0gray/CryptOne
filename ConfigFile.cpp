@@ -80,8 +80,7 @@ ErrCode ConfigFile::getValueW(const std::string& key, std::wstring& value) {
 }
 
 ErrCode ConfigFile::getCloudFolders(std::vector<std::string> &folders) {
-	for (MapStrStr::iterator iter = mData.begin(); iter != mData.end(); ++iter)
-	{
+	for (MapStrStr::iterator iter = mData.begin(); iter != mData.end(); ++iter) {
 		std::string key = iter->first;
 		size_t off = key.find("cloudFolder");
 	//	LOGI("checking key [%s] off=%u", key.c_str(), off);

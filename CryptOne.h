@@ -37,7 +37,7 @@ class CryptOne
 		ErrCode		initialize();
 
 		const std::string& getKeyFolder() const { return mKeyFolder; }
-		const std::string& getCloudFolder() const { return mCloudFolder; }
+		std::string getCloudFolder(int index);// const { return mCloudFolder; }
 		static std::string enterPassword();
 
 #ifdef WIN32
@@ -59,6 +59,8 @@ private:
 		ConfigFile configFile;
 
 		std::string mKeyFolder;
-		std::string mCloudFolder;
+	//	std::string mCloudFolder;
+
+		std::vector<std::string> mCloudFolders;
 };
 

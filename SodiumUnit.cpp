@@ -170,7 +170,7 @@ ErrCode SodiumCryptUnit::decryptDataSymmetric(std::string&plainData, const std::
 	LOG_DATA(3, "secretKey ", (const byte*)secretKey.c_str(), this->getSecretKeyLength());
 
 	size_t plainDataSize = getDecryptedMessageLengthSymmetric(cipherData.size());
-	LOGI("plainDataSize = %u", plainDataSize);
+//	LOGI("plainDataSize = %u", plainDataSize);
 	byte *plainDataBuffer = (byte*)calloc(plainDataSize, 1);
 	if (crypto_secretbox_open_easy(plainDataBuffer, (const byte*)cipherData.c_str(), cipherData.size(), (const byte*)nonce.c_str(), (const byte*)secretKey.c_str()) != 0)
 	{

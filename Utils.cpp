@@ -138,11 +138,11 @@ std::string Utils::charToString(char ch)
 	return v;
 }
 
-std::string Utils::ws2s(const std::wstring& ws) 
+/*std::string Utils::ws2s(const std::wstring& ws)
 {
 	std::string s(ws.begin(), ws.end());
 	return s;
-}
+}*/
 
 std::string Utils::format_arg_list(const char* fmt, va_list args)
 {
@@ -436,11 +436,11 @@ ErrCode Utils::copyFileA(const std::string& from, const std::string& to) {
 	std::string data;
 	ErrCode ret = Utils::loadFileA(from, data);
 	ASSERTME(ret);
-	LOGI("Loaded %u bytes from [%ws]", data.size(), from.c_str());
+	LOGI("Loaded %u bytes from [%s]", data.size(), from.c_str());
 
 	ret = Utils::writeFileA(to, data);
 	if (ret == eOk) {
-		LOGI("Written %u bytes to [%ws]", data.size(), to.c_str());
+		LOGI("Written %u bytes to [%s]", data.size(), to.c_str());
 	}
 	return ret;
 }
@@ -449,7 +449,6 @@ ErrCode Utils::getAvailableDrives(std::vector<std::string>& result) {
 	
 #ifdef WIN32
 	DWORD drives = GetLogicalDrives();
-//	LOGI("LogicalDrives [0x%x]", drives);
 
 	for (unsigned int i = 0; i < 32; i++) {
 		DWORD res = drives & (1 << i);
