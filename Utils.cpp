@@ -464,6 +464,7 @@ ErrCode Utils::getAvailableDrives(std::vector<std::string>& result) {
 }
 
 ErrCode Utils::getRemovablesDrives(std::vector<std::string>& result) {
+#ifdef WIN32
 	std::vector<std::string> drives;
 	ASSERTME( Utils::getAvailableDrives(drives) );
 	for (std::vector<std::string>::iterator it = drives.begin(); it != drives.end(); it++) {
@@ -473,6 +474,7 @@ ErrCode Utils::getRemovablesDrives(std::vector<std::string>& result) {
 			result.push_back(*it);
 		}
 	}
+#endif
 	return eOk;
 }
 
