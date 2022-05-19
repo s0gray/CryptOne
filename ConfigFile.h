@@ -12,14 +12,13 @@ class ConfigFile
 		ConfigFile();
 		~ConfigFile();
 
-		int Load();
-		int Store();
-		int Load(const char* folder);
+		int load();
+		int store();
+		int load(const char* folder);
 
 		std::string getIniFileName() const {
 			return mIniFileName;
 		}
-
 	ErrCode		getValue(const std::string& key, std::string& value);
 	ErrCode		getValueW(const std::string& key, std::wstring& value);
 	ErrCode		getCloudFolders(std::vector<std::string>& folders);

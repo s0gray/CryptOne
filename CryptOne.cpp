@@ -10,10 +10,11 @@
 #else
     #include <curses.h>
     #include <string.h>
+    #include <cstdlib>
+
 #endif
 
 #define NONCE_SIZE      24
-
 
 
 CryptOne::CryptOne() {    
@@ -51,16 +52,15 @@ ErrCode CryptOne::initialize() {
         }
     }
     LOGI("Using keyFolder: [%s]", mKeyFolder.c_str());
-
     return eOk;
 }
 
 ErrCode CryptOne::loadConfig() {
-    return (configFile.Load() == 0) ? eOk : eFatal;
+    return (configFile.load() == 0) ? eOk : eFatal;
 }
 
 ErrCode CryptOne::loadConfig(const char* folder) {
-    return (configFile.Load(folder) == 0) ? eOk : eFatal;
+    return (configFile.load(folder) == 0) ? eOk : eFatal;
 }
 
 // load, ask password, decrypt
@@ -79,8 +79,7 @@ ErrCode CryptOne::loadEncryptedKeyFromFile(const std::string& fileName, std::str
     salt = fileData.substr(0, 32);
     secretEncrypted = fileData.substr(32, 32);
 
-    std::cout << "Please enter password for encryption of key: ";
-    password = enterPassword();
+    password = enterPassword("Please enter password for encryption of key: ");
     std::string hashed;
 
     ret = cryptUnit.hashDataSHA256(salt + password, hashed);
@@ -274,12 +273,10 @@ ErrCode CryptOne::generateKeyWithPass(const std::string& fileName) {
 //    LOG_DATA(2, "secret", secret.c_str(), secret.size());
 
     std::string password1;
-    std::cout << "Please enter password for encryption of the key: ";
-    password1 = enterPassword();
+    password1 = enterPassword("Please enter password for encryption of the key: ");
 
     std::string password2;
-    std::cout << "For safety please re-enter password for encryption of the key: ";
-    password2 = enterPassword();
+    password2 = enterPassword("For safety please re-enter password for encryption of the key: ");
 
     if (password1.compare(password2)!=0) {
         std::cout << "Passwords are different.. exiting" << std::endl;
@@ -466,10 +463,11 @@ ErrCode  CryptOne::decryptFile(const char* inputFile, const char* keyFile, const
     return eOk;
 }
 
-std::string CryptOne::enterPassword() {
+std::string CryptOne::enterPassword(const char* promt) {
+#ifdef WIN32
+    std::cout << promt;
     std::string pass = "";
     char ch;
-  //  std::cout << "Enter password: ";
     ch = GETCH();
     while (ch != 13) {//character 13 is enter
         pass.push_back(ch);
@@ -478,6 +476,10 @@ std::string CryptOne::enterPassword() {
     }
     std::cout << "\n";
     return pass;
+#else
+    char* password = getpass(promt);
+    return password;
+#endif
 }
 
  std::string CryptOne::getCloudFolder(int index) {     

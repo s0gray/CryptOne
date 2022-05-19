@@ -8,8 +8,7 @@
 #define INI_CONFIG_FILE		"crypt1.ini"
 
 
-ConfigFile::ConfigFile()
-{
+ConfigFile::ConfigFile() {
 	std::string configFolder = ".";
 
 	mIniFileName = configFolder;
@@ -25,7 +24,7 @@ ConfigFile::~ConfigFile()
 *	Load config file to map
 *	@return 0 if success
 */
-int ConfigFile::Load() {
+int ConfigFile::load() {
 	const bool ok = Utils::LoadIniFile(mIniFileName, mData);
 	if (!ok) {
 		return 1;
@@ -33,7 +32,7 @@ int ConfigFile::Load() {
 	return 0;
 }
 
-int ConfigFile::Load(const char *folder) {
+int ConfigFile::load(const char *folder) {
 	const bool ok = Utils::LoadIniFile(folder + std::string("//") + mIniFileName, mData);
 	if (!ok) {
 		return 1;
@@ -44,7 +43,7 @@ int ConfigFile::Load(const char *folder) {
 /**
 *	Store config to file
 */
-int ConfigFile::Store() {
+int ConfigFile::store() {
 	std::string content = "";
 	MapStrStr::iterator it = mData.begin();
 	while (it != mData.end()) {
@@ -83,8 +82,6 @@ ErrCode ConfigFile::getCloudFolders(std::vector<std::string> &folders) {
 	for (MapStrStr::iterator iter = mData.begin(); iter != mData.end(); ++iter) {
 		std::string key = iter->first;
 		size_t off = key.find("cloudFolder");
-	//	LOGI("checking key [%s] off=%u", key.c_str(), off);
-
 		if ( off != std::string::npos) {
 			folders.push_back( iter->second);
 		}
