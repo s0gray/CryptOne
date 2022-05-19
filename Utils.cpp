@@ -6,21 +6,14 @@
 #include <iostream>
 
 #include "Logger.h"
-using namespace std;
 
-#ifndef WIN32
-#include <string.h>
-#endif
 
 #ifdef WIN32
-#include <Windows.h>
-#endif
-
-#ifdef WIN32
-#include <conio.h>
+	#include <Windows.h>
+	#include <conio.h>
 #else
-#include <curses.h>
-#include <string.h>
+	#include <curses.h>
+	#include <string.h>
 #endif
 
 std::string Utils::IntToHexString(int value) 
@@ -62,19 +55,18 @@ ErrCode Utils::loadFileA(const std::string& fileName, std::string& result)
 }
 
 #ifdef WIN32
-byte* Utils::loadFileW(const wchar_t* fileName, size_t& len)
-{
-	ifstream::pos_type size;
+byte* Utils::loadFileW(const wchar_t* fileName, size_t& len) {
+	std::ifstream::pos_type size;
 	byte* memblock = 0;
 	len = 0;
 
-	ifstream file(fileName, ios::in | ios::binary | ios::ate);
+	std::ifstream file(fileName, std::ios::in | std::ios::binary | std::ios::ate);
 	if (file.is_open())
 	{
 		size = file.tellg();
 		len = (unsigned int)size;
 		memblock = new byte[len];
-		file.seekg(0, ios::beg);
+		file.seekg(0, std::ios::beg);
 		file.read((char*)memblock, size);
 		file.close();
 	}
@@ -82,33 +74,29 @@ byte* Utils::loadFileW(const wchar_t* fileName, size_t& len)
 }
 #endif
 
-byte* Utils::loadFileA(const char* fileName, size_t& len)
-{
-	ifstream::pos_type size;
+byte* Utils::loadFileA(const char* fileName, size_t& len) {
+	std::ifstream::pos_type size;
 	byte* memblock = 0;
 	len = 0;
 
-	ifstream file(fileName, ios::in | ios::binary | ios::ate);
-	if (file.is_open())
-	{
+	std::ifstream file(fileName, std::ios::in | std::ios::binary | std::ios::ate);
+	if (file.is_open()) {
 		size = file.tellg();
 		len = (unsigned int)size;
 		memblock = new byte[len];
-		file.seekg(0, ios::beg);
+		file.seekg(0, std::ios::beg);
 		file.read((char*)memblock, size);
 		file.close();
 	}
 	return memblock;
 }
 
-std::string Utils::vectorToString(const std::vector<unsigned char>& data) 
-{
+std::string Utils::vectorToString(const std::vector<unsigned char>& data) {
 	std::string  str(data.begin(), data.end());
 	return str;
 }
 
-std::string Utils::bin2hex(const std::string& data) 
-{
+std::string Utils::bin2hex(const std::string& data)  {
 	return Utils::bin2hex((const byte*)data.c_str(), data.size());
 }
 
@@ -314,8 +302,7 @@ bool Utils::parseIniFileLine(const std::string& str, std::string& key, std::stri
 	return true;
 }
 
-string Utils::trim(const string& _str)
-{
+std::string Utils::trim(const std::string& _str) {
 	std::string str = _str;
 	int i, j, start, end;
 
@@ -333,8 +320,7 @@ string Utils::trim(const string& _str)
 }
 
 #ifdef WIN32
-bool Utils::LoadIniFile(const std::wstring& fileName, std::map<std::string, std::string>& map)
-{
+bool Utils::LoadIniFile(const std::wstring& fileName, std::map<std::string, std::string>& map) {
 	size_t len = 0;
 	byte* data = Utils::loadFileW(fileName.c_str(), len);
 	//LOG(Log::eStream, "Loaded %d bytes from %s", len, fileName);
@@ -349,8 +335,7 @@ bool Utils::LoadIniFile(const std::wstring& fileName, std::map<std::string, std:
 }
 #endif
 
-bool Utils::LoadIniFile(const std::string& fileName, std::map<std::string, std::string>& map)
-{
+bool Utils::LoadIniFile(const std::string& fileName, std::map<std::string, std::string>& map) {
 	size_t len = 0;
 	byte* data = Utils::loadFileA(fileName.c_str(), len);
 	//LOG(Log::eStream, "Loaded %d bytes from %s", len, fileName);
