@@ -10,8 +10,7 @@
 #else
     #include <curses.h>
     #include <string.h>
-    #include <cstdlib>
-
+    #include <unistd.h>
 #endif
 
 #define NONCE_SIZE      24

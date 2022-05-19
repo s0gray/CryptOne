@@ -37,13 +37,11 @@ class CryptOne
 		ErrCode		initialize();
 
 		const std::string& getKeyFolder() const { return mKeyFolder; }
-		std::string getCloudFolder(int index);// const { return mCloudFolder; }
+		std::string getCloudFolder(int index);
 		static std::string enterPassword(const char* promt);
 
 #ifdef WIN32
-//		static CStringA exec(const wchar_t* cmd);
 		static std::string exec(const char* cmd);
-
 #else
 		static std::string exec(const char* cmd);
 #endif

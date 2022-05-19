@@ -94,9 +94,12 @@ byte* Utils::loadFileA(const char* fileName, size_t& len) {
 	return memblock;
 }
 
-std::string Utils::vectorToString(const std::vector<unsigned char>& data) {
-	std::string  str(data.begin(), data.end());
-	return str;
+std::string Utils::getDeleteFileCommand() {
+#ifdef WIN32
+	return "del";
+#else
+	return "rm"
+#endif
 }
 
 std::string Utils::bin2hex(const std::string& data) {

@@ -13,11 +13,9 @@ ConfigFile::ConfigFile() {
 
 	mIniFileName = configFolder;
 	mIniFileName += Utils::getPathSeparator() + INI_CONFIG_FILE;
-
 }
 
-ConfigFile::~ConfigFile()
-{
+ConfigFile::~ConfigFile() {
 }
 
 /**

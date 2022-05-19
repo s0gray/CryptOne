@@ -9,7 +9,8 @@
 #include <string.h>
 #endif
 
-#define APP_VERSION     "1.0.2"
+#define APP_VERSION     "1.0.3"
+
 #define DEFAULT_ENCRPYTED_FILENAME      "crypt-one-data.tar.gz.enc"
 #define DEFAULT_COMPRESSED_FILENAME     "crypt-one-data.tar.gz"
 
@@ -29,7 +30,7 @@ int decryptAndDecompress(const std::string &inputFile) {
     LOGI("Decompressing file [%s]", compressedFile.c_str());
     CryptOne::exec(("tar xf " + compressedFile).c_str());
 
-    CryptOne::exec(("del " + compressedFile).c_str());
+    CryptOne::exec((Utils::getDeleteFileCommand() + " " + compressedFile).c_str());
     return 0;
 }
 
