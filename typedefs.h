@@ -17,9 +17,7 @@ enum ErrCode {
 	eNotFound
 };
 
-typedef unsigned short	uint16;
 
-typedef std::string BinaryData;
 typedef unsigned char byte;
 
 typedef std::vector<unsigned char> bytes;

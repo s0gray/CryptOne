@@ -4,6 +4,11 @@
 #include "ConfigFile.h"
 #include "Utils.h"
 #include "Logger.h"
+#include "Tools.h"
+#include "IniFileTools.h"
+#include "FileTools.h"
+
+
 
 #define INI_CONFIG_FILE		"crypt1.ini"
 
@@ -12,7 +17,7 @@ ConfigFile::ConfigFile() {
 	std::string configFolder = ".";
 
 	mIniFileName = configFolder;
-	mIniFileName += Utils::getPathSeparator() + INI_CONFIG_FILE;
+	mIniFileName += Tools::getPathSeparator() + INI_CONFIG_FILE;
 }
 
 ConfigFile::~ConfigFile() {
@@ -23,7 +28,7 @@ ConfigFile::~ConfigFile() {
 *	@return 0 if success
 */
 int ConfigFile::load() {
-	const bool ok = Utils::LoadIniFile(mIniFileName, mData);
+	const bool ok = IniFileTools::loadIniFile(mIniFileName, mData);
 	if (!ok) {
 		return 1;
 	}
@@ -31,7 +36,7 @@ int ConfigFile::load() {
 }
 
 int ConfigFile::load(const char *folder) {
-	const bool ok = Utils::LoadIniFile(folder + std::string("//") + mIniFileName, mData);
+	const bool ok = IniFileTools::loadIniFile(folder + Tools::getPathSeparator() + mIniFileName, mData);
 	if (!ok) {
 		return 1;
 	}
@@ -48,7 +53,7 @@ int ConfigFile::store() {
 		content += it->first + "=" + it->second + "\n";
 		it++;
 	}
-	return Utils::writeFileA(mIniFileName, content);
+	return FileTools::writeFileA(mIniFileName, content);
 }
 
 

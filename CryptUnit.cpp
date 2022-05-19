@@ -4,7 +4,7 @@
 #include <string.h>
 #include "Logger.h"
 #include "Utils.h"
-
+#include "Tools.h"
 
 ErrCode CryptUnit::xorData(const std::string& data1, const std::string& data2, size_t size, std::string& result)
 {
@@ -37,14 +37,14 @@ ErrCode CryptUnit::selfTest() {
 
 	// TEST 1. SHA256
 	std::string input = "abc";
-	std::string expectedHash = Utils::hex2bin("ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
+	std::string expectedHash = Tools::h2b("ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
 
 	std::string hash;
 	ErrCode ret = this->hashDataSHA256(input, hash);
 	ASSERTME(ret);
 
 	if (hash.compare(expectedHash) != 0) {
-		LOGI("SHA256 self-test failed expected [%s] received [%s]", expectedHash.c_str(), Utils::bin2hex(hash).c_str());
+		LOGI("SHA256 self-test failed expected [%s] received [%s]", expectedHash.c_str(), Tools::b2h(hash).c_str());
 		return eFatal;
 	}
 
@@ -64,7 +64,7 @@ ErrCode CryptUnit::selfTest() {
 	ASSERTME(ret);
 
 	if (key1.compare(xor2) != 0) {
-		LOGI("XOR self-test failed expected [%s] received [%s]", Utils::bin2hex(xor1).c_str(), Utils::bin2hex(xor2).c_str());
+		LOGI("XOR self-test failed expected [%s] received [%s]", Tools::b2h(xor1).c_str(), Tools::b2h(xor2).c_str());
 		return eFatal;
 	}
 
@@ -81,7 +81,7 @@ ErrCode CryptUnit::selfTest() {
 	ASSERTME(ret);
 
 	if (decrypted.compare(plain) != 0) {
-		LOGI("Symmetrical enc/dec self-test failed expected [%s] received [%s]", Utils::bin2hex(plain).c_str(), Utils::bin2hex(decrypted).c_str());
+		LOGI("Symmetrical enc/dec self-test failed expected [%s] received [%s]", Tools::b2h(plain).c_str(), Tools::b2h(decrypted).c_str());
 		return eFatal;
 	}
 

@@ -2,6 +2,7 @@
 
 #include "Logger.h"
 #include "Utils.h"
+#include "FileTools.h"
 
 #include <iostream>
 
@@ -44,7 +45,7 @@ ErrCode CryptOne::initialize() {
 
     if (ret1 != eOk) {
         // keyFolder was not found in config file or config file was not loaded at all
-        ErrCode ret2 = Utils::getKeyFolder(mKeyFolder);
+        ErrCode ret2 = FileTools::getKeyFolder(mKeyFolder);
         if (ret2 == eNotFound) {
             LOGE("No removable drives found..");
             return ret2;
@@ -66,7 +67,7 @@ ErrCode CryptOne::loadConfig(const char* folder) {
 ErrCode CryptOne::loadEncryptedKeyFromFile(const std::string& fileName, std::string& key) {
 
     std::string fileData;
-    ErrCode ret = Utils::loadFileA(fileName, fileData);
+    ErrCode ret = FileTools::loadFileA(fileName, fileData);
     if (ret != eOk) {
         LOGE("Can not load encrypted key from file [%s]", fileName.c_str());
         return ret;
@@ -306,7 +307,7 @@ ErrCode CryptOne::generateKeyWithPass(const std::string& fileName) {
     std::string output = salt + xored;
     LOG_DATA(2, "output", output.c_str(), output.size());
 
-    ret = Utils::writeFileA(outputFileName, output);
+    ret = FileTools::writeFileA(outputFileName, output);
     if (ret == eOk) {
         LOGI("Written %u bytes to [%ws]", cryptUnit.getSecretKeyLength(), outputFileName);
     }
@@ -325,7 +326,7 @@ ErrCode CryptOne::generateKey(const char* outputFileName) {
     ASSERTME(ret);
 
     LOG_DATA(2, "secret", secret.c_str(), secret.size());
-    ret = Utils::writeFileA(outputFileName, secret);
+    ret = FileTools::writeFileA(outputFileName, secret);
 
     if (ret == eOk) {
         LOGI("Written %u bytes to [%ws]", cryptUnit.getSecretKeyLength(), outputFileName);
@@ -342,7 +343,7 @@ ErrCode CryptOne::encryptFileWithPassKey(
                                         const std::string& outputFileName) {
     std::string plain;
 
-    ASSERTME( Utils::loadFileA(inputFile, plain));
+    ASSERTME(FileTools::loadFileA(inputFile, plain));
     LOGI("Loaded %u bytes from [%s]", plain.size(), inputFile.c_str());
 
     std::string keyFile = mKeyFolder  + keyFileName;
@@ -363,7 +364,7 @@ ErrCode CryptOne::encryptFileWithPassKey(
     outFileData.assign((const char*)&header, sizeof(header));
     outFileData += encrypted;
 
-    ASSERTME( Utils::writeFileA(outputFileName, outFileData) );
+    ASSERTME(FileTools::writeFileA(outputFileName, outFileData) );
     LOGI("Stored %u bytes to [%s]", outFileData.size(), outputFileName.c_str());
     return eOk;
 }
@@ -371,12 +372,12 @@ ErrCode CryptOne::encryptFileWithPassKey(
 
 ErrCode CryptOne::encryptFile(const char* inputFile, const char* keyFile, const char* outputFileName) {
     std::string data;
-    ASSERTME( Utils::loadFileA(inputFile, data) );
+    ASSERTME(FileTools::loadFileA(inputFile, data) );
 
     LOGI("Loaded %u bytes from [%s]", data.size(), inputFile);
 
     std::string secret;
-    ASSERTME( Utils::loadFileA(keyFile, secret) );
+    ASSERTME(FileTools::loadFileA(keyFile, secret) );
 
     std::string encrypted, nonce;
     ASSERTME( cryptUnit.encryptDataSymmetric(data, secret, encrypted, nonce) );
@@ -389,7 +390,7 @@ ErrCode CryptOne::encryptFile(const char* inputFile, const char* keyFile, const 
     outFileData.assign((const char*)&header, sizeof(header));
     outFileData += encrypted;
 
-    ASSERTME( Utils::writeFileA(outputFileName, outFileData));
+    ASSERTME(FileTools::writeFileA(outputFileName, outFileData));
 
     LOGI("Stored %u bytes to [%s]", outFileData.size(), outputFileName);
     return eOk;
@@ -402,7 +403,7 @@ ErrCode CryptOne::decryptFileWithPassKey(const std::string& inputFile,
     LOGI("[%s] [%s] [%s]", inputFile.c_str(), keyFile.c_str(), outputFileName.c_str());
 
     std::string data;
-    ASSERTME( Utils::loadFileA(inputFile, data) );
+    ASSERTME(FileTools::loadFileA(inputFile, data) );
     LOGI("Loaded %u bytes from [%s]", data.size(), inputFile.c_str());
 
     if (data.size() < sizeof(CryptHeader)) {
@@ -416,7 +417,7 @@ ErrCode CryptOne::decryptFileWithPassKey(const std::string& inputFile,
     const byte* encrypted = (const byte*)data.c_str() + sizeof(CryptHeader);
     size_t encryptedSize = data.size() - sizeof(CryptHeader);
 
-    BinaryData decrypted;
+    std::string decrypted;
     size_t decryptedSize = header->plainDataSize;
 
     ASSERTME( cryptUnit.decryptDataSymmetric(decrypted,
@@ -425,14 +426,14 @@ ErrCode CryptOne::decryptFileWithPassKey(const std::string& inputFile,
         plainKey,
         decryptedSize));
 
-    ASSERTME( Utils::writeFileA(outputFileName, decrypted));
+    ASSERTME(FileTools::writeFileA(outputFileName, decrypted));
 
     return eOk;
 }
 
 ErrCode  CryptOne::decryptFile(const char* inputFile, const char* keyFile, const char* outputFileName) {
     std::string data;
-    ASSERTME( Utils::loadFileA(inputFile, data) );
+    ASSERTME(FileTools::loadFileA(inputFile, data) );
 
     LOGI("Loaded %u bytes from [%s]", data.size(), inputFile);
 
@@ -442,13 +443,13 @@ ErrCode  CryptOne::decryptFile(const char* inputFile, const char* keyFile, const
     }
 
     std::string secret;
-    ASSERTME( Utils::loadFileA(keyFile, secret) );
+    ASSERTME(FileTools::loadFileA(keyFile, secret) );
 
     CryptHeader* header = (CryptHeader*)data.c_str();
     const byte* encrypted = (const byte*)data.c_str() + sizeof(CryptHeader);
     size_t encryptedSize = data.size() - sizeof(CryptHeader);
 
-    BinaryData decrypted;
+    std::string decrypted;
     size_t decryptedSize = header->plainDataSize;
 
     ASSERTME(   cryptUnit.decryptDataSymmetric(decrypted,
@@ -458,7 +459,7 @@ ErrCode  CryptOne::decryptFile(const char* inputFile, const char* keyFile, const
                 decryptedSize
     ));
 
-    ASSERTME( Utils::writeFileA(outputFileName, decrypted));
+    ASSERTME(FileTools::writeFileA(outputFileName, decrypted));
     return eOk;
 }
 

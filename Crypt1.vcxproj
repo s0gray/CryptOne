@@ -150,18 +150,24 @@
     <ClCompile Include="Crypt1.cpp" />
     <ClCompile Include="CryptOne.cpp" />
     <ClCompile Include="CryptUnit.cpp" />
+    <ClCompile Include="FileTools.cpp" />
+    <ClCompile Include="IniFileTools.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="OpenSslUnit.cpp" />
     <ClCompile Include="SodiumUnit.cpp" />
+    <ClCompile Include="Tools.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConfigFile.h" />
     <ClInclude Include="CryptOne.h" />
     <ClInclude Include="CryptUnit.h" />
+    <ClInclude Include="FileTools.h" />
+    <ClInclude Include="IniFileTools.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="OpenSslUnit.h" />
     <ClInclude Include="SodiumUnit.h" />
+    <ClInclude Include="Tools.h" />
     <ClInclude Include="typedefs.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>

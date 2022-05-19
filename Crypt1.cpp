@@ -4,6 +4,8 @@
 #include "CryptOne.h"
 
 #include "Utils.h"
+#include "Tools.h"
+#include "FileTools.h"
 
 #ifndef WIN32
 #include <string.h>
@@ -30,7 +32,7 @@ int decryptAndDecompress(const std::string &inputFile) {
     LOGI("Decompressing file [%s]", compressedFile.c_str());
     CryptOne::exec(("tar xf " + compressedFile).c_str());
 
-    CryptOne::exec((Utils::getDeleteFileCommand() + " " + compressedFile).c_str());
+    CryptOne::exec((Tools::getDeleteFileCommand() + " " + compressedFile).c_str());
     return 0;
 }
 
@@ -44,7 +46,7 @@ int up(int cloudIndex, const std::string& encryptedFile) {
 
     // copy
     LOGI("Uploading file [%s] to cloud #%d", encryptedFile.c_str(), cloudIndex);
-    ErrCode r = Utils::copyFileA(encryptedFile, cloudFolder + "//" + encryptedFile);
+    ErrCode r = FileTools::copyFileA(encryptedFile, cloudFolder + Tools::getPathSeparator() + encryptedFile);
     if (r != eOk) {
         LOGE("Failed to upload encrypted file to cloud");
         return 1;
@@ -148,7 +150,7 @@ int main(int argc, char* argv[])
         std::string sourceFile = cloudFolder + "//" + encryptedFile;
            ;
        LOGI("Downloading file [%s] from cloud ", sourceFile.c_str());
-       ret = Utils::copyFileA(sourceFile, encryptedFile);
+       ret = FileTools::copyFileA(sourceFile, encryptedFile);
        if (ret != eOk) {
            LOGE("Can not download file from cloud #%d", cloudIndex);
            return 1;
@@ -188,7 +190,7 @@ int main(int argc, char* argv[])
         std::string encryptedFile = (argc<4) ? DEFAULT_ENCRPYTED_FILENAME : argv[3];
         std::string sourceFile = cryptOne.getCloudFolder(cloudIndex) + "//" + encryptedFile;
         LOGI("Downloading file [%s] from cloud ", sourceFile.c_str());
-        ret = Utils::copyFileA(sourceFile, encryptedFile);
+        ret = FileTools::copyFileA(sourceFile, encryptedFile);
         if (ret != eOk) {
             LOGE("Can not download file from cloud");
             return 1;
