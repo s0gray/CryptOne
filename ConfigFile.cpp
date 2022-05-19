@@ -10,10 +10,10 @@
 
 ConfigFile::ConfigFile()
 {
-	std::string configFolder = "./";
+	std::string configFolder = ".";
 
 	mIniFileName = configFolder;
-	mIniFileName += std::string("\\") + INI_CONFIG_FILE;
+	mIniFileName += Utils::getPathSeparator() + INI_CONFIG_FILE;
 
 }
 

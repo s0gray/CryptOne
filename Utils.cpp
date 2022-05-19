@@ -16,19 +16,25 @@
 	#include <string.h>
 #endif
 
-std::string Utils::IntToHexString(int value) 
-{
+std::string Utils::IntToHexString(int value) {
 	std::stringstream stream;
 	stream << std::hex << value;
 	return std::string(stream.str());
+}
+
+std::string Utils::getPathSeparator() {
+#ifdef WIN32
+	return "\\";
+#else
+	return "/";
+#endif
 }
 
 /**
 *	Load file from disk
 */
 #ifdef WIN32
-ErrCode Utils::loadFileW(const std::wstring& fileName, std::string& result)
-{
+ErrCode Utils::loadFileW(const std::wstring& fileName, std::string& result) {
 	size_t len;
 	byte* buffer = Utils::loadFileW(fileName.c_str(), len);
 	if (!buffer) 
@@ -41,14 +47,12 @@ ErrCode Utils::loadFileW(const std::wstring& fileName, std::string& result)
 }
 #endif
 
-ErrCode Utils::loadFileA(const std::string& fileName, std::string& result)
-{
+ErrCode Utils::loadFileA(const std::string& fileName, std::string& result) {
 	size_t len;
 	byte* buffer = Utils::loadFileA(fileName.c_str(), len);
-	if (!buffer)
-	{
+	if (!buffer)	
 		return eBadFile;
-	}
+	
 	result.assign((const char*)buffer, len);
 	free(buffer);
 	return eOk;
@@ -61,8 +65,7 @@ byte* Utils::loadFileW(const wchar_t* fileName, size_t& len) {
 	len = 0;
 
 	std::ifstream file(fileName, std::ios::in | std::ios::binary | std::ios::ate);
-	if (file.is_open())
-	{
+	if (file.is_open()) {
 		size = file.tellg();
 		len = (unsigned int)size;
 		memblock = new byte[len];
@@ -96,30 +99,27 @@ std::string Utils::vectorToString(const std::vector<unsigned char>& data) {
 	return str;
 }
 
-std::string Utils::bin2hex(const std::string& data)  {
+std::string Utils::bin2hex(const std::string& data) {
 	return Utils::bin2hex((const byte*)data.c_str(), data.size());
 }
 
-std::string Utils::bin2hex(const byte* buf, size_t len)
-{
+std::string Utils::bin2hex(const byte* buf, size_t len) {
 	std::string str;
 	if (!buf || len == 0U)
 		return str;
+
 	for (unsigned int i = 0; i < len; i++) 
-	{
 		str += Utils::format("%02x", buf[i]);
-	}
+	
 	return str;
 }
 
-std::string Utils::charToHex(char ch) 
-{
+std::string Utils::charToHex(char ch) {
 	std::string str = charToString(ch);
 	return Utils::bin2hex(str);
 }
 
-std::string Utils::charToString(char ch) 
-{
+std::string Utils::charToString(char ch) {
 	char tmp[1];
 	tmp[0] = ch;
 	std::string v(tmp, 1);
@@ -132,13 +132,11 @@ std::string Utils::charToString(char ch)
 	return s;
 }*/
 
-std::string Utils::format_arg_list(const char* fmt, va_list args)
-{
+std::string Utils::format_arg_list(const char* fmt, va_list args) {
 	if (!fmt) return "";
 	int   result = -1, length = 256;
 	char* buffer = 0;
-	while (result == -1)
-	{
+	while (result == -1) {
 		if (buffer) delete[] buffer;
 		buffer = new char[length + 1];
 		memset(buffer, 0, length + 1);
@@ -150,8 +148,7 @@ std::string Utils::format_arg_list(const char* fmt, va_list args)
 	return s;
 }
 
-std::string Utils::format(const char* fmt, ...)
-{
+std::string Utils::format(const char* fmt, ...) {
 	va_list args;
 	va_start(args, fmt);
 	std::string s = format_arg_list(fmt, args);
@@ -160,8 +157,7 @@ std::string Utils::format(const char* fmt, ...)
 }
 
 #ifdef WIN32
-ErrCode Utils::writeFileW(const std::wstring& fileName, const std::string& body) noexcept
-{
+ErrCode Utils::writeFileW(const std::wstring& fileName, const std::string& body) noexcept {
 	FILE* ptr;
 	errno_t ret = _wfopen_s(&ptr, fileName.c_str(), L"wb+");
 	if (ret == 0) {
@@ -175,8 +171,7 @@ ErrCode Utils::writeFileW(const std::wstring& fileName, const std::string& body)
 }
 #endif
 
-ErrCode Utils::writeFileA(const std::string& fileName, const std::string& body) noexcept
-{
+ErrCode Utils::writeFileA(const std::string& fileName, const std::string& body) noexcept {
 	FILE* ptr= fopen( fileName.c_str(), "wb+");
 	if (ptr!=NULL) {
 		fwrite(body.c_str(), 1, body.size(), ptr);

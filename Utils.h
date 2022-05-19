@@ -25,6 +25,7 @@ public:
 //	static std::string	ws2s(const std::wstring& ws);
 	static std::string	format(const char* fmt, ...);
 	static std::string	format_arg_list(const char* fmt, va_list args);
+	static std::string  getPathSeparator();
 
 #ifdef WIN32
 	static void			getEnvTempPath(std::wstring& value);
