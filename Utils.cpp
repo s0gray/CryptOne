@@ -98,7 +98,7 @@ std::string Utils::getDeleteFileCommand() {
 #ifdef WIN32
 	return "del";
 #else
-	return "rm"
+	return "rm";
 #endif
 }
 
