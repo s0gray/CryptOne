@@ -328,7 +328,6 @@ bool Utils::LoadIniFile(const std::wstring& fileName, std::map<std::string, std:
 		return false;
 
 	bool ret = parseIniFile(data, len, map);
-	//LOG(Log::eStream, "config.parse ret %d", ret);
 
 	free( data );
 	return ret;
@@ -336,22 +335,19 @@ bool Utils::LoadIniFile(const std::wstring& fileName, std::map<std::string, std:
 #endif
 
 bool Utils::LoadIniFile(const std::string& fileName, std::map<std::string, std::string>& map) {
+	LOGI("Going to load file [%s]", fileName.c_str());
 	size_t len = 0;
 	byte* data = Utils::loadFileA(fileName.c_str(), len);
-	//LOG(Log::eStream, "Loaded %d bytes from %s", len, fileName);
 	if (len == 0 || !data)
 		return false;
 
 	bool ret = parseIniFile(data, len, map);
-	//LOG(Log::eStream, "config.parse ret %d", ret);
-
 	free(data);
 	return ret;
 }
 
 // same as hex2bin but std::string as output container of binary data
-std::string Utils::hex2bin(const std::string& str)
-{
+std::string Utils::hex2bin(const std::string& str) {
 	std::string	 str2 = Utils::removeChar(str, ' ');
 	std::string	 str3 = Utils::removeChar(str2, '\t');
 
@@ -372,24 +368,23 @@ std::string	 Utils::removeChar(const std::string& str1, char c) {
 	return result;
 }
 
-byte* Utils::hex2bin2(const std::string& str, size_t& len)
-{
+byte* Utils::hex2bin2(const std::string& str, size_t& len) {
 	len = str.length() / 2;
 
-	byte* buf = (byte*)calloc(len, 1);
+	byte* buf = (byte*) calloc(len, 1);
+	if (!buf)
+		return nullptr;
 
 	size_t ptr = 0;
 	for (size_t pos = 0; pos < str.length(); pos += 2) {
 		byte b = (parseChar_(str[pos]) << 4) + parseChar_(str[pos + 1]);
 		buf[ptr++] = b;
 	}
-
 	return buf;
 }
 
 
-byte Utils::parseChar_(char p)
-{
+byte Utils::parseChar_(char p) {
 	if (p >= '0' && p <= '9')
 		return (byte)(p - '0');
 
@@ -430,11 +425,9 @@ ErrCode Utils::copyFileA(const std::string& from, const std::string& to) {
 	return ret;
 }
 
-ErrCode Utils::getAvailableDrives(std::vector<std::string>& result) {
-	
+ErrCode Utils::getAvailableDrives(std::vector<std::string>& result) {	
 #ifdef WIN32
 	DWORD drives = GetLogicalDrives();
-
 	for (unsigned int i = 0; i < 32; i++) {
 		DWORD res = drives & (1 << i);
 		char letter = 'A' + i;
