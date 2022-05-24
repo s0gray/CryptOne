@@ -3,7 +3,6 @@
 
 #include <string.h>
 #include "Logger.h"
-#include "Utils.h"
 #include "Tools.h"
 
 ErrCode CryptUnit::xorData(const std::string& data1, const std::string& data2, size_t size, std::string& result)

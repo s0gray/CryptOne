@@ -24,9 +24,6 @@
     <ClCompile Include="CryptUnit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="OpenSslUnit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -57,9 +54,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Logger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OpenSslUnit.h">

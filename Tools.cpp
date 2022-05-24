@@ -1,6 +1,7 @@
 #include "Tools.h"
 
-#include "Utils.h"
+#include <memory>
+
 /**
 *	convert binary data in 'std::string' to Hex format in 'std::string'
 */
@@ -11,7 +12,7 @@ std::string Tools::b2h(const std::string& data) {
 	std::string str = "";
 
 	for (unsigned int i = 0; i < data.size(); i++)
-		str += Utils::format("%02x", data.at(i));
+		str += Tools::format("%02x", data.at(i));
 
 	return str;
 }
@@ -41,7 +42,7 @@ std::string Tools::h2b(const std::string& str0) {
 	std::string	 str2 = Tools::cleanChar(str0, ' ');
 	std::string	 str = Tools::cleanChar(str2, '\t');
 
-	int len = str.length() / 2;
+	size_t len = str.length() / 2;
 
 	byte* buf = (byte*)calloc(len, 1);
 	if (!buf)
@@ -80,7 +81,6 @@ std::string Tools::getDeleteFileCommand() {
 }
 
 
-
 std::string Tools::trim(const std::string& _str) {
 	std::string str = _str;
 	int i, j, start, end;
@@ -98,4 +98,19 @@ std::string Tools::trim(const std::string& _str) {
 	return str;
 }
 
+//#include <string>
+//#include <stdexcept>
 
+template<typename ... Args>
+std::string Tools::format(const std::string& format, Args ... args)
+{
+	size_t size = snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0'
+	if (size <= 0) { /*throw std::runtime_error("Error during formatting.");*/ return ""; }
+	std::unique_ptr<char[]> buf(new char[size]);
+	snprintf(buf.get(), size, format.c_str(), args ...);
+	return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
+}
+
+std::wstring Tools::s2ws(const std::string& value) {
+	return std::wstring(value.begin(), value.end());
+}

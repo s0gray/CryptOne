@@ -7,11 +7,11 @@
 #include "Logger.h"
 
 #ifdef WIN32
-#include <Windows.h>
-#include <conio.h>
+	#include <Windows.h>
+	#include <conio.h>
 #else
-#include <curses.h>
-#include <string.h>
+	#include <curses.h>
+	#include <string.h>
 #endif
 
 
@@ -46,8 +46,8 @@ ErrCode FileTools::loadFileA(const std::string& fileName, std::string& result) {
 #ifdef WIN32
 byte* FileTools::loadFileW(const wchar_t* fileName, size_t& len) {
 	std::ifstream::pos_type size;
-	byte* memblock = 0;
-	len = 0;
+	byte* memblock = nullptr;
+	len = 0U;
 
 	std::ifstream file(fileName, std::ios::in | std::ios::binary | std::ios::ate);
 	if (file.is_open()) {
@@ -80,12 +80,11 @@ byte* FileTools::loadFileA(const char* fileName, size_t& len) {
 }
 
 
-
 #ifdef WIN32
 ErrCode FileTools::writeFileW(const std::wstring& fileName, const std::string& body) noexcept {
-	FILE* ptr;
+	FILE* ptr = nullptr;
 	errno_t ret = _wfopen_s(&ptr, fileName.c_str(), L"wb+");
-	if (ret == 0) {
+	if (ret == 0 && ptr!=nullptr) {
 		fwrite(body.c_str(), 1, body.size(), ptr);
 		fclose(ptr);
 	}
@@ -98,17 +97,13 @@ ErrCode FileTools::writeFileW(const std::wstring& fileName, const std::string& b
 
 ErrCode FileTools::writeFileA(const std::string& fileName, const std::string& body) noexcept {
 	FILE* ptr = fopen(fileName.c_str(), "wb+");
-	if (ptr != NULL) {
-		fwrite(body.c_str(), 1, body.size(), ptr);
-		fclose(ptr);
-	}
-	else {
-		return eBadFile;
-	}
+	if (!ptr) return eBadFile;
+
+	fwrite(body.c_str(), 1, body.size(), ptr);
+	fclose(ptr);
+
 	return eOk;
 }
-
-
 
 #ifdef WIN32
 ErrCode FileTools::copyFileW(const std::wstring& from, const std::wstring& to) {
@@ -137,7 +132,6 @@ ErrCode FileTools::copyFileA(const std::string& from, const std::string& to) {
 	}
 	return ret;
 }
-
 
 
 ErrCode FileTools::getAvailableDrives(std::vector<std::string>& result) {

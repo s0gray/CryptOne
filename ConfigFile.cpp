@@ -2,7 +2,6 @@
 
 
 #include "ConfigFile.h"
-#include "Utils.h"
 #include "Logger.h"
 #include "Tools.h"
 #include "IniFileTools.h"
@@ -77,7 +76,7 @@ ErrCode ConfigFile::getValueW(const std::string& key, std::wstring& value) {
 		return eFatal;
 
 	std::string valueA = it->second;
-	value = Utils::s2ws(valueA);
+	value = Tools::s2ws(valueA);
 	return eOk;
 }
 

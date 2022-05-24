@@ -135,6 +135,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>libs\libsodium\include</AdditionalIncludeDirectories>
+      <AdditionalOptions>/std:c++17 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,7 +157,6 @@
     <ClCompile Include="OpenSslUnit.cpp" />
     <ClCompile Include="SodiumUnit.cpp" />
     <ClCompile Include="Tools.cpp" />
-    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConfigFile.h" />
@@ -169,7 +169,6 @@
     <ClInclude Include="SodiumUnit.h" />
     <ClInclude Include="Tools.h" />
     <ClInclude Include="typedefs.h" />
-    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

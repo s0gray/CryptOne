@@ -1,7 +1,6 @@
 #include "CryptOne.h"
 
 #include "Logger.h"
-#include "Utils.h"
 #include "FileTools.h"
 
 #include <iostream>
