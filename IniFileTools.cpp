@@ -98,7 +98,6 @@ bool IniFileTools::parseIniFileLine(const std::string& str, std::string& key, st
 bool IniFileTools::loadIniFile(const std::wstring& fileName, std::map<std::string, std::string>& map) {
 	size_t len = 0;
 	byte* data = FileTools::loadFileW(fileName.c_str(), len);
-	//LOG(Log::eStream, "Loaded %d bytes from %s", len, fileName);
 	if (len == 0 || !data)
 		return false;
 

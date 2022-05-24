@@ -19,7 +19,7 @@ size_t SodiumCryptUnit::getSecretKeyLength()
 }
 
 
-ErrCode SodiumCryptUnit::wipeData(unsigned char* data, size_t dataLen)
+RetCode SodiumCryptUnit::wipeData(unsigned char* data, size_t dataLen)
 {
 	if (!data)
 		return eBadArg;
@@ -29,11 +29,11 @@ ErrCode SodiumCryptUnit::wipeData(unsigned char* data, size_t dataLen)
 	return eOk;
 }
 
- ErrCode SodiumCryptUnit::generateSecretKey(std::string &key) {
+RetCode SodiumCryptUnit::generateSecretKey(std::string &key) {
 	return generateRandomData(key, getSecretKeyLength());
 }
 
- ErrCode SodiumCryptUnit::generateRandomData(std::string& result, size_t size) {
+ RetCode SodiumCryptUnit::generateRandomData(std::string& result, size_t size) {
 	 byte* secretKey = (byte*)malloc(size);
 	 if (!secretKey)
 		 return eFatal;
@@ -67,7 +67,7 @@ size_t SodiumCryptUnit::getNonceLengthSymmetric()
 }
 
 
-ErrCode SodiumCryptUnit::encryptData(const unsigned char *plainData, size_t plainDataLen, unsigned char *cipherData,
+RetCode SodiumCryptUnit::encryptData(const unsigned char *plainData, size_t plainDataLen, unsigned char *cipherData,
 								    unsigned char* nonce, const unsigned char *pubKeyReceiver, const unsigned char *privKeySender)
 {
 	if (!plainData || !cipherData || !nonce || !pubKeyReceiver || !privKeySender)
@@ -84,7 +84,7 @@ ErrCode SodiumCryptUnit::encryptData(const unsigned char *plainData, size_t plai
 	return eOk;
 }
 
-ErrCode SodiumCryptUnit::decryptData(unsigned char *plainData, const unsigned char *cipherData, size_t cipherDataLen,
+RetCode SodiumCryptUnit::decryptData(unsigned char *plainData, const unsigned char *cipherData, size_t cipherDataLen,
 								    const unsigned char* nonce, const unsigned char *pubKeySender, const unsigned char *privKeyReceiver)
 {
 	if (!plainData || !cipherData || !nonce || !pubKeySender || !privKeyReceiver)
@@ -98,7 +98,7 @@ ErrCode SodiumCryptUnit::decryptData(unsigned char *plainData, const unsigned ch
 	return eOk;
 }
 
-ErrCode SodiumCryptUnit::encryptDataSymmetric(	const std::string& plainData,	/// IN
+RetCode SodiumCryptUnit::encryptDataSymmetric(	const std::string& plainData,	/// IN
 												std::string& encryped,			/// OUT
 												std::string& nonce,				/// OUT
 												const std::string& secretKey)	/// IN
@@ -147,7 +147,7 @@ size_t SodiumCryptUnit::getEncryptedMessageLength(size_t messageLen) const
 	return (messageLen + crypto_box_MACBYTES);
 }
 
-ErrCode SodiumCryptUnit::hashDataSHA256(const std::string& data, std::string& hashData)
+RetCode SodiumCryptUnit::hashDataSHA256(const std::string& data, std::string& hashData)
 {
 	byte hash[32];
 	if (crypto_hash_sha256(hash, (const byte*)data.c_str(), data.size()) != 0) {
@@ -162,7 +162,7 @@ size_t SodiumCryptUnit::getOneTimeAuthKeyLength() const
 	return crypto_onetimeauth_KEYBYTES;
 }
 
-ErrCode SodiumCryptUnit::decryptDataSymmetric(std::string&plainData, const std::string&cipherData, const std::string& nonce, const std::string&secretKey, size_t plainDataLen)
+RetCode SodiumCryptUnit::decryptDataSymmetric(std::string&plainData, const std::string&cipherData, const std::string& nonce, const std::string&secretKey, size_t plainDataLen)
 {
 //	LOGI(" plainDataLen = %u", plainDataLen);
 	LOG_DATA(3, "cipherData ", (const byte*)cipherData.c_str(), cipherData.size());

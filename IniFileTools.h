@@ -1,9 +1,8 @@
 #pragma once
 
-#include "typedefs.h"
+#include "Typedefs.h"
 
-class IniFileTools
-{
+class IniFileTools {
 public:
 	static bool		getLine(char** begin, const char* end, std::string& rLine);
 	static bool		parseIniFile(const byte* data, size_t len, std::map<std::string, std::string>& map);

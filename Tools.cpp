@@ -1,3 +1,21 @@
+
+/*
+ * This file is part of the CryptOne distribution (https://github.com/s0gray/CryptOne).
+ * Copyright (c) 2022 Sergey Salata.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "Tools.h"
 
 #include <memory>
@@ -11,7 +29,7 @@ std::string Tools::b2h(const std::string& data) {
 
 	std::string str = "";
 
-	for (unsigned int i = 0; i < data.size(); i++)
+	for (size_t i = 0; i < data.size(); i++)
 		str += Tools::format("%02x", data.at(i));
 
 	return str;
@@ -43,20 +61,15 @@ std::string Tools::h2b(const std::string& str0) {
 	std::string	 str = Tools::cleanChar(str2, '\t');
 
 	size_t len = str.length() / 2;
-
-	byte* buf = (byte*)calloc(len, 1);
+	std::unique_ptr<char[]> buf(new char[len]);
 	if (!buf)
 		return "";
 
 	size_t ptr = 0;
-	for (size_t pos = 0; pos < str.length(); pos += 2) {
-		byte b = (Tools::parseHexChar(str[pos]) << 4) + Tools::parseHexChar(str[pos + 1]);
-		buf[ptr++] = b;
-	}
-
-	std::string result((const char*)buf, len);
-	free(buf);
-	return result;
+	for (size_t pos = 0; pos < str.length(); pos += 2) 
+		buf[ptr++] = (byte)(Tools::parseHexChar(str[pos]) << 4) + Tools::parseHexChar(str[pos + 1]);
+	
+	return std::string(buf.get(), len);
 }
 
 /**
@@ -98,8 +111,6 @@ std::string Tools::trim(const std::string& _str) {
 	return str;
 }
 
-//#include <string>
-//#include <stdexcept>
 
 template<typename ... Args>
 std::string Tools::format(const std::string& format, Args ... args)

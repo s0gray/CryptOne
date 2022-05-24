@@ -1,9 +1,10 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include "typedefs.h"
+#include "Typedefs.h"
 #include <stdarg.h>
 #include <string>
+
 typedef unsigned char byte;
 
 /**

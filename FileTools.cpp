@@ -19,7 +19,7 @@
 *	Load file from disk
 */
 #ifdef WIN32
-ErrCode FileTools::loadFileW(const std::wstring& fileName, std::string& result) {
+RetCode FileTools::loadFileW(const std::wstring& fileName, std::string& result) {
 	size_t len;
 	byte* buffer = FileTools::loadFileW(fileName.c_str(), len);
 	if (!buffer)
@@ -31,7 +31,7 @@ ErrCode FileTools::loadFileW(const std::wstring& fileName, std::string& result) 
 }
 #endif
 
-ErrCode FileTools::loadFileA(const std::string& fileName, std::string& result) {
+RetCode FileTools::loadFileA(const std::string& fileName, std::string& result) {
 	size_t len;
 	byte* buffer = FileTools::loadFileA(fileName.c_str(), len);
 	if (!buffer)
@@ -81,7 +81,7 @@ byte* FileTools::loadFileA(const char* fileName, size_t& len) {
 
 
 #ifdef WIN32
-ErrCode FileTools::writeFileW(const std::wstring& fileName, const std::string& body) noexcept {
+RetCode FileTools::writeFileW(const std::wstring& fileName, const std::string& body) noexcept {
 	FILE* ptr = nullptr;
 	errno_t ret = _wfopen_s(&ptr, fileName.c_str(), L"wb+");
 	if (ret == 0 && ptr!=nullptr) {
@@ -95,7 +95,7 @@ ErrCode FileTools::writeFileW(const std::wstring& fileName, const std::string& b
 }
 #endif
 
-ErrCode FileTools::writeFileA(const std::string& fileName, const std::string& body) noexcept {
+RetCode FileTools::writeFileA(const std::string& fileName, const std::string& body) noexcept {
 	FILE* ptr = fopen(fileName.c_str(), "wb+");
 	if (!ptr) return eBadFile;
 
@@ -106,9 +106,9 @@ ErrCode FileTools::writeFileA(const std::string& fileName, const std::string& bo
 }
 
 #ifdef WIN32
-ErrCode FileTools::copyFileW(const std::wstring& from, const std::wstring& to) {
+RetCode FileTools::copyFileW(const std::wstring& from, const std::wstring& to) {
 	std::string data;
-	ErrCode ret = FileTools::loadFileW(from, data);
+	RetCode ret = FileTools::loadFileW(from, data);
 	ASSERTME(ret);
 	LOGI("Loaded %u bytes from [%ws]", data.size(), from.c_str());
 
@@ -120,9 +120,9 @@ ErrCode FileTools::copyFileW(const std::wstring& from, const std::wstring& to) {
 }
 #endif
 
-ErrCode FileTools::copyFileA(const std::string& from, const std::string& to) {
+RetCode FileTools::copyFileA(const std::string& from, const std::string& to) {
 	std::string data;
-	ErrCode ret = FileTools::loadFileA(from, data);
+	RetCode ret = FileTools::loadFileA(from, data);
 	ASSERTME(ret);
 	LOGI("Loaded %u bytes from [%s]", data.size(), from.c_str());
 
@@ -134,7 +134,7 @@ ErrCode FileTools::copyFileA(const std::string& from, const std::string& to) {
 }
 
 
-ErrCode FileTools::getAvailableDrives(std::vector<std::string>& result) {
+RetCode FileTools::getAvailableDrives(std::vector<std::string>& result) {
 #ifdef WIN32
 	unsigned int  drives = GetLogicalDrives();
 	for (unsigned int i = 0; i < 32; i++) {
@@ -151,7 +151,7 @@ ErrCode FileTools::getAvailableDrives(std::vector<std::string>& result) {
 }
 
 
-ErrCode FileTools::getRemovablesDrives(std::vector<std::string>& result) {
+RetCode FileTools::getRemovablesDrives(std::vector<std::string>& result) {
 #ifdef WIN32
 	std::vector<std::string> drives;
 	ASSERTME(FileTools::getAvailableDrives(drives));
@@ -173,7 +173,7 @@ ErrCode FileTools::getRemovablesDrives(std::vector<std::string>& result) {
 *	1. Get list of removable drives
 *	2. if none - return, if more than one - ask
 */
-ErrCode FileTools::getKeyFolder(std::string& folder) {
+RetCode FileTools::getKeyFolder(std::string& folder) {
 	std::vector<std::string> removeableDrives;
 	ASSERTME(getRemovablesDrives(removeableDrives));
 

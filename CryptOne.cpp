@@ -22,11 +22,11 @@ CryptOne::CryptOne() {
 CryptOne::~CryptOne() {
 }
 
-ErrCode CryptOne::initialize() {
+RetCode CryptOne::initialize() {
     ASSERTME( cryptUnit.selfTest() );
 
-    ErrCode ret = loadConfig(); // not mandatory
-    ErrCode ret1 = eFatal;
+    RetCode ret = loadConfig(); // not mandatory
+    RetCode ret1 = eFatal;
     if (ret == eOk) {
         LOGI("Loaded config file");
         ret1 = configFile.getValue(KEY_FOLDER_KEY, mKeyFolder);
@@ -44,7 +44,7 @@ ErrCode CryptOne::initialize() {
 
     if (ret1 != eOk) {
         // keyFolder was not found in config file or config file was not loaded at all
-        ErrCode ret2 = FileTools::getKeyFolder(mKeyFolder);
+        RetCode ret2 = FileTools::getKeyFolder(mKeyFolder);
         if (ret2 == eNotFound) {
             LOGE("No removable drives found..");
             return ret2;
@@ -54,19 +54,19 @@ ErrCode CryptOne::initialize() {
     return eOk;
 }
 
-ErrCode CryptOne::loadConfig() {
+RetCode CryptOne::loadConfig() {
     return (configFile.load() == 0) ? eOk : eFatal;
 }
 
-ErrCode CryptOne::loadConfig(const char* folder) {
+RetCode CryptOne::loadConfig(const char* folder) {
     return (configFile.load(folder) == 0) ? eOk : eFatal;
 }
 
 // load, ask password, decrypt
-ErrCode CryptOne::loadEncryptedKeyFromFile(const std::string& fileName, std::string& key) {
+RetCode CryptOne::loadEncryptedKeyFromFile(const std::string& fileName, std::string& key) {
 
     std::string fileData;
-    ErrCode ret = FileTools::loadFileA(fileName, fileData);
+    RetCode ret = FileTools::loadFileA(fileName, fileData);
     if (ret != eOk) {
         LOGE("Can not load encrypted key from file [%s]", fileName.c_str());
         return ret;
@@ -259,13 +259,13 @@ std::string CryptOne::exec(const char* cmd)
 * 
 *   file : [salt] + [xored] 
 */
-ErrCode CryptOne::generateKeyWithPass(const std::string& fileName) {
+RetCode CryptOne::generateKeyWithPass(const std::string& fileName) {
     std::string outputFileName = getKeyFolder() + fileName;
 
     LOGI("outputFileName [%s]", outputFileName.c_str());
 
     std::string secret;
-    ErrCode ret = cryptUnit.generateSecretKey(secret);
+    RetCode ret = cryptUnit.generateSecretKey(secret);
     ASSERTME(ret);
 
     LOGI("generateSecretKey ret %u, len = %u", ret, cryptUnit.getSecretKeyLength());
@@ -317,9 +317,9 @@ ErrCode CryptOne::generateKeyWithPass(const std::string& fileName) {
 }
 
 
-ErrCode CryptOne::generateKey(const char* outputFileName) {
+RetCode CryptOne::generateKey(const char* outputFileName) {
     std::string secret;
-    ErrCode ret = cryptUnit.generateSecretKey(secret);
+    RetCode ret = cryptUnit.generateSecretKey(secret);
 
     LOGI("generateSecretKey ret %u, len = %u", ret, secret.size());
     ASSERTME(ret);
@@ -336,7 +336,7 @@ ErrCode CryptOne::generateKey(const char* outputFileName) {
     return ret;
 }
 
-ErrCode CryptOne::encryptFileWithPassKey(
+RetCode CryptOne::encryptFileWithPassKey(
                                         const std::string& inputFile, 
                                         const std::string& keyFileName, 
                                         const std::string& outputFileName) {
@@ -369,10 +369,9 @@ ErrCode CryptOne::encryptFileWithPassKey(
 }
 
 
-ErrCode CryptOne::encryptFile(const char* inputFile, const char* keyFile, const char* outputFileName) {
+RetCode CryptOne::encryptFile(const char* inputFile, const char* keyFile, const char* outputFileName) {
     std::string data;
     ASSERTME(FileTools::loadFileA(inputFile, data) );
-
     LOGI("Loaded %u bytes from [%s]", data.size(), inputFile);
 
     std::string secret;
@@ -395,7 +394,7 @@ ErrCode CryptOne::encryptFile(const char* inputFile, const char* keyFile, const 
     return eOk;
 }
 
-ErrCode CryptOne::decryptFileWithPassKey(const std::string& inputFile, 
+RetCode CryptOne::decryptFileWithPassKey(const std::string& inputFile,
                                 const std::string& keyFile, 
                                 const std::string& outputFileName) {
 
@@ -430,7 +429,7 @@ ErrCode CryptOne::decryptFileWithPassKey(const std::string& inputFile,
     return eOk;
 }
 
-ErrCode  CryptOne::decryptFile(const char* inputFile, const char* keyFile, const char* outputFileName) {
+RetCode  CryptOne::decryptFile(const char* inputFile, const char* keyFile, const char* outputFileName) {
     std::string data;
     ASSERTME(FileTools::loadFileA(inputFile, data) );
 

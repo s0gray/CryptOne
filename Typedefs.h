@@ -1,4 +1,3 @@
-
 /*
  * This file is part of the CryptOne distribution (https://github.com/s0gray/CryptOne).
  * Copyright (c) 2022 Sergey Salata.
@@ -18,26 +17,47 @@
 
 #pragma once
 
-#include "Typedefs.h"
+#include <string>
+#include <vector>
+#include <map>
 
 
-/**
-*	Class with static utility methods
-*/
-class Tools {
-public:
-	static std::string		h2b(const std::string& str);
-	static std::string		b2h(const std::string& data);
-	static std::string		getPathSeparator();
-	static std::string		getDeleteFileCommand();
-
-	static byte				parseHexChar(char p);
-	static std::string		trim(const std::string& str);
-	static std::string		cleanChar(const std::string& str1, char c);
-	static std::wstring		s2ws(const std::string& value);
-
-	template<typename ... Args>
-	static std::string		format(const std::string& format, Args ... args);
-
+enum RetCode {
+	eOk = 0,
+	eFatal = 1,
+	eBadArg = 2,
+	eUnknownErr,
+	eBadLen,
+	eBadPubKey,
+	eBadFile,
+	eNotImpl,
+	eNotFound
 };
+
+
+typedef unsigned char byte;
+
+typedef std::map<std::string, std::string>	MapStringString;
+
+
+struct CryptHeader {
+	size_t	plainDataSize;
+	byte	nonce[24];
+};
+
+#define ASSERTME(x)  if(x!=eOk){return x;}
+
+
+#ifdef WIN32
+	#define _INT64 __int64
+#else
+	#define _INT64 __int64_t
+#endif
+
+#ifdef WIN32
+	#define GETCH _getch
+#else
+	#define GETCH getch
+#endif
+
 

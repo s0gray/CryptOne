@@ -5,7 +5,7 @@
 #include "Logger.h"
 #include "Tools.h"
 
-ErrCode CryptUnit::xorData(const std::string& data1, const std::string& data2, size_t size, std::string& result)
+RetCode CryptUnit::xorData(const std::string& data1, const std::string& data2, size_t size, std::string& result)
 {
 	if (data1.size() < size) {
 		return eBadArg;
@@ -32,14 +32,14 @@ ErrCode CryptUnit::xorData(const std::string& data1, const std::string& data2, s
 	return eOk;
 }
 
-ErrCode CryptUnit::selfTest() {
+RetCode CryptUnit::selfTest() {
 
 	// TEST 1. SHA256
 	std::string input = "abc";
 	std::string expectedHash = Tools::h2b("ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
 
 	std::string hash;
-	ErrCode ret = this->hashDataSHA256(input, hash);
+	RetCode ret = this->hashDataSHA256(input, hash);
 	ASSERTME(ret);
 
 	if (hash.compare(expectedHash) != 0) {

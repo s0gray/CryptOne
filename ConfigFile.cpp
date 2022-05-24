@@ -47,7 +47,7 @@ int ConfigFile::load(const char *folder) {
 */
 int ConfigFile::store() {
 	std::string content = "";
-	MapStrStr::iterator it = mData.begin();
+	MapStringString::iterator it = mData.begin();
 	while (it != mData.end()) {
 		content += it->first + "=" + it->second + "\n";
 		it++;
@@ -61,8 +61,8 @@ int ConfigFile::store() {
 *	if not found return not 0
 *	@return 0 if found
 */
-ErrCode ConfigFile::getValue(const std::string& key, std::string& value) {
-	const MapStrStr::iterator it = mData.find(key);
+RetCode ConfigFile::getValue(const std::string& key, std::string& value) {
+	const MapStringString::iterator it = mData.find(key);
 	if (it == mData.end())
 		return eFatal;
 
@@ -70,8 +70,8 @@ ErrCode ConfigFile::getValue(const std::string& key, std::string& value) {
 	return eOk;
 }
 
-ErrCode ConfigFile::getValueW(const std::string& key, std::wstring& value) {
-	const MapStrStr::iterator it = mData.find(key);
+RetCode ConfigFile::getValueW(const std::string& key, std::wstring& value) {
+	const MapStringString::iterator it = mData.find(key);
 	if (it == mData.end())
 		return eFatal;
 
@@ -80,8 +80,8 @@ ErrCode ConfigFile::getValueW(const std::string& key, std::wstring& value) {
 	return eOk;
 }
 
-ErrCode ConfigFile::getCloudFolders(std::vector<std::string> &folders) {
-	for (MapStrStr::iterator iter = mData.begin(); iter != mData.end(); ++iter) {
+RetCode ConfigFile::getCloudFolders(std::vector<std::string> &folders) {
+	for (MapStringString::iterator iter = mData.begin(); iter != mData.end(); ++iter) {
 		std::string key = iter->first;
 		size_t off = key.find("cloudFolder");
 		if ( off != std::string::npos) {

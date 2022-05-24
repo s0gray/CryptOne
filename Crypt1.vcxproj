@@ -168,7 +168,7 @@
     <ClInclude Include="OpenSslUnit.h" />
     <ClInclude Include="SodiumUnit.h" />
     <ClInclude Include="Tools.h" />
-    <ClInclude Include="typedefs.h" />
+    <ClInclude Include="Typedefs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

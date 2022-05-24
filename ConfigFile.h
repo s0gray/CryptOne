@@ -1,13 +1,12 @@
 
 #pragma once
 
-#include "typedefs.h"
+#include "Typedefs.h"
 
 #define KEY_FOLDER_KEY		"keyFolder"
 #define CLOUD_FOLDER_KEY	"cloudFolder"
 
-class ConfigFile
-{
+class ConfigFile {
 	public:
 		ConfigFile();
 		~ConfigFile();
@@ -19,11 +18,11 @@ class ConfigFile
 		std::string getIniFileName() const {
 			return mIniFileName;
 		}
-	ErrCode		getValue(const std::string& key, std::string& value);
-	ErrCode		getValueW(const std::string& key, std::wstring& value);
-	ErrCode		getCloudFolders(std::vector<std::string>& folders);
+		RetCode		getValue(const std::string& key, std::string& value);
+		RetCode		getValueW(const std::string& key, std::wstring& value);
+		RetCode		getCloudFolders(std::vector<std::string>& folders);
 
 private:
-		MapStrStr mData;
+		MapStringString mData;
 		std::string mIniFileName;
 };

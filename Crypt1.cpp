@@ -20,7 +20,7 @@ CryptOne cryptOne;
 int decryptAndDecompress(const std::string &inputFile) {
     std::string compressedFile =  DEFAULT_COMPRESSED_FILENAME;
 
-    ErrCode ret = cryptOne.decryptFileWithPassKey(inputFile,
+    RetCode ret = cryptOne.decryptFileWithPassKey(inputFile,
         KEY_FILENAME,
         compressedFile);
 
@@ -45,7 +45,7 @@ int up(int cloudIndex, const std::string& encryptedFile) {
 
     // copy
     LOGI("Uploading file [%s] to cloud #%d", encryptedFile.c_str(), cloudIndex);
-    ErrCode r = FileTools::copyFileA(encryptedFile, cloudFolder + Tools::getPathSeparator() + encryptedFile);
+    RetCode r = FileTools::copyFileA(encryptedFile, cloudFolder + Tools::getPathSeparator() + encryptedFile);
     if (r != eOk) {
         LOGE("Failed to upload encrypted file to cloud");
         return 1;
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
     LOG_INIT(2, "");
     LOGI("CryptOne v%s", APP_VERSION);
 
-    ErrCode ret = cryptOne.initialize();
+    RetCode ret = cryptOne.initialize();
     if (ret != eOk) {
         LOGE("CryptOne initialize FAILED : %u", ret);
         return 1;
@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
         std::string res = CryptOne::exec( ("tar -czf " + compressedFile + std::string(" ") + argv[2]).c_str());
 
         LOGI("Encrypting file [%s]..", compressedFile.c_str());
-        ErrCode r = cryptOne.encryptFileWithPassKey(compressedFile, KEY_FILENAME, DEFAULT_ENCRPYTED_FILENAME);
+        RetCode r = cryptOne.encryptFileWithPassKey(compressedFile, KEY_FILENAME, DEFAULT_ENCRPYTED_FILENAME);
         if (r != eOk) {
             LOGE("Failed to encrypt compressed folder");
             return 1;

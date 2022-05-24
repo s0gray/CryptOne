@@ -27,14 +27,14 @@ class CryptOne
 		CryptOne();
 		virtual ~CryptOne();
 
-		ErrCode		loadEncryptedKeyFromFile(const std::string& fileName, std::string& key);
-		ErrCode		generateKeyWithPass(const std::string& fileName);
-		ErrCode		generateKey(const char* outputFileName);
-		ErrCode		encryptFileWithPassKey(const std::string& inputFile, const std::string& keyFile, const std::string& outputFileName);
-		ErrCode		encryptFile(const char* inputFile, const char* keyFile, const char* outputFileName);
-		ErrCode		decryptFileWithPassKey(const std::string& inputFile, const std::string& keyFile, const std::string& outputFileName);
-		ErrCode		decryptFile(const char* inputFile, const char* keyFile, const char* outputFileName);
-		ErrCode		initialize();
+		RetCode		loadEncryptedKeyFromFile(const std::string& fileName, std::string& key);
+		RetCode		generateKeyWithPass(const std::string& fileName);
+		RetCode		generateKey(const char* outputFileName);
+		RetCode		encryptFileWithPassKey(const std::string& inputFile, const std::string& keyFile, const std::string& outputFileName);
+		RetCode		encryptFile(const char* inputFile, const char* keyFile, const char* outputFileName);
+		RetCode		decryptFileWithPassKey(const std::string& inputFile, const std::string& keyFile, const std::string& outputFileName);
+		RetCode		decryptFile(const char* inputFile, const char* keyFile, const char* outputFileName);
+		RetCode		initialize();
 
 		const std::string& getKeyFolder() const { return mKeyFolder; }
 		std::string getCloudFolder(int index);
@@ -47,8 +47,8 @@ class CryptOne
 #endif
 			
 protected:
-		ErrCode loadConfig();
-		ErrCode loadConfig(const char* folder);
+		RetCode loadConfig();
+		RetCode loadConfig(const char* folder);
 
 private:
 		SodiumCryptUnit cryptUnit;
