@@ -1,11 +1,11 @@
 
-#include "CryptUnit.h"
+#include "CryptoGate.h"
 
 #include <string.h>
 #include "Log.h"
 #include "Tools.h"
 
-RetCode CryptUnit::xorData(const std::string& data1, const std::string& data2, size_t size, std::string& result)
+RetCode CryptoGate::xorData(const std::string& data1, const std::string& data2, size_t size, std::string& result)
 {
 	if (data1.size() < size) {
 		return eBadArg;
@@ -32,7 +32,7 @@ RetCode CryptUnit::xorData(const std::string& data1, const std::string& data2, s
 	return eOk;
 }
 
-RetCode CryptUnit::selfTest() {
+RetCode CryptoGate::selfTest() {
 
 	// TEST 1. SHA256
 	std::string input = "abc";

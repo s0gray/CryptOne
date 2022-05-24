@@ -23,7 +23,7 @@ CryptOne::~CryptOne() {
 }
 
 RetCode CryptOne::initialize() {
-    ASSERTME( cryptUnit.selfTest() );
+    ASSERTME(cryptoGate.selfTest() );
 
     RetCode ret = loadConfig(); // not mandatory
     RetCode ret1 = eFatal;
@@ -80,13 +80,13 @@ RetCode CryptOne::loadEncryptedKeyFromFile(const std::string& fileName, std::str
     password = enterPassword("Please enter password for encryption of key: ");
     std::string hashed;
 
-    ret = cryptUnit.hashDataSHA256(salt + password, hashed);
+    ret = cryptoGate.hashDataSHA256(salt + password, hashed);
     if (ret != eOk) {
         LOGGER("Can not Hash password");
         return ret;
     }
     std::string xored;
-    ret = cryptUnit.xorData(secretEncrypted, hashed, secretEncrypted.size(), xored);
+    ret = cryptoGate.xorData(secretEncrypted, hashed, secretEncrypted.size(), xored);
     if (ret != eOk) {
         LOGGER("Can not Xor password");
         return ret;
@@ -262,7 +262,7 @@ RetCode CryptOne::generateKeyWithPass(const std::string& fileName) {
   //  LOGI("outputFileName [%s]", outputFileName.c_str());
 
     std::string secret;
-    RetCode ret = cryptUnit.generateSecretKey(secret);
+    RetCode ret = cryptoGate.generateSecretKey(secret);
     ASSERTME(ret);
 
  //   LOGI("generateSecretKey ret %u, len = %u", ret, cryptUnit.getSecretKeyLength());
@@ -279,18 +279,18 @@ RetCode CryptOne::generateKeyWithPass(const std::string& fileName) {
     }
 
     std::string salt;
-    ASSERTME( cryptUnit.generateSecretKey(salt) );
+    ASSERTME(cryptoGate.generateSecretKey(salt) );
    // LOG_DATA(2, "salt", salt.c_str(), salt.size());
 
     std::string material = salt + password1;
     std::string hashed;
-    ret = cryptUnit.hashDataSHA256(material, hashed);
+    ret = cryptoGate.hashDataSHA256(material, hashed);
     if (ret != eOk) {
         LOGGER("Can not Hash password");
         return ret;
     }
     std::string xored;
-    ret = cryptUnit.xorData(secret, hashed, secret.size(), xored);
+    ret = cryptoGate.xorData(secret, hashed, secret.size(), xored);
     if (ret != eOk) {
         LOGGER("Can not XOR password");
         return ret;
@@ -313,7 +313,7 @@ RetCode CryptOne::generateKeyWithPass(const std::string& fileName) {
 
 RetCode CryptOne::generateKey(const char* outputFileName) {
     std::string secret;
-    ASSERTME( cryptUnit.generateSecretKey(secret));
+    ASSERTME(cryptoGate.generateSecretKey(secret));
     ASSERTME( FileTools::writeFileA(outputFileName, secret));
 
     return eOk;
@@ -339,7 +339,7 @@ RetCode CryptOne::encryptFileWithPassKey(
     header.plainDataSize = plain.size();
     std::string nonce;
 
-    ASSERTME( cryptUnit.encryptDataSymmetric(plain, encrypted, nonce, plainKey) );
+    ASSERTME(cryptoGate.encryptDataSymmetric(plain, encrypted, nonce, plainKey) );
     memcpy(header.nonce, nonce.c_str(), nonce.size());
 
     std::string outFileData;
@@ -361,7 +361,7 @@ RetCode CryptOne::encryptFile(const char* inputFile, const char* keyFile, const 
     ASSERTME(FileTools::loadFileA(keyFile, secret) );
 
     std::string encrypted, nonce;
-    ASSERTME( cryptUnit.encryptDataSymmetric(data, secret, encrypted, nonce) );
+    ASSERTME(cryptoGate.encryptDataSymmetric(data, secret, encrypted, nonce) );
 
     CryptHeader header;
     header.plainDataSize = data.size();
@@ -401,7 +401,7 @@ RetCode CryptOne::decryptFileWithPassKey(const std::string& inputFile,
     std::string decrypted;
     size_t decryptedSize = header->plainDataSize;
 
-    ASSERTME( cryptUnit.decryptDataSymmetric(decrypted,
+    ASSERTME(cryptoGate.decryptDataSymmetric(decrypted,
         std::string((const char*)encrypted, encryptedSize),
         std::string((const char*)header->nonce, NONCE_SIZE),
         plainKey,
@@ -433,7 +433,7 @@ RetCode  CryptOne::decryptFile(const char* inputFile, const char* keyFile, const
     std::string decrypted;
     size_t decryptedSize = header->plainDataSize;
 
-    ASSERTME(   cryptUnit.decryptDataSymmetric(decrypted,
+    ASSERTME(cryptoGate.decryptDataSymmetric(decrypted,
                 std::string((const char*)encrypted, encryptedSize),
                 std::string((const char*)header->nonce, NONCE_SIZE),
                 secret,

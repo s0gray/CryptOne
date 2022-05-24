@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ConfigFile.h"
-#include "SodiumUnit.h"
+#include "SodiumGate.h"
 
 #ifndef WIN32
 #include <cstdio>
@@ -51,8 +51,8 @@ protected:
 		RetCode loadConfig(const char* folder);
 
 private:
-		SodiumCryptUnit cryptUnit;
-		//OpenSslUnit cryptUnit;
+		SodiumGate cryptoGate;
+		//OpenSslUnit cryptoGate;
 
 		ConfigFile configFile;
 
