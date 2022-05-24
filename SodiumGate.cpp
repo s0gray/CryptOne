@@ -19,6 +19,7 @@
 
 #include "SodiumGate.h"
 
+#include <memory>
 
 SodiumGate::SodiumGate() {
 }
@@ -36,26 +37,17 @@ RetCode SodiumGate::generateSecretKey(std::string &key) {
 }
 
  RetCode SodiumGate::generateRandomData(std::string& result, size_t size) {
-	 byte* secretKey = (byte*)malloc(size);
-	 if (!secretKey)
-		 return eFatal;
 
-	 randombytes_buf(secretKey, size);
-
-	 result.assign((const char*)secretKey, size);
-	 free(secretKey);
-
+	 std::unique_ptr<char[]> privateKey(new char[size]);
+	 randombytes_buf(privateKey.get(), size);
+	 result.assign(privateKey.get(), size);
 	 return eOk;
  }
-
 
 
 size_t SodiumGate::getDecryptedMessageLengthSymmetric(size_t cipherLen) const {
     return (cipherLen - crypto_secretbox_MACBYTES);
 }
-
-
-
 
 RetCode SodiumGate::encryptDataSymmetric(	const std::string& plainData,	/// IN
 												std::string& encryped,			/// OUT
@@ -66,20 +58,12 @@ RetCode SodiumGate::encryptDataSymmetric(	const std::string& plainData,	/// IN
 	ASSERTME( generateRandomData(nonce, crypto_secretbox_NONCEBYTES) );
 
 	size_t encryptedSize = this->getEncryptedMessageLength(plainData.size());
-	byte* cipherData = (byte*)calloc(encryptedSize, 1);
-	if (!cipherData)
-		return eFatal;
+	std::unique_ptr<byte[]> cipherData(new byte[encryptedSize]);
 
-	if (crypto_secretbox_easy(cipherData,(const byte*) plainData.c_str(), plainData.size(),
-			(const byte*)nonce.c_str(), (const byte*)secretKey.c_str()) != 0)
-	{
-		free(cipherData);
-		return eUnknownErr;
-	}
-
-	encryped.assign((const char*)cipherData, encryptedSize);
-	free(cipherData);
-
+	if (crypto_secretbox_easy(cipherData.get(), (const byte*)plainData.c_str(), plainData.size(),
+			(const byte*)nonce.c_str(), (const byte*)secretKey.c_str()) != 0)	return eFatal;
+	
+	encryped.assign((const char*)cipherData.get(), encryptedSize);
 	return eOk;
 }
 
@@ -100,22 +84,18 @@ RetCode SodiumGate::hashDataSHA256(const std::string& data, std::string& hashDat
 
 RetCode SodiumGate::decryptDataSymmetric(std::string&plainData, const std::string&cipherData, const std::string& nonce, const std::string&secretKey, size_t plainDataLen) {
 	size_t plainDataSize = getDecryptedMessageLengthSymmetric(cipherData.size());
+	std::unique_ptr<byte[]> plainDataBuffer(new byte[plainDataSize]);
 
-	byte *plainDataBuffer = (byte*)calloc(plainDataSize, 1);
-	if (crypto_secretbox_open_easy(plainDataBuffer, (const byte*)cipherData.c_str(), cipherData.size(), (const byte*)nonce.c_str(), (const byte*)secretKey.c_str()) != 0) {
-		free(plainDataBuffer);
+	if (crypto_secretbox_open_easy(plainDataBuffer.get(), (const byte*)cipherData.c_str(), cipherData.size(), (const byte*)nonce.c_str(), (const byte*)secretKey.c_str()) != 0) 
 		return eUnknownErr;
-	}
+	
 	if (plainDataSize < plainDataLen) {
-	//	LOGE("plainDataSize [%u] < plainDataLen [%u]", plainDataSize, plainDataLen); // ?
 		return eFatal;
 	}
 	if (!plainDataBuffer) {
-	//	LOGE("plainDataBuffer is null");
 		return eFatal;
 	}
-	plainData.assign((const char*)plainDataBuffer, plainDataLen);
-	free(plainDataBuffer);
+	plainData.assign((const char*)plainDataBuffer.get(), plainDataLen);
 	return eOk;
 }
 

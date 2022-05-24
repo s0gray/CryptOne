@@ -24,12 +24,12 @@
 /**
 *	Parse ini file in format <key>=<value> in every line
 */
-RetCode IniFileTools::parseIniFile(const byte* data, size_t len, std::map<std::string, std::string>& map) {
-	if (!data || len == 0)
+RetCode IniFileTools::parseIniFile(const std::string& data, std::map<std::string, std::string>& map) {
+	if (data.empty())
 		return eBadArg;
 
-	char* buff = (char*)&data[0];
-	char* buffEnd = buff + len;
+	char* buff = (char*)&data.c_str()[0];
+	char* buffEnd = buff + data.size();
 
 	std::string line;
 	int lineNumber = 1;
@@ -84,7 +84,6 @@ bool IniFileTools::getLine(char** begin, const char* end, std::string& rLine) {
 /**
 	 parse line [key=value]
 	  # is comment
-
 */
 RetCode IniFileTools::parseIniFileLine(const std::string& str, std::string& key, std::string& value) {
 	key = "";
@@ -108,28 +107,11 @@ RetCode IniFileTools::parseIniFileLine(const std::string& str, std::string& key,
 	return eOk;
 }
 
-#ifdef WIN32
-bool IniFileTools::loadIniFile(const std::wstring& fileName, std::map<std::string, std::string>& map) {
-	size_t len = 0;
-	byte* data = FileTools::loadFileW(fileName.c_str(), len);
-	if (len == 0 || !data)
-		return false;
-
-	bool ret = parseIniFile(data, len, map);
-
-	free(data);
-	return ret;
-}
-#endif
 
 RetCode IniFileTools::loadIniFile(const std::string& fileName, std::map<std::string, std::string>& map) {
-//	LOGI("Going to load file [%s]", fileName.c_str());
-	size_t len = 0;
-	byte* data = FileTools::loadFileA(fileName.c_str(), len);
-	if (len == 0 || !data)
-		return eBadFile;
+	std::string data;
+	ASSERTME( FileTools::loadFileA(fileName, data) );
 
-	RetCode ret = parseIniFile(data, len, map);
-	free(data);
+	RetCode ret = parseIniFile(data, map);
 	return ret;
 }

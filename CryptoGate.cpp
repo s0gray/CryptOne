@@ -19,11 +19,12 @@
 #include "CryptoGate.h"
 
 #include <string.h>
+#include <memory>
+
 #include "Log.h"
 #include "Tools.h"
 
-RetCode CryptoGate::xorData(const std::string& data1, const std::string& data2, size_t size, std::string& result)
-{
+RetCode CryptoGate::xorData(const std::string& data1, const std::string& data2, size_t size, std::string& result) {
 	if (data1.size() < size) {
 		return eBadArg;
 	}
@@ -32,7 +33,7 @@ RetCode CryptoGate::xorData(const std::string& data1, const std::string& data2, 
 	}
 	result = "";
 	
-	byte* buf = (byte*)calloc(size, 1);
+	std::unique_ptr<char[]> buf(new char[size]);
 	if (!buf)
 		return eFatal;
 
@@ -43,9 +44,7 @@ RetCode CryptoGate::xorData(const std::string& data1, const std::string& data2, 
 		buf[i] = ptr1[i] ^ ptr2[i];
 	}
 
-	result.assign((const char*)buf, size);
-	free(buf);
-
+	result.assign(buf.get(), size);
 	return eOk;
 }
 
