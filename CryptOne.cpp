@@ -1,6 +1,6 @@
 #include "CryptOne.h"
 
-#include "Logger.h"
+#include "Log.h"
 #include "FileTools.h"
 
 #include <iostream>
@@ -28,29 +28,28 @@ RetCode CryptOne::initialize() {
     RetCode ret = loadConfig(); // not mandatory
     RetCode ret1 = eFatal;
     if (ret == eOk) {
-        LOGI("Loaded config file");
+        LOGGER("Loaded config file");
         ret1 = configFile.getValue(KEY_FOLDER_KEY, mKeyFolder);
 
         configFile.getCloudFolders(mCloudFolders);
 
        for(size_t i = 0; i< mCloudFolders.size(); i++) {
-        //for (std::vector<std::string>::iterator it = cloudFolders.begin(); it != cloudFolders.end(); it++) {
-           LOGI("Configured cloud folder: [%u] [%s]", i, mCloudFolders.at(i).c_str() ); //it->c_str());
+          // LOGI("Configured cloud folder: [%u] [%s]", i, mCloudFolders.at(i).c_str() ); //it->c_str());
         }
     }
     else {
-        LOGI("Not loaded config file");
+        LOGGER("Not loaded config file");
     }
 
     if (ret1 != eOk) {
         // keyFolder was not found in config file or config file was not loaded at all
         RetCode ret2 = FileTools::getKeyFolder(mKeyFolder);
         if (ret2 == eNotFound) {
-            LOGE("No removable drives found..");
+            LOGGER("No removable drives found..");
             return ret2;
         }
     }
-    LOGI("Using keyFolder: [%s]", mKeyFolder.c_str());
+    LOGGER("Using keyFolder: []");// , mKeyFolder.c_str());
     return eOk;
 }
 
@@ -68,7 +67,7 @@ RetCode CryptOne::loadEncryptedKeyFromFile(const std::string& fileName, std::str
     std::string fileData;
     RetCode ret = FileTools::loadFileA(fileName, fileData);
     if (ret != eOk) {
-        LOGE("Can not load encrypted key from file [%s]", fileName.c_str());
+        LOGGER("Can not load encrypted key from file []");// , fileName.c_str());
         return ret;
     }
     std::string salt;
@@ -83,17 +82,15 @@ RetCode CryptOne::loadEncryptedKeyFromFile(const std::string& fileName, std::str
 
     ret = cryptUnit.hashDataSHA256(salt + password, hashed);
     if (ret != eOk) {
-        LOGE("Can not Hash password");
+        LOGGER("Can not Hash password");
         return ret;
     }
-//    LOG_DATA(2, "material hash", hashed.c_str(), hashed.size());
     std::string xored;
     ret = cryptUnit.xorData(secretEncrypted, hashed, secretEncrypted.size(), xored);
     if (ret != eOk) {
-        LOGE("Can not Xor password");
+        LOGGER("Can not Xor password");
         return ret;
     }
-//    LOG_DATA(2, "xored key (plain key)", xored.c_str(), xored.size());
     key = xored;
     return eOk;
 }
@@ -184,7 +181,7 @@ CStringA CryptOne::exec(const wchar_t* cmd )
 */
 std::string CryptOne::exec(const char* cmd)
 {
-    LOGI("exec [%s]", cmd);
+   // LOGI("exec [%s]", cmd);
 
     CStringA strResult;
     HANDLE hPipeRead, hPipeWrite;
@@ -262,14 +259,13 @@ std::string CryptOne::exec(const char* cmd)
 RetCode CryptOne::generateKeyWithPass(const std::string& fileName) {
     std::string outputFileName = getKeyFolder() + fileName;
 
-    LOGI("outputFileName [%s]", outputFileName.c_str());
+  //  LOGI("outputFileName [%s]", outputFileName.c_str());
 
     std::string secret;
     RetCode ret = cryptUnit.generateSecretKey(secret);
     ASSERTME(ret);
 
-    LOGI("generateSecretKey ret %u, len = %u", ret, cryptUnit.getSecretKeyLength());
-//    LOG_DATA(2, "secret", secret.c_str(), secret.size());
+ //   LOGI("generateSecretKey ret %u, len = %u", ret, cryptUnit.getSecretKeyLength());
 
     std::string password1;
     password1 = enterPassword("Please enter password for encryption of the key: ");
@@ -284,34 +280,32 @@ RetCode CryptOne::generateKeyWithPass(const std::string& fileName) {
 
     std::string salt;
     ASSERTME( cryptUnit.generateSecretKey(salt) );
-    LOG_DATA(2, "salt", salt.c_str(), salt.size());
+   // LOG_DATA(2, "salt", salt.c_str(), salt.size());
 
     std::string material = salt + password1;
     std::string hashed;
     ret = cryptUnit.hashDataSHA256(material, hashed);
     if (ret != eOk) {
-        LOGE("Can not Hash password");
+        LOGGER("Can not Hash password");
         return ret;
     }
-//    LOG_DATA(2, "material hash", hashed.c_str(), hashed.size());
-
     std::string xored;
     ret = cryptUnit.xorData(secret, hashed, secret.size(), xored);
     if (ret != eOk) {
-        LOGE("Can not XOR password");
+        LOGGER("Can not XOR password");
         return ret;
     }
-    LOG_DATA(2, "XORed key", xored.c_str(), xored.size());
+   // LOG_DATA(2, "XORed key", xored.c_str(), xored.size());
 
     std::string output = salt + xored;
-    LOG_DATA(2, "output", output.c_str(), output.size());
+   // LOG_DATA(2, "output", output.c_str(), output.size());
 
     ret = FileTools::writeFileA(outputFileName, output);
     if (ret == eOk) {
-        LOGI("Written %u bytes to [%ws]", cryptUnit.getSecretKeyLength(), outputFileName);
+        LOGGER("Written  bytes to []");// , cryptUnit.getSecretKeyLength(), outputFileName);
     }
     else {
-        LOGE("Can not write data to [%ws]", outputFileName);
+        LOGGER("Can not write data to []");// , outputFileName);
     }
     return ret;
 }
@@ -319,21 +313,10 @@ RetCode CryptOne::generateKeyWithPass(const std::string& fileName) {
 
 RetCode CryptOne::generateKey(const char* outputFileName) {
     std::string secret;
-    RetCode ret = cryptUnit.generateSecretKey(secret);
+    ASSERTME( cryptUnit.generateSecretKey(secret));
+    ASSERTME( FileTools::writeFileA(outputFileName, secret));
 
-    LOGI("generateSecretKey ret %u, len = %u", ret, secret.size());
-    ASSERTME(ret);
-
-    LOG_DATA(2, "secret", secret.c_str(), secret.size());
-    ret = FileTools::writeFileA(outputFileName, secret);
-
-    if (ret == eOk) {
-        LOGI("Written %u bytes to [%ws]", cryptUnit.getSecretKeyLength(), outputFileName);
-    }
-    else {
-        LOGE("Can not write data to [%ws]", outputFileName);
-    }
-    return ret;
+    return eOk;
 }
 
 RetCode CryptOne::encryptFileWithPassKey(
@@ -343,7 +326,7 @@ RetCode CryptOne::encryptFileWithPassKey(
     std::string plain;
 
     ASSERTME(FileTools::loadFileA(inputFile, plain));
-    LOGI("Loaded %u bytes from [%s]", plain.size(), inputFile.c_str());
+  //  LOGI("Loaded %u bytes from [%s]", plain.size(), inputFile.c_str());
 
     std::string keyFile = mKeyFolder  + keyFileName;
     std::string plainKey;
@@ -364,7 +347,7 @@ RetCode CryptOne::encryptFileWithPassKey(
     outFileData += encrypted;
 
     ASSERTME(FileTools::writeFileA(outputFileName, outFileData) );
-    LOGI("Stored %u bytes to [%s]", outFileData.size(), outputFileName.c_str());
+  //  LOGI("Stored %u bytes to [%s]", outFileData.size(), outputFileName.c_str());
     return eOk;
 }
 
@@ -372,7 +355,7 @@ RetCode CryptOne::encryptFileWithPassKey(
 RetCode CryptOne::encryptFile(const char* inputFile, const char* keyFile, const char* outputFileName) {
     std::string data;
     ASSERTME(FileTools::loadFileA(inputFile, data) );
-    LOGI("Loaded %u bytes from [%s]", data.size(), inputFile);
+ //   LOGI("Loaded %u bytes from [%s]", data.size(), inputFile);
 
     std::string secret;
     ASSERTME(FileTools::loadFileA(keyFile, secret) );
@@ -390,7 +373,7 @@ RetCode CryptOne::encryptFile(const char* inputFile, const char* keyFile, const 
 
     ASSERTME(FileTools::writeFileA(outputFileName, outFileData));
 
-    LOGI("Stored %u bytes to [%s]", outFileData.size(), outputFileName);
+ //   LOGI("Stored %u bytes to [%s]", outFileData.size(), outputFileName);
     return eOk;
 }
 
@@ -398,14 +381,14 @@ RetCode CryptOne::decryptFileWithPassKey(const std::string& inputFile,
                                 const std::string& keyFile, 
                                 const std::string& outputFileName) {
 
-    LOGI("[%s] [%s] [%s]", inputFile.c_str(), keyFile.c_str(), outputFileName.c_str());
+  //  LOGI("[%s] [%s] [%s]", inputFile.c_str(), keyFile.c_str(), outputFileName.c_str());
 
     std::string data;
     ASSERTME(FileTools::loadFileA(inputFile, data) );
-    LOGI("Loaded %u bytes from [%s]", data.size(), inputFile.c_str());
+ //   LOGI("Loaded %u bytes from [%s]", data.size(), inputFile.c_str());
 
     if (data.size() < sizeof(CryptHeader)) {
-        LOGE("Too small input file : %u bytes", data.size());
+        LOGGER("Too small input file");// , data.size());
         return eBadFile;
     }
     std::string plainKey;
@@ -433,10 +416,10 @@ RetCode  CryptOne::decryptFile(const char* inputFile, const char* keyFile, const
     std::string data;
     ASSERTME(FileTools::loadFileA(inputFile, data) );
 
-    LOGI("Loaded %u bytes from [%s]", data.size(), inputFile);
+ //   LOGI("Loaded %u bytes from [%s]", data.size(), inputFile);
 
     if (data.size() < sizeof(CryptHeader)) {
-        LOGE("Too small input file : %u bytes", data.size());
+        LOGGER("Too small input file");
         return eBadFile;
     }
 

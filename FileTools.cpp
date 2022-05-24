@@ -4,7 +4,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "Logger.h"
+#include "Log.h"
 
 #ifdef WIN32
 	#include <Windows.h>
@@ -110,11 +110,11 @@ RetCode FileTools::copyFileW(const std::wstring& from, const std::wstring& to) {
 	std::string data;
 	RetCode ret = FileTools::loadFileW(from, data);
 	ASSERTME(ret);
-	LOGI("Loaded %u bytes from [%ws]", data.size(), from.c_str());
+//	LOGI("Loaded %u bytes from [%ws]", data.size(), from.c_str());
 
 	ret = FileTools::writeFileW(to, data);
 	if (ret == eOk) {
-		LOGI("Written %u bytes to [%ws]", data.size(), to.c_str());
+	//	LOGI("Written %u bytes to [%ws]", data.size(), to.c_str());
 	}
 	return ret;
 }
@@ -124,11 +124,11 @@ RetCode FileTools::copyFileA(const std::string& from, const std::string& to) {
 	std::string data;
 	RetCode ret = FileTools::loadFileA(from, data);
 	ASSERTME(ret);
-	LOGI("Loaded %u bytes from [%s]", data.size(), from.c_str());
+//	LOGI("Loaded %u kBytes from [%s]", data.size() / 1024, from.c_str());
 
 	ret = FileTools::writeFileA(to, data);
 	if (ret == eOk) {
-		LOGI("Written %u bytes to [%s]", data.size(), to.c_str());
+//		LOGI("Written %u kBytes to [%s]", data.size() / 1024, to.c_str());
 	}
 	return ret;
 }
@@ -137,7 +137,7 @@ RetCode FileTools::copyFileA(const std::string& from, const std::string& to) {
 RetCode FileTools::getAvailableDrives(std::vector<std::string>& result) {
 #ifdef WIN32
 	unsigned int  drives = GetLogicalDrives();
-	for (unsigned int i = 0; i < 32; i++) {
+	for (unsigned int i = 0; i < 32U; i++) {
 		unsigned int res = drives & (1 << i);
 		char letter = 'A' + i;
 		bool present = (res != 0);

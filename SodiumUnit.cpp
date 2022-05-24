@@ -3,29 +3,24 @@
 #include <sodium.h> 
 
 #include "SodiumUnit.h"
-#include "Logger.h"
 
-SodiumCryptUnit::SodiumCryptUnit()
-{
+
+SodiumCryptUnit::SodiumCryptUnit() {
 }
 
-SodiumCryptUnit::~SodiumCryptUnit()
-{
+SodiumCryptUnit::~SodiumCryptUnit() {
 }
 
-size_t SodiumCryptUnit::getSecretKeyLength()
-{
+size_t SodiumCryptUnit::getSecretKeyLength() {
 	return crypto_secretbox_KEYBYTES;
 }
 
 
-RetCode SodiumCryptUnit::wipeData(unsigned char* data, size_t dataLen)
-{
+RetCode SodiumCryptUnit::wipeData(unsigned char* data, size_t dataLen) {
 	if (!data)
 		return eBadArg;
 
-	sodium_memzero((unsigned char*)data, dataLen);
-
+	sodium_memzero(data, dataLen);
 	return eOk;
 }
 
@@ -46,23 +41,19 @@ RetCode SodiumCryptUnit::generateSecretKey(std::string &key) {
 	 return eOk;
  }
 
-size_t SodiumCryptUnit::getDecryptedMessageLength(size_t cipherLen) const
-{
+size_t SodiumCryptUnit::getDecryptedMessageLength(size_t cipherLen) const {
 	return (cipherLen - crypto_box_MACBYTES);
 }
 
-size_t SodiumCryptUnit::getDecryptedMessageLengthSymmetric(size_t cipherLen) const
-{
+size_t SodiumCryptUnit::getDecryptedMessageLengthSymmetric(size_t cipherLen) const {
     return (cipherLen - crypto_secretbox_MACBYTES);
 }
 
-size_t SodiumCryptUnit::getNonceLength()
-{
+size_t SodiumCryptUnit::getNonceLength() {
 	return crypto_box_NONCEBYTES;
 }
 
-size_t SodiumCryptUnit::getNonceLengthSymmetric()
-{
+size_t SodiumCryptUnit::getNonceLengthSymmetric() {
 	return crypto_secretbox_NONCEBYTES;
 }
 
@@ -77,9 +68,8 @@ RetCode SodiumCryptUnit::encryptData(const unsigned char *plainData, size_t plai
 	randombytes_buf(nonce, crypto_box_NONCEBYTES);
 
 	if (crypto_box_easy(cipherData, plainData, plainDataLen, nonce, pubKeyReceiver, privKeySender) != 0)
-	{
 		return eUnknownErr;
-	}
+	
 
 	return eOk;
 }
@@ -90,10 +80,9 @@ RetCode SodiumCryptUnit::decryptData(unsigned char *plainData, const unsigned ch
 	if (!plainData || !cipherData || !nonce || !pubKeySender || !privKeyReceiver)
 		return eBadArg;
 
-	if (crypto_box_open_easy(plainData, cipherData, cipherDataLen, nonce, pubKeySender, privKeyReceiver) != 0)
-	{
+	if (crypto_box_open_easy(plainData, cipherData, cipherDataLen, nonce, pubKeySender, privKeyReceiver) != 0)	
 		return eUnknownErr;
-	}
+	
 
 	return eOk;
 }
@@ -117,14 +106,9 @@ RetCode SodiumCryptUnit::encryptDataSymmetric(	const std::string& plainData,	///
 		free(cipherData);
 		return eUnknownErr;
 	}
-	//nonceSize = crypto_secretbox_NONCEBYTES;
-	//cipherDataSize = plainData.size() + crypto_secretbox_MACBYTES;
+
 	encryped.assign((const char*)cipherData, encryptedSize);
 	free(cipherData);
-
-	//LOG_DATA(3, "cipherData ", cipherData, cipherDataSize);
-	//LOG_DATA(3, "nonce ", nonce, this->getNonceLength());
-	//LOG_DATA(3, "secretKey ", secretKey.c_str(), secretKey.size());
 
 	return eOk;
 }
@@ -137,18 +121,15 @@ int SodiumCryptUnit::secureMemCompare(const unsigned char* dataA, const unsigned
 	return sodium_memcmp(dataA, dataB, dataLen);
 }
 
-size_t SodiumCryptUnit::getSHA256HashLength() const
-{
+size_t SodiumCryptUnit::getSHA256HashLength() const {
 	return crypto_hash_sha256_BYTES;
 }
 
-size_t SodiumCryptUnit::getEncryptedMessageLength(size_t messageLen) const
-{
+size_t SodiumCryptUnit::getEncryptedMessageLength(size_t messageLen) const {
 	return (messageLen + crypto_box_MACBYTES);
 }
 
-RetCode SodiumCryptUnit::hashDataSHA256(const std::string& data, std::string& hashData)
-{
+RetCode SodiumCryptUnit::hashDataSHA256(const std::string& data, std::string& hashData) {
 	byte hash[32];
 	if (crypto_hash_sha256(hash, (const byte*)data.c_str(), data.size()) != 0) {
 		return eFatal;
@@ -157,32 +138,28 @@ RetCode SodiumCryptUnit::hashDataSHA256(const std::string& data, std::string& ha
 	return eOk;
 }
 
-size_t SodiumCryptUnit::getOneTimeAuthKeyLength() const
-{
+size_t SodiumCryptUnit::getOneTimeAuthKeyLength() const {
 	return crypto_onetimeauth_KEYBYTES;
 }
 
-RetCode SodiumCryptUnit::decryptDataSymmetric(std::string&plainData, const std::string&cipherData, const std::string& nonce, const std::string&secretKey, size_t plainDataLen)
-{
-//	LOGI(" plainDataLen = %u", plainDataLen);
-	LOG_DATA(3, "cipherData ", (const byte*)cipherData.c_str(), cipherData.size());
-	LOG_DATA(3, "nonce ", (const byte*)nonce.c_str(), this->getNonceLength());
-	LOG_DATA(3, "secretKey ", (const byte*)secretKey.c_str(), this->getSecretKeyLength());
+RetCode SodiumCryptUnit::decryptDataSymmetric(std::string&plainData, const std::string&cipherData, const std::string& nonce, const std::string&secretKey, size_t plainDataLen) {
+//	LOG_DATA(3, "cipherData ", cipherData.c_str(), cipherData.size());
+//	LOG_DATA(3, "nonce ", nonce.c_str(), this->getNonceLength());
+//	LOG_DATA(3, "secretKey ", secretKey.c_str(), this->getSecretKeyLength());
 
 	size_t plainDataSize = getDecryptedMessageLengthSymmetric(cipherData.size());
-//	LOGI("plainDataSize = %u", plainDataSize);
+
 	byte *plainDataBuffer = (byte*)calloc(plainDataSize, 1);
-	if (crypto_secretbox_open_easy(plainDataBuffer, (const byte*)cipherData.c_str(), cipherData.size(), (const byte*)nonce.c_str(), (const byte*)secretKey.c_str()) != 0)
-	{
+	if (crypto_secretbox_open_easy(plainDataBuffer, (const byte*)cipherData.c_str(), cipherData.size(), (const byte*)nonce.c_str(), (const byte*)secretKey.c_str()) != 0) {
 		free(plainDataBuffer);
 		return eUnknownErr;
 	}
 	if (plainDataSize < plainDataLen) {
-		LOGE("plainDataSize [%u] < plainDataLen [%u]", plainDataSize, plainDataLen); // ?
+	//	LOGE("plainDataSize [%u] < plainDataLen [%u]", plainDataSize, plainDataLen); // ?
 		return eFatal;
 	}
 	if (!plainDataBuffer) {
-		LOGE("plainDataBuffer is null");
+	//	LOGE("plainDataBuffer is null");
 		return eFatal;
 	}
 	plainData.assign((const char*)plainDataBuffer, plainDataLen);

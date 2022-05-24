@@ -2,7 +2,7 @@
 #include "CryptUnit.h"
 
 #include <string.h>
-#include "Logger.h"
+#include "Log.h"
 #include "Tools.h"
 
 RetCode CryptUnit::xorData(const std::string& data1, const std::string& data2, size_t size, std::string& result)
@@ -43,7 +43,7 @@ RetCode CryptUnit::selfTest() {
 	ASSERTME(ret);
 
 	if (hash.compare(expectedHash) != 0) {
-		LOGI("SHA256 self-test failed expected [%s] received [%s]", expectedHash.c_str(), Tools::b2h(hash).c_str());
+//		LOGI("SHA256 self-test failed expected [%s] received [%s]", expectedHash.c_str(), Tools::b2h(hash).c_str());
 		return eFatal;
 	}
 
@@ -63,7 +63,7 @@ RetCode CryptUnit::selfTest() {
 	ASSERTME(ret);
 
 	if (key1.compare(xor2) != 0) {
-		LOGI("XOR self-test failed expected [%s] received [%s]", Tools::b2h(xor1).c_str(), Tools::b2h(xor2).c_str());
+	//	LOGI("XOR self-test failed expected [%s] received [%s]", Tools::b2h(xor1).c_str(), Tools::b2h(xor2).c_str());
 		return eFatal;
 	}
 
@@ -80,7 +80,7 @@ RetCode CryptUnit::selfTest() {
 	ASSERTME(ret);
 
 	if (decrypted.compare(plain) != 0) {
-		LOGI("Symmetrical enc/dec self-test failed expected [%s] received [%s]", Tools::b2h(plain).c_str(), Tools::b2h(decrypted).c_str());
+	//	LOGI("Symmetrical enc/dec self-test failed expected [%s] received [%s]", Tools::b2h(plain).c_str(), Tools::b2h(decrypted).c_str());
 		return eFatal;
 	}
 

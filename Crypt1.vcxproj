@@ -135,7 +135,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>libs\libsodium\include</AdditionalIncludeDirectories>
-      <AdditionalOptions>/std:c++17 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/std:c++20 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -153,7 +153,7 @@
     <ClCompile Include="CryptUnit.cpp" />
     <ClCompile Include="FileTools.cpp" />
     <ClCompile Include="IniFileTools.cpp" />
-    <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="Log.cpp" />
     <ClCompile Include="OpenSslUnit.cpp" />
     <ClCompile Include="SodiumUnit.cpp" />
     <ClCompile Include="Tools.cpp" />
@@ -164,7 +164,7 @@
     <ClInclude Include="CryptUnit.h" />
     <ClInclude Include="FileTools.h" />
     <ClInclude Include="IniFileTools.h" />
-    <ClInclude Include="Logger.h" />
+    <ClInclude Include="Log.h" />
     <ClInclude Include="OpenSslUnit.h" />
     <ClInclude Include="SodiumUnit.h" />
     <ClInclude Include="Tools.h" />

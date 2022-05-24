@@ -2,7 +2,7 @@
 
 
 #include "ConfigFile.h"
-#include "Logger.h"
+#include "Log.h"
 #include "Tools.h"
 #include "IniFileTools.h"
 #include "FileTools.h"
@@ -26,20 +26,12 @@ ConfigFile::~ConfigFile() {
 *	Load config file to map
 *	@return 0 if success
 */
-int ConfigFile::load() {
-	const bool ok = IniFileTools::loadIniFile(mIniFileName, mData);
-	if (!ok) {
-		return 1;
-	}
-	return 0;
+RetCode ConfigFile::load() { // inline
+	return IniFileTools::loadIniFile(mIniFileName, mData);
 }
 
-int ConfigFile::load(const char *folder) {
-	const bool ok = IniFileTools::loadIniFile(folder + Tools::getPathSeparator() + mIniFileName, mData);
-	if (!ok) {
-		return 1;
-	}
-	return 0;
+RetCode ConfigFile::load(const char *folder) {
+	return IniFileTools::loadIniFile(folder + Tools::getPathSeparator() + mIniFileName, mData);
 }
 
 /**

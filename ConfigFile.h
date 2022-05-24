@@ -11,9 +11,9 @@ class ConfigFile {
 		ConfigFile();
 		~ConfigFile();
 
-		int load();
+		RetCode load();
 		int store();
-		int load(const char* folder);
+		RetCode load(const char* folder);
 
 		std::string getIniFileName() const {
 			return mIniFileName;
