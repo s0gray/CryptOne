@@ -1,6 +1,8 @@
 # CryptOne
 
-Simple comamnd lie file encryption/decryption tool.
+Simple command line tool for folder encryption/decryption and uploading/downloading to cloud.
+Generation of private key on external storage (USB stick)
+Support Windows and Linux
 
 Windows
 
