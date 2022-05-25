@@ -47,13 +47,11 @@ int decryptAndDecompress(const std::string &inputFile) {
     }
     LOGGER("Decompressing file [%s]", compressedFile.c_str());
     CryptOne::exec(("tar xf " + compressedFile).c_str());
-
     CryptOne::exec((Tools::getDeleteFileCommand() + " " + compressedFile).c_str());
     return 0;
 }
 
 int up(int cloudIndex, const std::string& encryptedFile) {
-//   const int cloudIndex = atoi(cloudIndexParam);
     std::string cloudFolder = cryptOne.getCloudFolder(cloudIndex);
     if (cloudFolder.empty()) {
         LOGGER("Could not find configured cloud folder in config file with index [%d]" , cloudIndex);
@@ -160,8 +158,6 @@ int main(int argc, char* argv[])
             LOGGER("Could not find configured cloud folder in config file with index [%s]", argv[2]);
             return 1;
         }
-
-       // std::string compressedFile = COMPRESSED_FILE;
         std::string encryptedFile = (argc < 4) ? DEFAULT_ENCRPYTED_FILENAME : argv[3];
         std::string sourceFile = cloudFolder + "//" + encryptedFile;
            
@@ -173,18 +169,6 @@ int main(int argc, char* argv[])
        }
 
        return decryptAndDecompress(encryptedFile);
-       /*
-       LOGGER("Decrypting file from cloud #%d", cloudIndex);
-       ret = cryptOne.decryptFileWithPassKey(encryptedFile, 
-             KEY_FILENAME, compressedFile);
-
-       if (ret != eOk) {
-           LOGE("Could not decrypt downloaded file [%ws]", encryptedFile.c_str());
-           return 1;
-       }
-       LOGGER("Decompressing file [%s]", compressedFile.c_str());
-       CryptOne::exec(("tar xf " + compressedFile).c_str());
-       return 0;*/
     }
   
 

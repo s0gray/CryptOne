@@ -23,7 +23,6 @@
 #include "FileTools.h"
 
 
-
 #define INI_CONFIG_FILE		"crypt1.ini"
 
 
@@ -39,7 +38,6 @@ ConfigFile::~ConfigFile() {
 
 /**
 *	Load config file to map
-*	@return 0 if success
 */
 RetCode ConfigFile::load() { // inline
 	return IniFileTools::loadIniFile(mIniFileName, mData);

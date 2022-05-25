@@ -17,7 +17,6 @@
 
 #pragma once
 
-//#include "Typedefs.h"
 
 #define LOGGER(...)		___log(__func__, __VA_ARGS__)
 
@@ -34,7 +33,6 @@ void ___log(const char* func, const std::string& format, Args ... args) {
 	std::string msg =  std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 
 	msg = "[" + std::string(func) + "] " + msg;
-
 	std::cout << msg << std::endl;
 }
 

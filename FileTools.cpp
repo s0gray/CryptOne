@@ -36,7 +36,6 @@
 RetCode FileTools::loadFileA(const std::string& fileName, std::string& result) {
 	size_t len = 0U;
 	std::ifstream::pos_type size;
-
 	std::ifstream file(fileName, std::ios::in | std::ios::binary | std::ios::ate);
 	if (!file.is_open()) return eBadFile;
 
@@ -44,7 +43,6 @@ RetCode FileTools::loadFileA(const std::string& fileName, std::string& result) {
 	len = (unsigned int)size;
 
 	std::unique_ptr<char[]> memblock(new char[len]);
-
 	file.seekg(0, std::ios::beg);
 	file.read(memblock.get(), size);
 	file.close();
@@ -52,8 +50,6 @@ RetCode FileTools::loadFileA(const std::string& fileName, std::string& result) {
 	result.assign(memblock.get(), len);
 	return eOk;
 }
-
-
 
 
 RetCode FileTools::writeFileA(const std::string& fileName, const std::string& body) noexcept {

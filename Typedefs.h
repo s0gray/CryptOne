@@ -36,9 +36,7 @@ enum RetCode {
 
 
 typedef unsigned char byte;
-
 typedef std::map<std::string, std::string>	MapStringString;
-
 
 struct CryptHeader {
 	size_t	plainDataSize;

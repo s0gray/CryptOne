@@ -21,28 +21,26 @@
 #include "SodiumGate.h"
 
 #ifndef WIN32
-#include <cstdio>
-#include <memory>
-#include <stdexcept>
-#include <string>
-#include <array>
+	#include <cstdio>
+	#include <memory>
+	#include <stdexcept>
+	#include <string>
+	#include <array>
 #else
-#include <windows.h>
-#include <atlstr.h>
+	#include <windows.h>
+	#include <atlstr.h>
 #endif
 
 
 #define KEY_FILENAME		"key0001.ekey"
-//#define KEY_FILENAME    "key001.ekey"
-
 #define COMPRESSED_FILE    "crypt-one-data.tar.gz"
-//#define COMPRESSED_FILEW    L"crypt-one-data.tar.gz"
+
 
 class CryptOne
 {
 	public:
 		CryptOne();
-		virtual ~CryptOne();
+		virtual		~CryptOne();
 
 		RetCode		loadEncryptedKeyFromFile(const std::string& fileName, std::string& key);
 		RetCode		generateKeyWithPass(const std::string& fileName);
@@ -69,13 +67,8 @@ protected:
 
 private:
 		SodiumGate cryptoGate;
-		//OpenSslUnit cryptoGate;
-
 		ConfigFile configFile;
-
 		std::string mKeyFolder;
-	//	std::string mCloudFolder;
-
 		std::vector<std::string> mCloudFolders;
 };
 

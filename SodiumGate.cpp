@@ -15,10 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <sodium.h> 
-
 #include "SodiumGate.h"
 
+#include <sodium.h>
 #include <memory>
 
 SodiumGate::SodiumGate() {
@@ -50,9 +49,9 @@ size_t SodiumGate::getDecryptedMessageLengthSymmetric(size_t cipherLen) const {
 }
 
 RetCode SodiumGate::encryptDataSymmetric(	const std::string& plainData,	/// IN
-												std::string& encryped,			/// OUT
-												std::string& nonce,				/// OUT
-												const std::string& secretKey)	/// IN
+											std::string& encryped,			/// OUT
+											std::string& nonce,				/// OUT
+											const std::string& secretKey)	/// IN
 {
 	// generate/use random bytes as nonce
 	ASSERTME( generateRandomData(nonce, crypto_secretbox_NONCEBYTES) );

@@ -28,6 +28,5 @@ public:
 	static RetCode		getAvailableDrives(std::vector<std::string>& result);
 	static RetCode		getRemovablesDrives(std::vector<std::string>& result);
 	static RetCode		getKeyFolder(std::string& folder);
-
 };
 
