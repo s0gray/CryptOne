@@ -96,7 +96,7 @@ RetCode CryptoGate::selfTest() {
 	ASSERTME(ret);
 
 	if (decrypted.compare(plain) != 0) {
-	//	LOGI("Symmetrical enc/dec self-test failed expected [%s] received [%s]", Tools::b2h(plain).c_str(), Tools::b2h(decrypted).c_str());
+	//	LOGGER("Symmetrical enc/dec self-test failed expected [%s] received [%s]", Tools::b2h(plain).c_str(), Tools::b2h(decrypted).c_str());
 		return eFatal;
 	}
 

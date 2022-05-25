@@ -98,7 +98,7 @@ RetCode FileTools::getRemovablesDrives(std::vector<std::string>& result) {
 	ASSERTME(FileTools::getAvailableDrives(drives));
 	for (std::vector<std::string>::iterator it = drives.begin(); it != drives.end(); it++) {
 		unsigned int driveType = GetDriveTypeA(it->c_str());
-		//		LOGI("Drive Type of [%s] is [%u]", it->c_str(), driveType);
+		//		LOGGER("Drive Type of [%s] is [%u]", it->c_str(), driveType);
 		if (driveType == DRIVE_REMOVABLE) {
 			result.push_back(*it);
 		}

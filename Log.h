@@ -17,17 +17,24 @@
 
 #pragma once
 
-#include "Typedefs.h"
+//#include "Typedefs.h"
 
-#define LOGGER(...)		Log::logs(__func__, __VA_ARGS__)
+#define LOGGER(...)		___log(__func__, __VA_ARGS__)
+
+#include <iostream>
+#include <string>
 
 
-class Log {
-public:
-	Log();
-	~Log();
+template<typename ... Args>
+void ___log(const char* func, const std::string& format, Args ... args) {
+	size_t size = snprintf(nullptr, 0, format.c_str(), args ...) + 1; // Extra space for '\0'
+	if (size <= 0) { return; }
+	std::unique_ptr<char[]> buf(new char[size]);
+	snprintf(buf.get(), size, format.c_str(), args ...);
+	std::string msg =  std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 
-	static void logs(const char* func, const std::string& msg);
+	msg = "[" + std::string(func) + "] " + msg;
 
-};
+	std::cout << msg << std::endl;
+}
 

@@ -26,12 +26,13 @@
 #include <string.h>
 #endif
 
-#define APP_VERSION     "1.0.3"
+#define APP_VERSION     "1.0.4"
 
 #define DEFAULT_ENCRPYTED_FILENAME      "crypt-one-data.tar.gz.enc"
 #define DEFAULT_COMPRESSED_FILENAME     "crypt-one-data.tar.gz"
 
 CryptOne cryptOne;
+
 
 int decryptAndDecompress(const std::string &inputFile) {
     std::string compressedFile =  DEFAULT_COMPRESSED_FILENAME;
@@ -41,10 +42,10 @@ int decryptAndDecompress(const std::string &inputFile) {
         compressedFile);
 
     if (ret != eOk) {
-        LOGGER("Could not decrypt file []");// , inputFile.c_str());
+        LOGGER("Could not decrypt file [%s]" , inputFile.c_str());
         return 1;
     }
-    LOGGER("Decompressing file []");// , compressedFile.c_str());
+    LOGGER("Decompressing file [%s]", compressedFile.c_str());
     CryptOne::exec(("tar xf " + compressedFile).c_str());
 
     CryptOne::exec((Tools::getDeleteFileCommand() + " " + compressedFile).c_str());
@@ -55,12 +56,12 @@ int up(int cloudIndex, const std::string& encryptedFile) {
 //   const int cloudIndex = atoi(cloudIndexParam);
     std::string cloudFolder = cryptOne.getCloudFolder(cloudIndex);
     if (cloudFolder.empty()) {
-        LOGGER("Could not find configured cloud folder in config file with index []");// , cloudIndex);
+        LOGGER("Could not find configured cloud folder in config file with index [%d]" , cloudIndex);
         return 1;
     }
 
     // copy
-    LOGGER("Uploading file [] to cloud ");// , encryptedFile.c_str(), cloudIndex);
+    LOGGER("Uploading file [%s] to cloud #%d", encryptedFile.c_str(), cloudIndex);
     RetCode r = FileTools::copyFileA(encryptedFile, cloudFolder + Tools::getPathSeparator() + encryptedFile);
     if (r != eOk) {
         LOGGER("Failed to upload encrypted file to cloud");
@@ -69,9 +70,12 @@ int up(int cloudIndex, const std::string& encryptedFile) {
     return 0;
 }
 
+/**
+*   Entry Point
+*/
 int main(int argc, char* argv[])
 {
-    LOGGER( std::string("CryptOne ")  + APP_VERSION);
+    LOGGER( " --== CryptOne %s ==-- ", APP_VERSION);
 
     RetCode ret = cryptOne.initialize();
     if (ret != eOk) {
@@ -80,13 +84,13 @@ int main(int argc, char* argv[])
     }
 
     if (argc < 2) {
- /*       LOGE("Usage: [e|d|g|k] <input file> [<key file>] [output file]");
-        LOGI("   e - encrypt file with raw key");
-        LOGI("   d - decrypt file with raw key");
-        LOGI("   g - generate raw key");
-        LOGI("   k - generate password protected key");
-        LOGI("   x - encrypt file with password protected key");
-        LOGI("   l - decrypt file with password protected key");*/
+ /*       LOGGER("Usage: [e|d|g|k] <input file> [<key file>] [output file]");
+        LOGGER("   e - encrypt file with raw key");
+        LOGGER("   d - decrypt file with raw key");
+        LOGGER("   g - generate raw key");
+        LOGGER("   k - generate password protected key");
+        LOGGER("   x - encrypt file with password protected key");
+        LOGGER("   l - decrypt file with password protected key");*/
 
         LOGGER("Usage: [generate-key | push | pull | decrypt | encrypt] <folder/file>");
         LOGGER("   generate-key - generate password encrpyted key and store on USB stick");
@@ -115,15 +119,15 @@ int main(int argc, char* argv[])
         const int cloudIndex = atoi(argv[3]);
         std::string cloudFolder = cryptOne.getCloudFolder(cloudIndex);
         if (cloudFolder.empty()) {
-            LOGGER("Could not find configured cloud folder in config file with index []");// , argv[3]);
+            LOGGER("Could not find configured cloud folder in config file with index [%s]" , argv[3]);
             return 1;
         }
         std::string compressedFile = COMPRESSED_FILE;
 
-        LOGGER("Compressing folder [] to file []..");// , argv[2], compressedFile.c_str());
+        LOGGER("Compressing folder [%s] to file [%s]..", argv[2], compressedFile.c_str());
         std::string res = CryptOne::exec( ("tar -czf " + compressedFile + std::string(" ") + argv[2]).c_str());
 
-        LOGGER("Encrypting file []..");// , compressedFile.c_str());
+        LOGGER("Encrypting file [%s]..", compressedFile.c_str());
         RetCode r = cryptOne.encryptFileWithPassKey(compressedFile, KEY_FILENAME, DEFAULT_ENCRPYTED_FILENAME);
         if (r != eOk) {
             LOGGER("Failed to encrypt compressed folder");
@@ -145,7 +149,7 @@ int main(int argc, char* argv[])
 
     if (!strcmp(argv[1], "pull")) {
         LOGGER("Download folder from cloud");
-     
+    
         if (argc < 3) {
             LOGGER("Usage: Crypt1 pull <cloud-id> [file]");
             return 1;
@@ -153,7 +157,7 @@ int main(int argc, char* argv[])
         const int cloudIndex = atoi(argv[2]);
         std::string cloudFolder = cryptOne.getCloudFolder(cloudIndex);
         if (cloudFolder.empty()) {
-            LOGGER("Could not find configured cloud folder in config file with index []");// , argv[2]);
+            LOGGER("Could not find configured cloud folder in config file with index [%s]", argv[2]);
             return 1;
         }
 
@@ -161,16 +165,16 @@ int main(int argc, char* argv[])
         std::string encryptedFile = (argc < 4) ? DEFAULT_ENCRPYTED_FILENAME : argv[3];
         std::string sourceFile = cloudFolder + "//" + encryptedFile;
            
-       LOGGER("Downloading file [] from cloud ");// , sourceFile.c_str());
+       LOGGER("Downloading file [%s] from cloud ", sourceFile.c_str());
        ret = FileTools::copyFileA(sourceFile, encryptedFile);
        if (ret != eOk) {
-           LOGGER("Can not download file from cloud");// , cloudIndex);
+           LOGGER("Can not download file from cloud #%d", cloudIndex);
            return 1;
        }
 
        return decryptAndDecompress(encryptedFile);
        /*
-       LOGI("Decrypting file from cloud #%d", cloudIndex);
+       LOGGER("Decrypting file from cloud #%d", cloudIndex);
        ret = cryptOne.decryptFileWithPassKey(encryptedFile, 
              KEY_FILENAME, compressedFile);
 
@@ -178,11 +182,11 @@ int main(int argc, char* argv[])
            LOGE("Could not decrypt downloaded file [%ws]", encryptedFile.c_str());
            return 1;
        }
-       LOGI("Decompressing file [%s]", compressedFile.c_str());
+       LOGGER("Decompressing file [%s]", compressedFile.c_str());
        CryptOne::exec(("tar xf " + compressedFile).c_str());
        return 0;*/
     }
-    
+  
 
     if (!strcmp(argv[1], "down")) {
         LOGGER("Download file from cloud");
@@ -195,13 +199,13 @@ int main(int argc, char* argv[])
         const int cloudIndex = atoi(argv[2]);
         std::string cloudFolder = cryptOne.getCloudFolder(cloudIndex);
         if (cloudFolder.empty()) {
-            LOGGER("Could not find configured cloud folder in config file with index");// , argv[2]);
+            LOGGER("Could not find configured cloud folder in config file with index %s" , argv[2]);
             return 1;
         }
 
         std::string encryptedFile = (argc<4) ? DEFAULT_ENCRPYTED_FILENAME : argv[3];
         std::string sourceFile = cryptOne.getCloudFolder(cloudIndex) + "//" + encryptedFile;
-        LOGGER("Downloading file [] from cloud ");// , sourceFile.c_str());
+        LOGGER("Downloading file [%s] from cloud", sourceFile.c_str());
         ret = FileTools::copyFileA(sourceFile, encryptedFile);
         if (ret != eOk) {
             LOGGER("Can not download file from cloud");
@@ -225,18 +229,18 @@ int main(int argc, char* argv[])
         }
 
         std::string compressedFile = COMPRESSED_FILE;
-        LOGGER("Compressing folder [] to file []..");// , argv[2], compressedFile.c_str());
+        LOGGER("Compressing folder [%s] to file [%s]..", argv[2], compressedFile.c_str());
         std::string res = CryptOne::exec(("tar -czf " + compressedFile + std::string(" ") + argv[2]).c_str());
         // encrypt
 
-        LOGGER("Encrypting file []..");// , compressedFile.c_str());
+        LOGGER("Encrypting file [%s]..", compressedFile.c_str());
         ret = cryptOne.encryptFileWithPassKey(compressedFile,
             KEY_FILENAME,
             argc>3 ? argv[3] : DEFAULT_ENCRPYTED_FILENAME);
 
         // now delete temporary compressed unencrypred file
         res = CryptOne::exec(("del " + compressedFile).c_str());
-        //LOGI("[%s]", res.c_str());
+        //LOGGER("[%s]", res.c_str());
 
         if (ret != eOk) {
             LOGGER("Failed to encrypt compressed folder");
@@ -258,7 +262,7 @@ int main(int argc, char* argv[])
         }
         case L'x':
         {
-            LOGI("encrypt file with password protected key");
+            LOGGER("encrypt file with password protected key");
             if (argc < 4) {
                 LOGE("Usage: e <input file> <key file> [output file]");
                 return 1;
@@ -267,22 +271,22 @@ int main(int argc, char* argv[])
         }
         case L'd':
         {
-            LOGI("decrypt file");
+            LOGGER("decrypt file");
             return cryptOne.decryptFile(argv[2], argv[3], (argc == 5) ? argv[4] : (argv[2] + std::string(".dec")).c_str());
         }
         case L'l':
         {
-            LOGI("decrypt file with password protected key");
+            LOGGER("decrypt file with password protected key");
             return cryptOne.decryptFileWithPassKey(argv[2], argv[3], (argc == 5) ? argv[4] : (argv[2] + std::string(".dec")).c_str());
         }
         case L'g':
         {
-            LOGI("generate key and store raw key to file");
+            LOGGER("generate key and store raw key to file");
             return cryptOne.generateKey(argv[2]);
         }
         case L'k':
         {
-            LOGI("generate key and store password protected key to file");
+            LOGGER("generate key and store password protected key to file");
             return cryptOne.generateKeyWithPass(argv[2]);
         }
         default:

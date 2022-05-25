@@ -153,7 +153,6 @@
     <ClCompile Include="CryptOne.cpp" />
     <ClCompile Include="FileTools.cpp" />
     <ClCompile Include="IniFileTools.cpp" />
-    <ClCompile Include="Log.cpp" />
     <ClCompile Include="SodiumGate.cpp" />
     <ClCompile Include="Tools.cpp" />
   </ItemGroup>
