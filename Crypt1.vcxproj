@@ -154,7 +154,6 @@
     <ClCompile Include="FileTools.cpp" />
     <ClCompile Include="IniFileTools.cpp" />
     <ClCompile Include="Log.cpp" />
-    <ClCompile Include="OpenSslGate.cpp" />
     <ClCompile Include="SodiumGate.cpp" />
     <ClCompile Include="Tools.cpp" />
   </ItemGroup>
@@ -165,7 +164,6 @@
     <ClInclude Include="FileTools.h" />
     <ClInclude Include="IniFileTools.h" />
     <ClInclude Include="Log.h" />
-    <ClInclude Include="OpenSslGate.h" />
     <ClInclude Include="SodiumGate.h" />
     <ClInclude Include="Tools.h" />
     <ClInclude Include="Typedefs.h" />
