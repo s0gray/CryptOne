@@ -19,6 +19,7 @@
 #include "Tools.h"
 
 #include <memory>
+#include <algorithm>
 
 /**
 *	convert binary data in 'std::string' to Hex format in 'std::string'
