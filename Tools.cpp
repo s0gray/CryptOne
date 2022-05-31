@@ -96,21 +96,24 @@ std::string Tools::getDeleteFileCommand() {
 }
 
 
-std::string Tools::trim(const std::string& _str) {
-	std::string str = _str;
-	int i, j, start, end;
+// trim from start (in place)
+void Tools::ltrim(std::string& s) {
+	s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+		return !std::isspace(ch);
+		}));
+}
 
-	//ltrim
-	for (i = 0; (str[i] != 0 && str[i] <= 32); )
-		i++;
-	start = i;
+// trim from end (in place)
+void Tools::rtrim(std::string& s) {
+	s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
+		return !std::isspace(ch);
+		}).base(), s.end());
+}
 
-	//rtrim
-	for (i = 0, j = 0; str[i] != 0; i++)
-		j = ((str[i] <= 32) ? j + 1 : 0);
-	end = i - j;
-	str = str.substr(start, end - start);
-	return str;
+// trim from both ends (in place)
+void Tools::trim(std::string& s) {
+	ltrim(s);
+	rtrim(s);
 }
 
 std::wstring Tools::s2ws(const std::string& value) {

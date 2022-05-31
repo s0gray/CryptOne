@@ -53,11 +53,9 @@ RetCode FileTools::loadFileA(const std::string& fileName, std::string& result) {
 
 
 RetCode FileTools::writeFileA(const std::string& fileName, const std::string& body) noexcept {
-	FILE* ptr = fopen(fileName.c_str(), "wb+");
-	if (!ptr) return eBadFile;
-
-	fwrite(body.c_str(), 1, body.size(), ptr);
-	fclose(ptr);
+	auto myfile = std::fstream(fileName, std::ios::out | std::ios::binary);
+	myfile.write(body.c_str(), body.size());
+	myfile.close();
 
 	return eOk;
 }

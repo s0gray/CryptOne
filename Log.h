@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <string>
+#include <memory>
 
 
 template<typename ... Args>

@@ -34,7 +34,13 @@ public:
 	static std::string		trim(const std::string& str);
 	static std::string		cleanChar(const std::string& str1, char c);
 	static std::wstring		s2ws(const std::string& value);
+	static void ltrim(std::string& s);
 
+	// trim from end (in place)
+	static void rtrim(std::string& s);
+
+	// trim from both ends (in place)
+	static void trim(std::string& s);
 };
 
 template<typename ... Args>

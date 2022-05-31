@@ -47,10 +47,9 @@ RetCode CryptOne::initialize() {
     if (ret == eOk) {
         LOGGER("Loaded config file");
         ret1 = configFile.getValue(KEY_FOLDER_KEY, mKeyFolder);
-
         configFile.getCloudFolders(mCloudFolders);
 
-       for(size_t i = 0; i< mCloudFolders.size(); i++) {
+        for(size_t i = 0; i< mCloudFolders.size(); i++) {
            LOGGER("Configured cloud folder: [%u] [%s]", i, mCloudFolders.at(i).c_str() ); //it->c_str());
         }
     }

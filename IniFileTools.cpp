@@ -99,11 +99,11 @@ RetCode IniFileTools::parseIniFileLine(const std::string& str, std::string& key,
 	if (pos == std::string::npos)
 		return eFatal;
 
-	std::string _key = str.substr(0, pos);
-	std::string _value = str.substr(pos + 1);
+	key = str.substr(0, pos);
+	value = str.substr(pos + 1);
 
-	key = Tools::trim(_key);
-	value = Tools::trim(_value);
+	Tools::trim(key);
+	Tools::trim(value);
 	return eOk;
 }
 

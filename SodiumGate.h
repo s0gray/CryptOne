@@ -26,13 +26,13 @@ public:
 	SodiumGate();
 	virtual ~SodiumGate();
 
-	size_t getSecretKeyLength();
-	RetCode generateSecretKey(std::string& secretKey);
-	virtual size_t getDecryptedMessageLengthSymmetric(size_t cipherLen) const;
+	size_t			getSecretKeyLength();
+	RetCode			generateSecretKey(std::string& secretKey);
+	virtual size_t	getDecryptedMessageLengthSymmetric(size_t cipherLen) const;
 	virtual RetCode encryptDataSymmetric(const std::string& plainData, std::string& encrypted, std::string& nonce, const std::string& secretKey);
 	virtual RetCode generateRandomData(std::string& result, size_t size);
-	virtual size_t getEncryptedMessageLength(size_t messageLen) const;
-	virtual RetCode hashDataSHA256(const std::string& data, std::string& hashData);
-	virtual RetCode decryptDataSymmetric(std::string&plainData, const std::string&cipherData, const std::string& nonce, const std::string&secretKey, size_t plainDataLen);
+	virtual size_t	getEncryptedMessageLength(size_t messageLen) const;
+	virtual RetCode	hashDataSHA256(const std::string& data, std::string& hashData);
+	virtual RetCode	decryptDataSymmetric(std::string&plainData, const std::string&cipherData, const std::string& nonce, const std::string&secretKey, size_t plainDataLen);
 };
 

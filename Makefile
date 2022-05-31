@@ -7,7 +7,7 @@ app_name := ./CryptOne
 preprocess := _DEBUG
 preprocess := $(addprefix -D , $(preprocess))
 
-LIB_ROOT:=./
+LIB_ROOT:=.
 
 #  Project root directory
 project_dir := ./
@@ -28,15 +28,9 @@ objects := $(addprefix ./bin/, $(objects))
 object_files := $(objects)
 
 #includes
-includes := $(LIB_ROOT)/boost/include 
-#ifdef mysqli
-#  includes += /usr/include/mysql
-#else
-#  includes += ../mysqlclient/include
-#endif
+includes := ./
 includes += $(LIB_ROOT)/libsodium/include 
 
-#includes += ../../cpp-driver-1.0/include 
 includes += /usr/include 
 includes += $(source_dirs)
 includes := $(addprefix -I , $(includes))
@@ -44,15 +38,6 @@ includes := $(addprefix -I , $(includes))
 
 # library
 lib_files :=  -ldl -lpthread -lstdc++ -lrt -lsodium -lncurses
-# -lssl -lcrypto
-#-lrt -leXosip2 -lortp -losip2 -losipparser2 -lamr_codec -lcurl
-#lib_files += $(wildcard $(LIB_ROOT)/libsodium/lib/libsodium.a)
-
-#ifdef mysqli
-#  lib_files += -lmysqlclient
-#else
-#  lib_files += $(wildcard ../mysqlclient/lib/*.a)
-#endif
 
 VPATH := $(source_dirs)
 
@@ -61,9 +46,7 @@ $(app_name):  $(object_files)
 
 	
 ./bin/%.o: %.cpp 
-	g++ -std=c++0x -g -c $(includes) $(preprocess) -MD $< -o $@ 
-		
-#include $(wildcard *.d)
+	g++ -std=c++0x -g -c $(includes) $(preprocess) -MD $< -o $@ 		
 
 echo:
 	@echo $(source_files)
