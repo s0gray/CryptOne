@@ -2,10 +2,10 @@
 
 Simple command line tool for folder encryption/decryption and uploading/downloading to cloud.
 Generation of private key on external storage (USB stick)
-Support Windows and Linux
+Support Windows and Linux, iCloud and Google Drive
 
 
-** Windows **
+## Windows ##
 
 C++
 
@@ -22,7 +22,7 @@ Upload / download encrypted package to cloud.
 
 
 
-** Linux **
+## Linux ##
 
 $ mkdir build
 
