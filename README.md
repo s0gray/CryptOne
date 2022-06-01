@@ -4,7 +4,8 @@ Simple command line tool for folder encryption/decryption and uploading/download
 Generation of private key on external storage (USB stick)
 Support Windows and Linux
 
-Windows
+
+** Windows **
 
 C++
 
@@ -20,7 +21,8 @@ Can encrypt / decrypt files with plain or encrypted keys.
 Upload / download encrypted package to cloud.
 
 
-Build for Linux:
+
+** Linux **
 
 $ mkdir build
 
