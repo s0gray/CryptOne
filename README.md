@@ -22,4 +22,6 @@ Upload / download encrypted package to cloud.
 
 Build for Linux:
 
+$ mkdir build
+
 $ sudo apt-get install libncurses5-dev libsodium-dev

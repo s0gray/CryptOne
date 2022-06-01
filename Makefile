@@ -24,7 +24,7 @@ source_files := $(wildcard $(source_files))
 # set object files
 objects := $(patsubst %.cpp, %.o, $(source_files))
 objects := $(notdir $(objects))
-objects := $(addprefix ./bin/, $(objects))
+objects := $(addprefix ./build/, $(objects))
 object_files := $(objects)
 
 #includes
@@ -45,13 +45,13 @@ $(app_name):  $(object_files)
 	g++ $^ $(lib_files) -g -o $@
 
 	
-./bin/%.o: %.cpp 
+./build/%.o: %.cpp 
 	g++ -std=c++0x -g -c $(includes) $(preprocess) -MD $< -o $@ 		
 
 echo:
 	@echo $(source_files)
 	
 clean_d:
-	rm bin/*.d
+	rm build/*.d
 clean:
-	rm bin/*.o bin/*.d $(app_name) 
+	rm build/*.o build/*.d $(app_name) 
