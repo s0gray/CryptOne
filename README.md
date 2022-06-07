@@ -3,7 +3,9 @@
 
 Simple command line tool for folder encryption/decryption and uploading/downloading to cloud.
 Generation of private key on external storage (USB stick)
-Supported OSes: Windows and Linux, 
+
+Supported OSes: Windows and Linux
+
 Supported Clouds: Apple iCloud, Google Drive, Microsoft One Drive
 
 
