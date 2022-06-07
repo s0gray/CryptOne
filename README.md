@@ -5,6 +5,22 @@ Generation of private key on external storage (USB stick)
 Support Windows and Linux, iCloud and Google Drive
 
 
+## Example config file ##
+
+```text
+# folders mapped to cloud storage
+# to upload encrypted file
+
+cloudFolder1=~\iCloudDrive
+cloudFolder2=G:\My Drive
+cloudFolder3=~\OneDrive
+
+# folder with private key
+# normally should be USB folder
+# if not set - automatically find removable drive
+#keyFolder=d:\
+
+```
 ## Windows ##
 
 C++
@@ -27,3 +43,4 @@ Upload / download encrypted package to cloud.
 $ mkdir build
 
 $ sudo apt-get install libncurses5-dev libsodium-dev
+
