@@ -26,7 +26,7 @@
 #include <string.h>
 #endif
 
-#define APP_VERSION     "1.0.4"
+#define APP_VERSION     "1.0.5"
 
 #define DEFAULT_ENCRPYTED_FILENAME      "crypt-one-data.tar.gz.enc"
 #define DEFAULT_COMPRESSED_FILENAME     "crypt-one-data.tar.gz"

@@ -41,6 +41,10 @@ public:
 
 	// trim from both ends (in place)
 	static void trim(std::string& s);
+
+	static std::string decodeFolder(const std::string& folder);
+	static std::string wideToChar(const std::wstring& wide);
+
 };
 
 template<typename ... Args>

@@ -20,6 +20,13 @@
 
 #include <memory>
 #include <algorithm>
+#include <codecvt>
+
+#ifdef WIN32
+//#include <windows.h>
+//#include <Lmcons.h>
+#include <Shlobj.h>
+#endif
 
 /**
 *	convert binary data in 'std::string' to Hex format in 'std::string'
@@ -119,4 +126,33 @@ void Tools::trim(std::string& s) {
 
 std::wstring Tools::s2ws(const std::string& value) {
 	return std::wstring(value.begin(), value.end());
+}
+
+// replace '~' -> username
+std::string Tools::decodeFolder(const std::string &folder) {
+	size_t off = folder.find('~');
+	if (off == std::string::npos)
+		return folder;
+
+	std::string result = folder;
+#ifdef WIN32
+	WCHAR path[MAX_PATH];
+	if (!SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_PROFILE, NULL, 0, path))) {
+		return folder;
+	}
+	std::string homeDir = Tools::wideToChar(path); 
+	result = //folder.substr(0, off - 1);
+	result = homeDir;
+	result += folder.substr(off + 1, folder.size() - off - 1);	
+#endif
+
+	return result;
+}
+
+std::string Tools::wideToChar(const std::wstring& wide) {
+	if (wide.empty()) return std::string();
+	int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wide[0], (int)wide.size(), NULL, 0, NULL, NULL);
+	std::string strTo(size_needed, 0);
+	WideCharToMultiByte(CP_UTF8, 0, &wide[0], (int)wide.size(), &strTo[0], size_needed, NULL, NULL);
+	return strTo;
 }

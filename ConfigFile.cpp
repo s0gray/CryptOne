@@ -90,7 +90,10 @@ RetCode ConfigFile::getCloudFolders(std::vector<std::string> &folders) {
 		std::string key = iter->first;
 		size_t off = key.find("cloudFolder");
 		if ( off != std::string::npos) {
-			folders.push_back( iter->second);
+			std::string folder = iter->second;
+			// replace '~' to home folder
+
+			folders.push_back( Tools::decodeFolder( folder ) );
 		}
 	}
 	return eOk;
