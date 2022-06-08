@@ -23,9 +23,10 @@
 #include <codecvt>
 
 #ifdef WIN32
-//#include <windows.h>
-//#include <Lmcons.h>
-#include <Shlobj.h>
+	#include <Shlobj.h>
+#else
+	#include <locale>
+	#include <codecvt>
 #endif
 
 /**
@@ -151,8 +152,21 @@ std::string Tools::decodeFolder(const std::string &folder) {
 
 std::string Tools::wideToChar(const std::wstring& wide) {
 	if (wide.empty()) return std::string();
+
+#ifdef WIN32
 	int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wide[0], (int)wide.size(), NULL, 0, NULL, NULL);
 	std::string strTo(size_needed, 0);
 	WideCharToMultiByte(CP_UTF8, 0, &wide[0], (int)wide.size(), &strTo[0], size_needed, NULL, NULL);
 	return strTo;
+#else
+	std::wstring string_to_convert = wide;
+
+	//setup converter
+	using convert_type = std::codecvt_utf8<wchar_t>;
+	std::wstring_convert<convert_type, wchar_t> converter;
+
+	//use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)
+	std::string converted_str = converter.to_bytes(string_to_convert);
+	return converted_str;
+#endif
 }
