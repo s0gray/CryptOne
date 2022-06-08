@@ -35,7 +35,7 @@ cloudFolder1=~\iCloudDrive
 # Google Drive folder
 cloudFolder2=G:\My Drive
 
-# Microsoft One Driver folder
+# Microsoft OneDrive folder
 cloudFolder3=~\OneDrive
 
 # folder with private key
@@ -49,15 +49,9 @@ C++
 
 Visual Studio 2022 (x64 Debug/Release)
 
-Uses libsodium
+Uses libsodium  ( https://github.com/jedisct1/libsodium )
 
-
-Can generate raw key, password protected key ( XOR with SHA256(password) )
-
-Can encrypt / decrypt files with plain or encrypted keys.
-
-Upload / download encrypted package to cloud.
-
+Open CryptOne.sln and build
 
 
 ## Linux ##
