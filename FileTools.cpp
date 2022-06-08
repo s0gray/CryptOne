@@ -30,6 +30,8 @@
 #else
 	#include <curses.h>
 	#include <string.h>
+
+	#include <sys/stat.h>
 #endif
 
 
