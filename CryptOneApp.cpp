@@ -68,7 +68,6 @@ int decryptAndDecompress(const std::string &inputFile) {
         LOGGER("Could not decrypt file [%s]" , inputFile.c_str());
         return 1;
     }
-
     auto start_time = std::chrono::high_resolution_clock::now();
 
     LOGGER("Decompressing file [%s]", compressedFile.c_str());
@@ -76,7 +75,6 @@ int decryptAndDecompress(const std::string &inputFile) {
     auto end_time = std::chrono::high_resolution_clock::now();
     auto time = end_time - start_time;
     LOGGER("Decompressed for %ld ms", time / std::chrono::milliseconds(1));
-
 
     CryptOne::exec((Tools::getDeleteFileCommand() + " " + compressedFile).c_str());
     return 0;

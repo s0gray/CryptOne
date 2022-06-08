@@ -4,25 +4,25 @@
 Simple command line tool for folder encryption/decryption and uploading/downloading to cloud.
 Generation of private key on external storage (USB stick)
 
-Supported OSes: Windows and Linux
+Supported OS: Windows and Linux
 
-Supported Clouds: Apple iCloud, Google Drive, Microsoft One Drive
+Supported Cloud: Apple iCloud, Google Drive, Microsoft One Drive
 
 
 # Quick start
 
-1. Create 'Crypt1.ini' file (see example below) in some folder
+1. Create 'CryptOne.ini' file (see example below) in some folder
 2. Create subfolder which you want to put encrypted to clouds
 3. Insert USB stick
-4. Generate key:  _Crypt1 generate-key_
-5. Encrypt folder to file: _Crypt1 encrypt subfolder_
-6. Upload encrypted archive to cloud #0  _Crypt1 up 0_
-7. Upload encrypted archive to cloud #1 _Crypt1 up 1_
-8. Later download archive from file from cloud #0 by _Crypt1 down 0_
-9. Decrypt file (having USB stick in) _Crypt1 decrypt_
+4. Generate key:  _CryptOne generate-key_
+5. Encrypt folder to file: _CryptOne encrypt subfolder_
+6. Upload encrypted archive to cloud #0  _CryptOne up 0_
+7. Upload encrypted archive to cloud #1 _CryptOne up 1_
+8. Later download archive from file from cloud #0 by _CryptOne down 0_
+9. Decrypt file (having USB stick in) _CryptOne decrypt_
 
 
-## Example config file ##
+## Example config file _CryptOne.ini_##
 
 ```text
 
