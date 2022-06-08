@@ -51,6 +51,8 @@ Visual Studio 2022 (x64 Debug/Release)
 
 Uses libsodium  ( https://github.com/jedisct1/libsodium )
 
+Download libsodium and copy includes and libraries to /libs folder
+
 Open CryptOne.sln and build
 
 
@@ -59,5 +61,9 @@ Open CryptOne.sln and build
 $ mkdir build
 
 $ sudo apt-get install libncurses5-dev libsodium-dev
+
+$ make
+
+
 
 
