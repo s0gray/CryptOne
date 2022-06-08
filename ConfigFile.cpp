@@ -23,7 +23,7 @@
 #include "FileTools.h"
 
 
-#define INI_CONFIG_FILE		"crypt1.ini"
+#define INI_CONFIG_FILE		"CryptOne.ini"
 
 
 ConfigFile::ConfigFile() {
@@ -31,6 +31,7 @@ ConfigFile::ConfigFile() {
 
 	mIniFileName = configFolder;
 	mIniFileName += Tools::getPathSeparator() + INI_CONFIG_FILE;
+
 }
 
 ConfigFile::~ConfigFile() {

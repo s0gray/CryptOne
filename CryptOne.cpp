@@ -34,6 +34,8 @@
 
 
 CryptOne::CryptOne() {    
+    mExternalStoragePresent = false;
+
 }
 
 CryptOne::~CryptOne() {
@@ -62,10 +64,15 @@ RetCode CryptOne::initialize() {
         RetCode ret2 = FileTools::getKeyFolder(mKeyFolder);
         if (ret2 == eNotFound) {
             LOGGER("No removable drives found..");
-            return ret2;
+            mExternalStoragePresent = false;
+
+            //return ret2;
+        }
+        else {
+            mExternalStoragePresent = true;
         }
     }
-    LOGGER("Using keyFolder: [%s]" , mKeyFolder.c_str());
+    LOGGER("Using keyFolder: [%s] ExternalStoragePresent : %u" , mKeyFolder.c_str(), mExternalStoragePresent);
     return eOk;
 }
 

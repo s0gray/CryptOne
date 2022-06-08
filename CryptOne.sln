@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32414.318
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Crypt1", "Crypt1.vcxproj", "{1B5056E2-D2D8-408C-B484-DA3496761C15}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CryptOne", "CryptOne.vcxproj", "{1B5056E2-D2D8-408C-B484-DA3496761C15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

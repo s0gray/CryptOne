@@ -102,7 +102,6 @@ RetCode FileTools::getRemovablesDrives(std::vector<std::string>& result) {
 }
 
 
-
 /**
 *	Key folder can be only on removable drive
 *	1. Get list of removable drives
@@ -135,4 +134,18 @@ RetCode FileTools::getKeyFolder(std::string& folder) {
 	std::cout << "Bad input" << std::endl;
 
 	return eFatal;
+}
+
+bool FileTools::isFolderPresent(const char *folder) {
+	if (!folder)
+		return false;
+
+	struct stat info;
+
+	if (stat(folder, &info) != 0)
+		return false;
+	else if (info.st_mode & S_IFDIR)
+		return true;
+	else
+		return false;
 }

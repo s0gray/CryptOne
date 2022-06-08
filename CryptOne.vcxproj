@@ -148,9 +148,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ConfigFile.cpp" />
-    <ClCompile Include="Crypt1.cpp" />
     <ClCompile Include="CryptoGate.cpp" />
     <ClCompile Include="CryptOne.cpp" />
+    <ClCompile Include="CryptOneApp.cpp" />
     <ClCompile Include="FileTools.cpp" />
     <ClCompile Include="IniFileTools.cpp" />
     <ClCompile Include="SodiumGate.cpp" />

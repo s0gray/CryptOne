@@ -55,6 +55,9 @@ class CryptOne
 		std::string getCloudFolder(int index);
 		static std::string enterPassword(const char* promt);
 
+		bool isExternalStoragePresent() const {
+			return mExternalStoragePresent;
+		}
 #ifdef WIN32
 		static std::string exec(const char* cmd);
 #else
@@ -70,5 +73,8 @@ private:
 		ConfigFile configFile;
 		std::string mKeyFolder;
 		std::vector<std::string> mCloudFolders;
+		bool		mExternalStoragePresent;
+
+
 };
 

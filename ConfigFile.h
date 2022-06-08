@@ -34,6 +34,7 @@ class ConfigFile {
 		std::string getIniFileName() const {
 			return mIniFileName;
 		}
+
 		RetCode		getValue(const std::string& key, std::string& value);
 		RetCode		getValueW(const std::string& key, std::wstring& value);
 		RetCode		getCloudFolders(std::vector<std::string>& folders);
