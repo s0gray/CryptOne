@@ -22,7 +22,7 @@ Supported Cloud: Apple iCloud, Google Drive, Microsoft One Drive
 9. Decrypt file (having USB stick in) _CryptOne decrypt_
 
 
-## Example config file _CryptOne.ini_##
+## Example config file _CryptOne.ini_ ##
 
 ```text
 
