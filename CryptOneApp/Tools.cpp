@@ -142,7 +142,6 @@ std::string Tools::decodeFolder(const std::string &folder) {
 		return folder;
 	}
 	std::string homeDir = Tools::wideToChar(path); 
-	result = //folder.substr(0, off - 1);
 	result = homeDir;
 	result += folder.substr(off + 1, folder.size() - off - 1);	
 #endif

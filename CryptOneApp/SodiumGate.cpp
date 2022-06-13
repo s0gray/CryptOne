@@ -35,13 +35,12 @@ RetCode SodiumGate::generateSecretKey(std::string &key) {
 	return generateRandomData(key, getSecretKeyLength());
 }
 
- RetCode SodiumGate::generateRandomData(std::string& result, size_t size) {
-
-	 std::unique_ptr<char[]> privateKey(new char[size]);
-	 randombytes_buf(privateKey.get(), size);
-	 result.assign(privateKey.get(), size);
-	 return eOk;
- }
+RetCode SodiumGate::generateRandomData(std::string& result, size_t size) {
+	std::unique_ptr<char[]> privateKey(new char[size]);
+	randombytes_buf(privateKey.get(), size);
+	result.assign(privateKey.get(), size);
+	return eOk;
+}
 
 
 size_t SodiumGate::getDecryptedMessageLengthSymmetric(size_t cipherLen) const {
@@ -51,7 +50,7 @@ size_t SodiumGate::getDecryptedMessageLengthSymmetric(size_t cipherLen) const {
 RetCode SodiumGate::encryptDataSymmetric(	const std::string& plainData,	/// IN
 											std::string& encryped,			/// OUT
 											std::string& nonce,				/// OUT
-											const std::string& secretKey)	/// IN
+											const std::string& secretKey)	/// IN 
 {
 	// generate/use random bytes as nonce
 	ASSERTME( generateRandomData(nonce, crypto_secretbox_NONCEBYTES) );
