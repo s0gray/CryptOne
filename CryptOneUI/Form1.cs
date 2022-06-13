@@ -302,7 +302,7 @@ namespace CryptOneService
             }*/
             updateKeyStatusFromOtherThread();
         }
-        private void backgroundWorker1_DoWork() //object sender, DoWorkEventArgs e)
+        private void backgroundWorker1_DoWork() 
         {
               WqlEventQuery insertQuery = new WqlEventQuery("SELECT * FROM __InstanceCreationEvent WITHIN 2 WHERE TargetInstance ISA 'Win32_USBHub'");
 
@@ -317,21 +317,6 @@ namespace CryptOneService
 
               // Do something while waiting for events
               System.Threading.Thread.Sleep(3000);
-
-       /*     var watcher = new ManagementEventWatcher();
-            var query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2");
-            watcher.EventArrived += new EventArrivedEventHandler(watcher_EventArrived);
-            watcher.Query = query;
-            watcher.Start();*/
-        }
-
-        private void watcher_EventArrived(object sender, EventArrivedEventArgs e)
-        {
-            ManagementBaseObject instance = (ManagementBaseObject)e.NewEvent["TargetInstance"];
-            foreach (var property in instance.Properties)
-            {
-                Debug.WriteLine(property.Name + " = " + property.Value);
-            }
         }
     }
 }
