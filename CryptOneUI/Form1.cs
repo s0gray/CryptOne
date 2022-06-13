@@ -1,5 +1,7 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Management;
 
 
 namespace CryptOneService
@@ -12,10 +14,14 @@ namespace CryptOneService
         public const string INI_FILENAME = "CryptOne.ini";
         public const string CLOUDFOLDER_KEY = "cloudFolder";
         public const string CLOUDDESCRIPTION_KEY = "cloudDescription";
+        public const string KEY_FILENAME = "key0001.ekey";
 
         public Form1()
         {
             InitializeComponent();
+
+            Thread thread1 = new Thread(backgroundWorker1_DoWork);
+            thread1.Start();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -60,8 +66,10 @@ namespace CryptOneService
                 setKeyFolderRadioButton.Select();
                 keyFolderEdit.Enabled = true;
                 keyFolderEdit.Text = keyFolder;
-
             }
+
+            updateKeyStatus();
+
             string currentFolder = Directory.GetCurrentDirectory();
 
             string[] arr = new string[2];
@@ -220,6 +228,110 @@ namespace CryptOneService
                 saveChanges();
             }
             this.Close();
+        }
+
+        string getKeyStatusText()
+        {
+            Debug.WriteLine("getKeyStatusText");
+
+            string keyPath = "";
+            if (keyFolderEdit.Enabled)
+            {
+                keyPath = keyFolderEdit.Text;
+            }
+            else
+            {
+                keyPath = Tools.getKeyFolder();
+            }
+            Debug.WriteLine("keyPath = " + keyPath);
+
+            string keyFileName = keyPath + KEY_FILENAME;
+            Debug.WriteLine("keyFileName = " + keyFileName);
+
+            if (keyPath != null && keyPath.Length > 0 && File.Exists(keyFileName))
+            {
+                return "Key file found at [" + keyFileName + "]";
+            }
+            else
+            {
+                string msg = "Key file not found";
+                if (keyPath.Length > 0)
+                {
+                    msg += " at [" + keyFileName + "]";
+                }
+                return msg;
+            }
+        }
+
+        void updateKeyStatus()
+        {
+            string msg = getKeyStatusText();
+            keyStatusLabel.Text = msg;           
+        }
+        void updateKeyStatusFromOtherThread()
+        {
+            string msg = getKeyStatusText();
+
+            keyStatusLabel.Invoke((MethodInvoker) delegate {
+                // Running on the UI thread
+                keyStatusLabel.Text = msg;
+            });
+        }
+
+
+        private  void DeviceInsertedEvent(object sender, EventArrivedEventArgs e)
+        {
+           Debug.WriteLine("DeviceInsertedEvent");
+            /*ManagementBaseObject instance = (ManagementBaseObject)e.NewEvent["TargetInstance"];
+             foreach (var property in instance.Properties)
+             {
+                // Debug.WriteLine(property.Name + " = " + property.Value);
+             }*/
+            updateKeyStatusFromOtherThread();
+
+        }
+
+        private  void DeviceRemovedEvent(object sender, EventArrivedEventArgs e)
+        {
+           Debug.WriteLine("DeviceRemovedEvent");
+
+            /*ManagementBaseObject instance = (ManagementBaseObject)e.NewEvent["TargetInstance"];
+            foreach (var property in instance.Properties)
+            {
+              //  Debug.WriteLine(property.Name + " = " + property.Value);
+            }*/
+            updateKeyStatusFromOtherThread();
+        }
+        private void backgroundWorker1_DoWork() //object sender, DoWorkEventArgs e)
+        {
+              WqlEventQuery insertQuery = new WqlEventQuery("SELECT * FROM __InstanceCreationEvent WITHIN 2 WHERE TargetInstance ISA 'Win32_USBHub'");
+
+              ManagementEventWatcher insertWatcher = new ManagementEventWatcher(insertQuery);
+              insertWatcher.EventArrived += new EventArrivedEventHandler(DeviceInsertedEvent);
+              insertWatcher.Start();
+
+              WqlEventQuery removeQuery = new WqlEventQuery("SELECT * FROM __InstanceDeletionEvent WITHIN 2 WHERE TargetInstance ISA 'Win32_USBHub'");
+              ManagementEventWatcher removeWatcher = new ManagementEventWatcher(removeQuery);
+              removeWatcher.EventArrived += new EventArrivedEventHandler(DeviceRemovedEvent);
+              removeWatcher.Start();
+
+              // Do something while waiting for events
+              System.Threading.Thread.Sleep(3000);
+
+       /*     var watcher = new ManagementEventWatcher();
+            var query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2");
+            watcher.EventArrived += new EventArrivedEventHandler(watcher_EventArrived);
+            watcher.Query = query;
+            watcher.Start();*/
+        }
+
+        private void watcher_EventArrived(object sender, EventArrivedEventArgs e)
+        {
+            ManagementBaseObject instance = (ManagementBaseObject)e.NewEvent["TargetInstance"];
+            foreach (var property in instance.Properties)
+            {
+                Debug.WriteLine(property.Name + " = " + property.Value);
+            }
         }
     }
 }

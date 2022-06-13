@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "0",
             "Google Cloud",
@@ -56,6 +56,8 @@
             this.button2 = new System.Windows.Forms.Button();
             this.applyButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.keyStatusLabel = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -75,6 +77,8 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.keyStatusLabel);
+            this.tabPage1.Controls.Add(this.label2);
             this.tabPage1.Controls.Add(this.keyFolderEdit);
             this.tabPage1.Controls.Add(this.setKeyFolderRadioButton);
             this.tabPage1.Controls.Add(this.autoDetectKeyFolderRadioButton);
@@ -89,16 +93,16 @@
             // 
             // keyFolderEdit
             // 
-            this.keyFolderEdit.Location = new System.Drawing.Point(117, 141);
+            this.keyFolderEdit.Location = new System.Drawing.Point(342, 85);
             this.keyFolderEdit.Name = "keyFolderEdit";
-            this.keyFolderEdit.Size = new System.Drawing.Size(150, 31);
+            this.keyFolderEdit.Size = new System.Drawing.Size(235, 31);
             this.keyFolderEdit.TabIndex = 3;
             this.keyFolderEdit.Text = "D:\\";
             // 
             // setKeyFolderRadioButton
             // 
             this.setKeyFolderRadioButton.AutoSize = true;
-            this.setKeyFolderRadioButton.Location = new System.Drawing.Point(117, 89);
+            this.setKeyFolderRadioButton.Location = new System.Drawing.Point(142, 85);
             this.setKeyFolderRadioButton.Name = "setKeyFolderRadioButton";
             this.setKeyFolderRadioButton.Size = new System.Drawing.Size(146, 29);
             this.setKeyFolderRadioButton.TabIndex = 2;
@@ -109,7 +113,7 @@
             // autoDetectKeyFolderRadioButton
             // 
             this.autoDetectKeyFolderRadioButton.AutoSize = true;
-            this.autoDetectKeyFolderRadioButton.Location = new System.Drawing.Point(117, 41);
+            this.autoDetectKeyFolderRadioButton.Location = new System.Drawing.Point(142, 41);
             this.autoDetectKeyFolderRadioButton.Name = "autoDetectKeyFolderRadioButton";
             this.autoDetectKeyFolderRadioButton.Size = new System.Drawing.Size(263, 29);
             this.autoDetectKeyFolderRadioButton.TabIndex = 1;
@@ -225,7 +229,7 @@
             this.cloudsList.FullRowSelect = true;
             this.cloudsList.GridLines = true;
             this.cloudsList.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem2});
+            listViewItem1});
             this.cloudsList.Location = new System.Drawing.Point(6, 35);
             this.cloudsList.Name = "cloudsList";
             this.cloudsList.Size = new System.Drawing.Size(936, 197);
@@ -286,6 +290,25 @@
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 166);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(126, 25);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Current status:";
+            // 
+            // keyStatusLabel
+            // 
+            this.keyStatusLabel.AutoSize = true;
+            this.keyStatusLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.keyStatusLabel.Location = new System.Drawing.Point(142, 166);
+            this.keyStatusLabel.Name = "keyStatusLabel";
+            this.keyStatusLabel.Size = new System.Drawing.Size(166, 25);
+            this.keyStatusLabel.TabIndex = 5;
+            this.keyStatusLabel.Text = "Key file not found";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
@@ -333,5 +356,7 @@
         private ColumnHeader fullPathColumn;
         private Button applyButton;
         private Button okButton;
+        private Label keyStatusLabel;
+        private Label label2;
     }
 }
