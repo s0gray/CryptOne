@@ -47,11 +47,13 @@ namespace CryptOneService
         {
             foldersList.Items.Clear();
 
-            for(int i=0;i< monitoredFolders.Count;i++)
+            for(int i=0;i<monitoredFolders.Count;i++)
             {
-                string[] arr2 = new string[2];
+                string[] arr2 = new string[4];
                 arr2[0] = "" + i;
                 arr2[1] = monitoredFolders[i].path;
+                arr2[2] = mainForm.getFolderStatus(monitoredFolders[i]);
+                arr2[3] = monitoredFolders[i].getCloudFileName();
                 foldersList.Items.Add(new ListViewItem(arr2));
             }
         }
@@ -82,18 +84,17 @@ namespace CryptOneService
             }
         }
 
-
-        public bool isArchivePresentOnCloud(int folderIndex, int cloudIndex)
+        public int getCount()
         {
-            if(folderIndex < 0 || folderIndex >= monitoredFolders.Count)
-            {
-                return false;
-            }
+            return this.monitoredFolders.Count;
+        }
 
-            string filename = monitoredFolders[folderIndex].getCloudFileName();
+        public MonitoredFolder get(int folderIndex)
+        {
+            if (folderIndex < 0 || folderIndex >= getCount())
+                return null;
 
-
-            return false;
+            return monitoredFolders[folderIndex];
         }
     }
 }

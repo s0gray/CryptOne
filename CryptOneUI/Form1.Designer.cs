@@ -47,6 +47,8 @@
             this.foldersList = new System.Windows.Forms.ListView();
             this.folderIdColumn = new System.Windows.Forms.ColumnHeader();
             this.folderNameColumn = new System.Windows.Forms.ColumnHeader();
+            this.statusColumn = new System.Windows.Forms.ColumnHeader();
+            this.cloudFileColumn = new System.Windows.Forms.ColumnHeader();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.removeCloudButton = new System.Windows.Forms.Button();
             this.addCloudButton = new System.Windows.Forms.Button();
@@ -188,7 +190,9 @@
             // 
             this.foldersList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.folderIdColumn,
-            this.folderNameColumn});
+            this.folderNameColumn,
+            this.statusColumn,
+            this.cloudFileColumn});
             this.foldersList.FullRowSelect = true;
             this.foldersList.GridLines = true;
             this.foldersList.Location = new System.Drawing.Point(6, 35);
@@ -201,11 +205,22 @@
             // folderIdColumn
             // 
             this.folderIdColumn.Text = "Index";
+            this.folderIdColumn.Width = 100;
             // 
             // folderNameColumn
             // 
             this.folderNameColumn.Text = "Path";
-            this.folderNameColumn.Width = 800;
+            this.folderNameColumn.Width = 300;
+            // 
+            // statusColumn
+            // 
+            this.statusColumn.Text = "Status";
+            this.statusColumn.Width = 80;
+            // 
+            // cloudFileColumn
+            // 
+            this.cloudFileColumn.Text = "Cloud filename";
+            this.cloudFileColumn.Width = 400;
             // 
             // tabPage3
             // 
@@ -361,5 +376,7 @@
         private Button okButton;
         private Label keyStatusLabel;
         private Label label2;
+        private ColumnHeader statusColumn;
+        private ColumnHeader cloudFileColumn;
     }
 }

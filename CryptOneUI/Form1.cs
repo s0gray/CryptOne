@@ -20,6 +20,7 @@ namespace CryptOneService
 
         MonitoredFoldersContainer monitoredFoldersContainer;
         CloudFolderContainer cloudFolderContainer;
+        CryptoOne cryptoOne = new CryptoOne();
         public Form1()
         {
             InitializeComponent();
@@ -52,12 +53,27 @@ namespace CryptOneService
                     applyButton.Enabled = true;
                 }
                 cloudFolderContainer.show( cloudsList );
-
             }
             else
             {
                 Debug.WriteLine("Nothing selected");
             }
+        }
+
+        public string getFolderStatus(MonitoredFolder monitoredFolder)
+        {
+            int value = 0;
+
+            for(int index = 0; index < cloudFolderContainer.getCount(); index++)
+            {
+                bool present = this.isArchivePresentOnCloud(monitoredFolder, index);
+                if (present)
+                {
+                    value |= (1 << index);
+                }
+            }
+
+            return Convert.ToString(value, 2);
         }
 
         private void Form1_Shown(object sender, EventArgs e)
@@ -90,8 +106,27 @@ namespace CryptOneService
 
             // START INIT cloudFolder TAB
             cloudFolderContainer.load(ini);
-            cloudFolderContainer.show(cloudsList);           
+            cloudFolderContainer.show(cloudsList);
             // END INIT cloudFolder TAB
+
+            startMainProcessing();
+        }
+
+        private void startMainProcessing()
+        {
+            for (int index = 0; index < monitoredFoldersContainer.getCount(); index++)
+            {
+                for (int cloudIndex = 0; cloudIndex < cloudFolderContainer.getCount(); cloudIndex++)
+                {
+                    bool present = isArchivePresentOnCloud(index, cloudIndex);
+                    if (!present)
+                    {
+                        Debug.WriteLine("Folder ["+index+"] not present on cloud ["+cloudIndex+"] - will upload");
+
+                        cryptoOne.push(monitoredFoldersContainer.get(index), cloudFolderContainer.get(cloudIndex));
+                    }
+                }
+            }
         }
 
         private void autoDetectKeyFolderRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -284,10 +319,6 @@ namespace CryptOneService
               System.Threading.Thread.Sleep(3000);
         }
 
-       // private void fileSystemWatcher1_Changed(object sender, FileSystemEventArgs e)
-        //{
-       //     Debug.WriteLine("File changed in folder..");
-       // }
 
         private void addMonitoredFolderButton_Click(object sender, EventArgs e)
         {
@@ -325,6 +356,27 @@ namespace CryptOneService
             {
                 Debug.WriteLine("Nothing selected");
             }
+        }
+        public bool isArchivePresentOnCloud(int folderIndex, int cloudIndex)
+        {
+            if (folderIndex < 0 || folderIndex >= monitoredFoldersContainer.getCount())
+            {
+                return false;
+            }
+            MonitoredFolder folder = monitoredFoldersContainer.get(folderIndex);
+            return isArchivePresentOnCloud(folder, cloudIndex);
+        }
+
+        public bool isArchivePresentOnCloud(MonitoredFolder folder, int cloudIndex)
+        {
+            if (cloudIndex < 0 || cloudIndex >= cloudFolderContainer.getCount())
+            {
+                return false;
+            }
+
+            string filename = folder.getCloudFileName();
+            string cloudFileName = cloudFolderContainer.get(cloudIndex).fullPath + filename;
+            return File.Exists(cloudFileName);
         }
     }
 }

@@ -95,5 +95,15 @@ namespace CryptOneService
         {
             this.cloudFolders.Add(new CloudFolder(folder, description, fullPath, this.cloudFolders.Count));
         }
+
+        public int getCount()
+        {
+            return this.cloudFolders.Count;
+        }
+
+        public CloudFolder get(int cloudIndex)
+        {
+            return cloudFolders[cloudIndex];
+        }
     }
 }
