@@ -35,6 +35,11 @@ namespace CryptOneService
             return result.ToArray();
         }
 
+        public static string decodeFolder(string folder)
+        {
+            return folder.Replace("~", Form1.homeDir);
+        }
+
         public static string getKeyFolder()
         {
             string[] removable = Tools.getRemovableDrives();

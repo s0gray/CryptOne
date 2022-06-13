@@ -25,12 +25,20 @@ namespace CryptOneService
             this.fileSystemWatcher.NotifyFilter = System.IO.NotifyFilters.LastWrite; //LastAccess;
             this.fileSystemWatcher.SynchronizingObject = mainForm;
             this.fileSystemWatcher.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcher_Changed);
-
         }
 
         private void fileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             Debug.WriteLine("File changed in folder ["+this.path+"]");
         }
+
+        // in which file this folder will be stored in cloud
+        public string getCloudFileName()
+        {
+            string hashHex = Crypto.hashSHA256hex(path);
+
+            return hashHex + ".tar.gz.enc";  // = tar.gz.enc
+        }
+
     }
 }

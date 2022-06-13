@@ -32,11 +32,6 @@ namespace CryptOneService
                 {
                     Debug.WriteLine("monitoredFolder [" + index + "] = [" + monitoredFolder + "]");
 
-                    //  string[] arr2 = new string[2];
-                    //  arr2[0] = "" + index;
-                    //  arr2[1] = monitoredFolder;
-                    //  foldersList.Items.Add(new ListViewItem(arr2));
-
                     monitoredFolders.Add(new MonitoredFolder(monitoredFolder, mainForm));
                 }
                 else
@@ -85,6 +80,20 @@ namespace CryptOneService
                 string key = Form1.MONITOREDFOLDER_KEY + i;
                 ini.Write(key, monitoredFolders[i].path, Form1.SECTION);
             }
+        }
+
+
+        public bool isArchivePresentOnCloud(int folderIndex, int cloudIndex)
+        {
+            if(folderIndex < 0 || folderIndex >= monitoredFolders.Count)
+            {
+                return false;
+            }
+
+            string filename = monitoredFolders[folderIndex].getCloudFileName();
+
+
+            return false;
         }
     }
 }
