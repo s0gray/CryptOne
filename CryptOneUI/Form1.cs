@@ -18,6 +18,7 @@ namespace CryptOneService
         public const string CLOUDDESCRIPTION_KEY = "cloudDescription";
         public const string KEY_FILENAME = "key0001.ekey";
 
+        MonitoredFoldersContainer monitoredFoldersContainer = new MonitoredFoldersContainer();
         public Form1()
         {
             InitializeComponent();
@@ -50,7 +51,6 @@ namespace CryptOneService
             }
         }
 
-
         private void Form1_Shown(object sender, EventArgs e)
         {
             IniFile ini = new IniFile();
@@ -75,42 +75,12 @@ namespace CryptOneService
             // END INIT KeyFolder TAB
 
             // START INIT folders TAB
-            foldersList.Items.Clear();
-            int index = 0;
-            while (true)
-            {
-                string key = MONITOREDFOLDER_KEY + index;
-                var monitoredFolder = ini.Read(key);
-
-                if (monitoredFolder != null && monitoredFolder.Length > 0)
-                {
-                    Debug.WriteLine("monitoredFolder [" + index + "] = [" + monitoredFolder + "]");
-
-                    string[] arr2 = new string[2];
-                    arr2[0] = "" + index;
-                    arr2[1] = monitoredFolder;
-                    foldersList.Items.Add(new ListViewItem(arr2));
-                }
-                else
-                {
-                    break;
-                }
-                index++;
-            } // while (true)
-            /*
-            string currentFolder = Directory.GetCurrentDirectory();
-            string[] arr = new string[2];
-            arr[0] = "0";
-            arr[1] = currentFolder;
-            ListViewItem item = new ListViewItem(arr);
-            foldersList.Items.Add(item);
-
-            this.fileSystemWatcher1.Path = currentFolder;
-            */
+            monitoredFoldersContainer.load(ini);
+            monitoredFoldersContainer.show(foldersList);
             // END INIT folders TAB
 
             // START INIT cloudFolder TAB
-            index = 0;
+            int index = 0;
             cloudsList.Items.Clear();
             while (true)
             {
@@ -167,13 +137,9 @@ namespace CryptOneService
             Debug.WriteLine("save changes to ini file");
             File.Delete(INI_FILENAME);
 
-            IniFile ini = new IniFile(INI_FILENAME);      
-            
-            for(int i = 0; i < foldersList.Items.Count; i++)
-            {
-                string key = MONITOREDFOLDER_KEY + i;
-                ini.Write(key, foldersList.Items[i].SubItems[1].Text, SECTION);
-            }
+            IniFile ini = new IniFile(INI_FILENAME);
+
+            monitoredFoldersContainer.save(ini);
 
             for (int i = 0; i < cloudsList.Items.Count; i++)
             {
@@ -368,10 +334,8 @@ namespace CryptOneService
             DialogResult res = folderBrowserDialog1.ShowDialog();
             if (res == DialogResult.OK)
             {
-                string[] arr2 = new string[2];
-                arr2[0] = "" + foldersList.Items.Count;
-                arr2[1] = folderBrowserDialog1.SelectedPath;
-                foldersList.Items.Add(new ListViewItem(arr2));
+                monitoredFoldersContainer.add(folderBrowserDialog1.SelectedPath);
+                monitoredFoldersContainer.show(foldersList);
 
                 applyButton.Enabled = true;
             }
@@ -381,14 +345,20 @@ namespace CryptOneService
         {
             if (foldersList.SelectedItems.Count > 0)
             {
+                int deletedCount = 0;
                 for (int i = 0; i < foldersList.SelectedItems.Count; i++)
                 {
                     ListViewItem item = foldersList.SelectedItems[i];
                     Debug.WriteLine("deleting monitored folder #" + item.SubItems[0].Text);
-                    foldersList.Items.Remove(item);
-                    applyButton.Enabled = true;
+                    // foldersList.Items.Remove(item);
 
+                    int index = int.Parse(item.SubItems[0].Text);
+                    monitoredFoldersContainer.remove(index - deletedCount);
+
+                    deletedCount++;
+                    applyButton.Enabled = true;
                 }
+                monitoredFoldersContainer.show(foldersList);
             }
             else
             {
