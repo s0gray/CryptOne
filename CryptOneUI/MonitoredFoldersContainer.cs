@@ -10,9 +10,10 @@ namespace CryptOneService
     public class MonitoredFoldersContainer
     {
         List<MonitoredFolder> monitoredFolders = new List<MonitoredFolder>();
-        public MonitoredFoldersContainer()
+        Form1 mainForm;
+        public MonitoredFoldersContainer(Form1 form)
         {
-
+            this.mainForm = form;
         }
 
         /**
@@ -36,7 +37,7 @@ namespace CryptOneService
                     //  arr2[1] = monitoredFolder;
                     //  foldersList.Items.Add(new ListViewItem(arr2));
 
-                    monitoredFolders.Add(new MonitoredFolder(monitoredFolder));
+                    monitoredFolders.Add(new MonitoredFolder(monitoredFolder, mainForm));
                 }
                 else
                 {
@@ -62,7 +63,7 @@ namespace CryptOneService
 
         public void add(string selectedPath)
         {
-            monitoredFolders.Add(new MonitoredFolder(selectedPath));
+            monitoredFolders.Add(new MonitoredFolder(selectedPath, mainForm));
         }
 
         public void remove(int index)

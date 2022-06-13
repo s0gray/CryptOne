@@ -18,10 +18,11 @@ namespace CryptOneService
         public const string CLOUDDESCRIPTION_KEY = "cloudDescription";
         public const string KEY_FILENAME = "key0001.ekey";
 
-        MonitoredFoldersContainer monitoredFoldersContainer = new MonitoredFoldersContainer();
+        MonitoredFoldersContainer monitoredFoldersContainer;
         public Form1()
         {
             InitializeComponent();
+            monitoredFoldersContainer = new MonitoredFoldersContainer(this);
 
             Thread thread1 = new Thread(backgroundWorker1_DoWork);
             thread1.Start();
