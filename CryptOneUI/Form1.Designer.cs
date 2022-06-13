@@ -35,13 +35,15 @@
             "~\\Google Drive"}, -1);
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.keyStatusLabel = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.keyFolderEdit = new System.Windows.Forms.TextBox();
             this.setKeyFolderRadioButton = new System.Windows.Forms.RadioButton();
             this.autoDetectKeyFolderRadioButton = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
+            this.removeMonitoredFolderButton = new System.Windows.Forms.Button();
+            this.addMonitoredFolderButton = new System.Windows.Forms.Button();
             this.foldersList = new System.Windows.Forms.ListView();
             this.folderIdColumn = new System.Windows.Forms.ColumnHeader();
             this.folderNameColumn = new System.Windows.Forms.ColumnHeader();
@@ -56,12 +58,12 @@
             this.button2 = new System.Windows.Forms.Button();
             this.applyButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.keyStatusLabel = new System.Windows.Forms.Label();
+            this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -90,6 +92,25 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Key storage";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // keyStatusLabel
+            // 
+            this.keyStatusLabel.AutoSize = true;
+            this.keyStatusLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.keyStatusLabel.Location = new System.Drawing.Point(142, 166);
+            this.keyStatusLabel.Name = "keyStatusLabel";
+            this.keyStatusLabel.Size = new System.Drawing.Size(166, 25);
+            this.keyStatusLabel.TabIndex = 5;
+            this.keyStatusLabel.Text = "Key file not found";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 166);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(126, 25);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Current status:";
             // 
             // keyFolderEdit
             // 
@@ -134,8 +155,8 @@
             // tabPage2
             // 
             this.tabPage2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tabPage2.Controls.Add(this.button6);
-            this.tabPage2.Controls.Add(this.button5);
+            this.tabPage2.Controls.Add(this.removeMonitoredFolderButton);
+            this.tabPage2.Controls.Add(this.addMonitoredFolderButton);
             this.tabPage2.Controls.Add(this.foldersList);
             this.tabPage2.Location = new System.Drawing.Point(4, 34);
             this.tabPage2.Name = "tabPage2";
@@ -145,23 +166,25 @@
             this.tabPage2.Text = "Folders";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // button6
+            // removeMonitoredFolderButton
             // 
-            this.button6.Location = new System.Drawing.Point(159, 251);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(112, 34);
-            this.button6.TabIndex = 2;
-            this.button6.Text = "Remove";
-            this.button6.UseVisualStyleBackColor = true;
+            this.removeMonitoredFolderButton.Location = new System.Drawing.Point(159, 251);
+            this.removeMonitoredFolderButton.Name = "removeMonitoredFolderButton";
+            this.removeMonitoredFolderButton.Size = new System.Drawing.Size(112, 34);
+            this.removeMonitoredFolderButton.TabIndex = 2;
+            this.removeMonitoredFolderButton.Text = "Remove";
+            this.removeMonitoredFolderButton.UseVisualStyleBackColor = true;
+            this.removeMonitoredFolderButton.Click += new System.EventHandler(this.removeMonitoredFolderButton_Click);
             // 
-            // button5
+            // addMonitoredFolderButton
             // 
-            this.button5.Location = new System.Drawing.Point(6, 252);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(112, 34);
-            this.button5.TabIndex = 1;
-            this.button5.Text = "Add";
-            this.button5.UseVisualStyleBackColor = true;
+            this.addMonitoredFolderButton.Location = new System.Drawing.Point(6, 252);
+            this.addMonitoredFolderButton.Name = "addMonitoredFolderButton";
+            this.addMonitoredFolderButton.Size = new System.Drawing.Size(112, 34);
+            this.addMonitoredFolderButton.TabIndex = 1;
+            this.addMonitoredFolderButton.Text = "Add";
+            this.addMonitoredFolderButton.UseVisualStyleBackColor = true;
+            this.addMonitoredFolderButton.Click += new System.EventHandler(this.addMonitoredFolderButton_Click);
             // 
             // foldersList
             // 
@@ -290,34 +313,23 @@
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
-            // label2
+            // fileSystemWatcher1
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 166);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(126, 25);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Current status:";
-            // 
-            // keyStatusLabel
-            // 
-            this.keyStatusLabel.AutoSize = true;
-            this.keyStatusLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.keyStatusLabel.Location = new System.Drawing.Point(142, 166);
-            this.keyStatusLabel.Name = "keyStatusLabel";
-            this.keyStatusLabel.Size = new System.Drawing.Size(166, 25);
-            this.keyStatusLabel.TabIndex = 5;
-            this.keyStatusLabel.Text = "Key file not found";
+            this.fileSystemWatcher1.EnableRaisingEvents = true;
+            this.fileSystemWatcher1.NotifyFilter = System.IO.NotifyFilters.LastAccess;
+            this.fileSystemWatcher1.SynchronizingObject = this;
+            this.fileSystemWatcher1.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcher1_Changed);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(994, 435);
+            this.ClientSize = new System.Drawing.Size(994, 424);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.applyButton);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.tabControl1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "Form1";
             this.Text = "CryptOne Configuration";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -327,6 +339,7 @@
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -347,8 +360,8 @@
         private ListView cloudsList;
         private ColumnHeader cloudId;
         private ColumnHeader localFolderColumn;
-        private Button button6;
-        private Button button5;
+        private Button removeMonitoredFolderButton;
+        private Button addMonitoredFolderButton;
         private ListView foldersList;
         private ColumnHeader folderIdColumn;
         private ColumnHeader folderNameColumn;
@@ -358,5 +371,6 @@
         private Button okButton;
         private Label keyStatusLabel;
         private Label label2;
+        private FileSystemWatcher fileSystemWatcher1;
     }
 }

@@ -12,6 +12,8 @@ namespace CryptOneService
         public const string SECTION = "config";
         public const string KEY_FOLDER = "keyFolder";
         public const string INI_FILENAME = "CryptOne.ini";
+        public const string MONITOREDFOLDER_KEY = "monitoredFolder";
+
         public const string CLOUDFOLDER_KEY = "cloudFolder";
         public const string CLOUDDESCRIPTION_KEY = "cloudDescription";
         public const string KEY_FILENAME = "key0001.ekey";
@@ -48,11 +50,13 @@ namespace CryptOneService
             }
         }
 
+
         private void Form1_Shown(object sender, EventArgs e)
         {
             IniFile ini = new IniFile();
             applyButton.Enabled = false;
 
+            // START INIT KeyFolder TAB
             var keyFolder = ini.Read(KEY_FOLDER);
             if(keyFolder==null || keyFolder.Length==0)
             {
@@ -67,18 +71,46 @@ namespace CryptOneService
                 keyFolderEdit.Enabled = true;
                 keyFolderEdit.Text = keyFolder;
             }
-
             updateKeyStatus();
+            // END INIT KeyFolder TAB
 
+            // START INIT folders TAB
+            foldersList.Items.Clear();
+            int index = 0;
+            while (true)
+            {
+                string key = MONITOREDFOLDER_KEY + index;
+                var monitoredFolder = ini.Read(key);
+
+                if (monitoredFolder != null && monitoredFolder.Length > 0)
+                {
+                    Debug.WriteLine("monitoredFolder [" + index + "] = [" + monitoredFolder + "]");
+
+                    string[] arr2 = new string[2];
+                    arr2[0] = "" + index;
+                    arr2[1] = monitoredFolder;
+                    foldersList.Items.Add(new ListViewItem(arr2));
+                }
+                else
+                {
+                    break;
+                }
+                index++;
+            } // while (true)
+            /*
             string currentFolder = Directory.GetCurrentDirectory();
-
             string[] arr = new string[2];
             arr[0] = "0";
             arr[1] = currentFolder;
             ListViewItem item = new ListViewItem(arr);
             foldersList.Items.Add(item);
 
-            int index = 0;
+            this.fileSystemWatcher1.Path = currentFolder;
+            */
+            // END INIT folders TAB
+
+            // START INIT cloudFolder TAB
+            index = 0;
             cloudsList.Items.Clear();
             while (true)
             {
@@ -99,14 +131,15 @@ namespace CryptOneService
                     arr1[3] = decodeFolder(cloudFolder);
                     ListViewItem item1 = new ListViewItem(arr1);
                     cloudsList.Items.Add(item1);
-
                 }
                 else
                 {
                     break;
                 }
                 index++;
-            }
+            } // while (true)
+            // END INIT cloudFolder TAB
+
 
         }
 
@@ -133,7 +166,15 @@ namespace CryptOneService
         {
             Debug.WriteLine("save changes to ini file");
             File.Delete(INI_FILENAME);
-            IniFile ini = new IniFile(INI_FILENAME);            
+
+            IniFile ini = new IniFile(INI_FILENAME);      
+            
+            for(int i = 0; i < foldersList.Items.Count; i++)
+            {
+                string key = MONITOREDFOLDER_KEY + i;
+                ini.Write(key, foldersList.Items[i].SubItems[1].Text, SECTION);
+            }
+
             for (int i = 0; i < cloudsList.Items.Count; i++)
             {
                 string key = CLOUDFOLDER_KEY + i;                
@@ -141,15 +182,12 @@ namespace CryptOneService
 
                 string descriptionKey = CLOUDDESCRIPTION_KEY + i;
                 ini.Write(descriptionKey, cloudsList.Items[i].SubItems[2].Text, SECTION);
-
             }
 
             if (this.setKeyFolderRadioButton.Checked)
             {
                 ini.Write(KEY_FOLDER, this.keyFolderEdit.Text, SECTION);
-            }
-
-            
+            }            
         }
 
         private void applyButton_Click(object sender, EventArgs e)
@@ -317,6 +355,45 @@ namespace CryptOneService
 
               // Do something while waiting for events
               System.Threading.Thread.Sleep(3000);
+        }
+
+        private void fileSystemWatcher1_Changed(object sender, FileSystemEventArgs e)
+        {
+            Debug.WriteLine("File changed in folder..");
+        }
+
+        private void addMonitoredFolderButton_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
+            DialogResult res = folderBrowserDialog1.ShowDialog();
+            if (res == DialogResult.OK)
+            {
+                string[] arr2 = new string[2];
+                arr2[0] = "" + foldersList.Items.Count;
+                arr2[1] = folderBrowserDialog1.SelectedPath;
+                foldersList.Items.Add(new ListViewItem(arr2));
+
+                applyButton.Enabled = true;
+            }
+        }
+
+        private void removeMonitoredFolderButton_Click(object sender, EventArgs e)
+        {
+            if (foldersList.SelectedItems.Count > 0)
+            {
+                for (int i = 0; i < foldersList.SelectedItems.Count; i++)
+                {
+                    ListViewItem item = foldersList.SelectedItems[i];
+                    Debug.WriteLine("deleting monitored folder #" + item.SubItems[0].Text);
+                    foldersList.Items.Remove(item);
+                    applyButton.Enabled = true;
+
+                }
+            }
+            else
+            {
+                Debug.WriteLine("Nothing selected");
+            }
         }
     }
 }
