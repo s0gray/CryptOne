@@ -20,6 +20,7 @@ namespace CryptOneService
 
         MonitoredFoldersContainer monitoredFoldersContainer;
         CloudFolderContainer cloudFolderContainer;
+        KeyStorageContainer keyStorageContainer;
         CryptoOne cryptoOne = new CryptoOne();
 
         Crypto crypto = new Crypto();
@@ -28,6 +29,7 @@ namespace CryptOneService
             InitializeComponent();
             monitoredFoldersContainer = new MonitoredFoldersContainer(this);
             cloudFolderContainer = new CloudFolderContainer();
+            keyStorageContainer = new KeyStorageContainer();
 
             Thread thread1 = new Thread(backgroundWorker1_DoWork);
             thread1.Start();
@@ -80,26 +82,19 @@ namespace CryptOneService
             return Convert.ToString(value, 2);
         }
 
+        /// <summary>
+        /// Initiliaze Form1
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Form1_Shown(object sender, EventArgs e)
         {
             IniFile ini = new IniFile();
             applyButton.Enabled = false;
 
             // START INIT KeyFolder TAB
-            var keyFolder = ini.Read(KEY_FOLDER);
-            if(keyFolder==null || keyFolder.Length==0)
-            {
-                Debug.WriteLine("Auto keyFolder");
-                autoDetectKeyFolderRadioButton.Select();
-                keyFolderEdit.Enabled = false;
-            } else
-            {
-                Debug.WriteLine("keyFolder = [" + keyFolder + "]");
-
-                setKeyFolderRadioButton.Select();
-                keyFolderEdit.Enabled = true;
-                keyFolderEdit.Text = keyFolder;
-            }
+            keyStorageContainer.load(ini);
+            showKeyTab();
             updateKeyStatus();
             // END INIT KeyFolder TAB
 
@@ -116,6 +111,23 @@ namespace CryptOneService
             startMainProcessing();
         }
 
+        private void showKeyTab()
+        {
+            if(keyStorageContainer.autodetectKeyStorage)
+            {
+                Debug.WriteLine("Auto keyFolder");
+                autoDetectKeyFolderRadioButton.Select();
+                keyFolderEdit.Enabled = false;
+            } else
+            {
+                Debug.WriteLine("keyFolder = [" + keyStorageContainer.getKeyFolder() + "]");
+
+                setKeyFolderRadioButton.Select();
+                keyFolderEdit.Enabled = true;
+                keyFolderEdit.Text = keyStorageContainer.getKeyFolder();
+            }
+        }
+
         private void startMainProcessing()
         {
             for (int index = 0; index < monitoredFoldersContainer.getCount(); index++)
@@ -125,9 +137,9 @@ namespace CryptOneService
                     bool present = isArchivePresentOnCloud(index, cloudIndex);
                     if (!present)
                     {
-                        Debug.WriteLine("Folder ["+index+"] not present on cloud ["+cloudIndex+"] - will upload");
+                        Debug.WriteLine("Folder ["+index+"] not present on cloud ["+cloudIndex+"] - will should upload");
 
-                        cryptoOne.push(monitoredFoldersContainer.get(index), cloudFolderContainer.get(cloudIndex)); // keyFolder
+                       // cryptoOne.push(monitoredFoldersContainer.get(index), keyFile, cloudFolderContainer.get(cloudIndex)); // keyFolder
                     }
                 }
             }
@@ -135,15 +147,8 @@ namespace CryptOneService
 
         private void autoDetectKeyFolderRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            if (autoDetectKeyFolderRadioButton.Checked)
-            {
-                keyFolderEdit.Enabled = false;
-            }
-            else
-            {
-                keyFolderEdit.Enabled = true;
+            onKeyStorageRadiobuttonClicked();
 
-            }
         }
 
         void saveChanges()
@@ -157,8 +162,10 @@ namespace CryptOneService
 
             if (this.setKeyFolderRadioButton.Checked)
             {
-                ini.Write(KEY_FOLDER, this.keyFolderEdit.Text, SECTION);
-            }            
+                //ini.Write(KEY_FOLDER, this.keyFolderEdit.Text, SECTION);
+                keyStorageContainer.setKeyFolder(this.keyFolderEdit.Text);
+            }     
+            keyStorageContainer.save(ini);
         }
 
         private void applyButton_Click(object sender, EventArgs e)
@@ -381,6 +388,26 @@ namespace CryptOneService
             string filename = folder.getCloudFileName();
             string cloudFileName = cloudFolderContainer.get(cloudIndex).fullPath + filename;
             return File.Exists(cloudFileName);
+        }
+
+        private void setKeyFolderRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            onKeyStorageRadiobuttonClicked();
+        }
+
+        void onKeyStorageRadiobuttonClicked()
+        {
+            if (autoDetectKeyFolderRadioButton.Checked)
+            {
+                keyFolderEdit.Enabled = false;
+                keyStorageContainer.setAutodetectKeyStorage(true, "");
+            }
+            else
+            {
+                keyStorageContainer.setAutodetectKeyStorage(false, keyFolderEdit.Text);
+                keyFolderEdit.Enabled = true;
+            }
+            applyButton.Enabled = true;
         }
     }
 }

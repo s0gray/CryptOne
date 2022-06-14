@@ -130,6 +130,7 @@
             this.setKeyFolderRadioButton.TabStop = true;
             this.setKeyFolderRadioButton.Text = "Specify folder";
             this.setKeyFolderRadioButton.UseVisualStyleBackColor = true;
+            this.setKeyFolderRadioButton.CheckedChanged += new System.EventHandler(this.setKeyFolderRadioButton_CheckedChanged);
             // 
             // autoDetectKeyFolderRadioButton
             // 
