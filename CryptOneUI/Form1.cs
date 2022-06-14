@@ -21,6 +21,8 @@ namespace CryptOneService
         MonitoredFoldersContainer monitoredFoldersContainer;
         CloudFolderContainer cloudFolderContainer;
         CryptoOne cryptoOne = new CryptoOne();
+
+        Crypto crypto = new Crypto();
         public Form1()
         {
             InitializeComponent();
@@ -29,6 +31,8 @@ namespace CryptOneService
 
             Thread thread1 = new Thread(backgroundWorker1_DoWork);
             thread1.Start();
+
+            crypto.selfTest();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -123,7 +127,7 @@ namespace CryptOneService
                     {
                         Debug.WriteLine("Folder ["+index+"] not present on cloud ["+cloudIndex+"] - will upload");
 
-                        cryptoOne.push(monitoredFoldersContainer.get(index), cloudFolderContainer.get(cloudIndex));
+                        cryptoOne.push(monitoredFoldersContainer.get(index), cloudFolderContainer.get(cloudIndex)); // keyFolder
                     }
                 }
             }

@@ -89,7 +89,7 @@ namespace CryptOneService
             var tgzPath = (tarArchive.RootPath + ".tgz").Replace('/', '\\');
 
             tarArchive.Close();
-            return tgzPath;
+            return targetDirectory + Path.GetFileName( tgzPath );
         }
     }
 
