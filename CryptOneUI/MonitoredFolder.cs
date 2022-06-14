@@ -31,7 +31,7 @@ namespace CryptOneService
         {
             string lastFolderName = Path.GetFileName(path);// Path.GetDirectoryName(path));
 
-            return lastFolderName + ".tar.gz";  
+            return lastFolderName;// + ".tar.gz";  
         }
 
         private void fileSystemWatcher_Changed(object sender, FileSystemEventArgs e)

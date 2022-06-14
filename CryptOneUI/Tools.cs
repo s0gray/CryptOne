@@ -8,6 +8,7 @@ using ICSharpCode.SharpZipLib.Tar;
 using ICSharpCode.SharpZipLib.Zip;
 
 using System.IO;
+using System.Diagnostics;
 
 namespace CryptOneService
 {
@@ -70,7 +71,7 @@ namespace CryptOneService
         using (var outStream = File.Create(Path.Combine(targetDirectory, tgzFileName)))
         using (var gzoStream = new GZipOutputStream(outStream))
         {
-            var tarArchive = TarArchive.CreateOutputTarArchive(gzoStream);
+            var tarArchive = TarArchive.CreateOutputTarArchive(gzoStream, Encoding.UTF8);
 
             // Note that the RootPath is currently case sensitive and must be forward slashes e.g. "c:/temp"
             // and must not end with a slash, otherwise cuts off first char of filename
@@ -79,14 +80,12 @@ namespace CryptOneService
             {
                 tarArchive.RootPath = tarArchive.RootPath.Remove(tarArchive.RootPath.Length - 1);
             }
-
             AddDirectoryFilesToTGZ(tarArchive, sourceDirectory);
 
             if (deleteSourceDirectoryUponCompletion)
             {
                 File.Delete(sourceDirectory);
             }
-
             var tgzPath = (tarArchive.RootPath + ".tgz").Replace('/', '\\');
 
             tarArchive.Close();
@@ -101,6 +100,7 @@ namespace CryptOneService
 
     private static void AddDirectoryFilesToTGZ(TarArchive tarArchive, string sourceDirectory, string currentDirectory)
     {
+    //    Debug.WriteLine("AddDirectoryFilesToTGZ src="+ sourceDirectory+" cur="+ currentDirectory);
         var pathToCurrentDirectory = Path.Combine(sourceDirectory, currentDirectory);
 
         // Write each file to the tgz.
