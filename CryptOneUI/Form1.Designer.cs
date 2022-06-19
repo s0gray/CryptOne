@@ -28,13 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "0",
             "Google Cloud",
             "~\\Google Drive"}, -1);
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.useButton = new System.Windows.Forms.Button();
+            this.initButton = new System.Windows.Forms.Button();
             this.removableList = new System.Windows.Forms.ListView();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
@@ -83,6 +85,8 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.useButton);
+            this.tabPage1.Controls.Add(this.initButton);
             this.tabPage1.Controls.Add(this.removableList);
             this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Controls.Add(this.keyStatusLabel);
@@ -99,6 +103,26 @@
             this.tabPage1.Text = "Key storage";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // useButton
+            // 
+            this.useButton.Location = new System.Drawing.Point(622, 225);
+            this.useButton.Name = "useButton";
+            this.useButton.Size = new System.Drawing.Size(112, 34);
+            this.useButton.TabIndex = 9;
+            this.useButton.Text = "Use";
+            this.useButton.UseVisualStyleBackColor = true;
+            this.useButton.Click += new System.EventHandler(this.useButton_Click);
+            // 
+            // initButton
+            // 
+            this.initButton.Location = new System.Drawing.Point(622, 185);
+            this.initButton.Name = "initButton";
+            this.initButton.Size = new System.Drawing.Size(112, 34);
+            this.initButton.TabIndex = 8;
+            this.initButton.Text = "Initialize storage";
+            this.initButton.UseVisualStyleBackColor = true;
+            this.initButton.Click += new System.EventHandler(this.initButton_Click);
+            // 
             // removableList
             // 
             this.removableList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -111,6 +135,7 @@
             this.removableList.TabIndex = 7;
             this.removableList.UseCompatibleStateImageBehavior = false;
             this.removableList.View = System.Windows.Forms.View.Details;
+            this.removableList.SelectedIndexChanged += new System.EventHandler(this.removableList_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
@@ -304,7 +329,7 @@
             this.cloudsList.FullRowSelect = true;
             this.cloudsList.GridLines = true;
             this.cloudsList.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1});
+            listViewItem2});
             this.cloudsList.Location = new System.Drawing.Point(6, 35);
             this.cloudsList.Name = "cloudsList";
             this.cloudsList.Size = new System.Drawing.Size(936, 197);
@@ -421,5 +446,7 @@
         private ListView removableList;
         private ColumnHeader columnHeader1;
         private ColumnHeader columnHeader2;
+        private Button useButton;
+        private Button initButton;
     }
 }

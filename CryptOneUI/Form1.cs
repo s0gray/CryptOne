@@ -17,12 +17,15 @@ namespace CryptOneService
         public const string CLOUDDESCRIPTION_KEY = "cloudDescription";
         public const string KEY_FILENAME = "key0001.ekey";
 
+        public const string STATUS_PRESENT = "Present";
+        public const string STATUS_ABSENT = "Absent";
+
         MonitoredFoldersContainer monitoredFoldersContainer;
         CloudFolderContainer cloudFolderContainer;
         KeyStorageContainer keyStorageContainer;
         CryptoOne cryptoOne = new CryptoOne();
 
-        Crypto crypto = new Crypto();
+
         public Form1()
         {
             InitializeComponent();
@@ -33,7 +36,6 @@ namespace CryptOneService
             Thread thread1 = new Thread(backgroundWorker1_DoWork);
             thread1.Start();
 
-            crypto.selfTest();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -107,6 +109,9 @@ namespace CryptOneService
 
             updateRemovableList();
             startMainProcessing();
+
+            this.useButton.Enabled = false;
+            this.initButton.Enabled = false;
         }
            
         private void updateRemovableListFromOtherThread()
@@ -122,9 +127,9 @@ namespace CryptOneService
                 string[] arr2 = new string[2];
                 arr2[0] = removable[i];
                 if (Tools.isKeyFileExistOnRemovableDrive(removable[i]))
-                    arr2[1] = "Present";
+                    arr2[1] = STATUS_PRESENT;
                 else
-                    arr2[1] = "Absent";
+                    arr2[1] = STATUS_ABSENT;
 
                 this.removableList.Invoke((MethodInvoker)delegate {
                     this.removableList.Items.Add(new ListViewItem(arr2));
@@ -444,6 +449,50 @@ namespace CryptOneService
                 keyFolderEdit.Enabled = true;
             }
             applyButton.Enabled = true;
+        }
+
+        private void removableList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(this.removableList.SelectedItems.Count==1)
+            {
+                ListViewItem selected = this.removableList.SelectedItems[0];
+                string drive = selected.SubItems[0].Text;
+                string status = selected.SubItems[1].Text;
+                Debug.WriteLine("[" + drive +"] "+status);
+
+                if(STATUS_PRESENT.Equals(status))
+                {
+                    initButton.Enabled = false;
+                    useButton.Enabled = true;
+                }
+                else
+                {
+                    initButton.Enabled = true;
+                    useButton.Enabled = false;
+                }
+            }
+        }
+
+        private void initButton_Click(object sender, EventArgs e)
+        {
+            PassForm form = new PassForm();
+            DialogResult result = form.ShowDialog();
+            Debug.WriteLine("result = " + result);
+            if(result == DialogResult.OK)
+            {
+                Debug.WriteLine("Entered password = " + form.password);
+                // generate and store key 
+                ListViewItem selected = this.removableList.SelectedItems[0];
+                string drive = selected.SubItems[0].Text;
+                cryptoOne.generateEncryptedKeyFile(drive, form.password);
+                // update UI
+                updateRemovableListFromOtherThread();
+            }
+        }
+
+        private void useButton_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

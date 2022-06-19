@@ -282,7 +282,6 @@ RetCode CryptOne::generateKeyWithPass(const std::string& fileName) {
     std::string outputFileName = getKeyFolder() + fileName;
 
   //  LOGGER("outputFileName [%s]", outputFileName.c_str());
-
     std::string secret;
     RetCode ret = cryptoGate.generateSecretKey(secret);
     ASSERTME(ret);

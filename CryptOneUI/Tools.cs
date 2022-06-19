@@ -66,7 +66,12 @@ namespace CryptOneService
          return File.Exists(keyFileName);
     }
 
-    public static string CreateTGZ(string sourceDirectory, string tgzFileName, string targetDirectory, bool deleteSourceDirectoryUponCompletion = false)
+        public static void WriteFile(byte[] data, string filename)
+        {
+            File.WriteAllBytes(filename, data);
+        }
+
+        public static string CreateTGZ(string sourceDirectory, string tgzFileName, string targetDirectory, bool deleteSourceDirectoryUponCompletion = false)
     {
         if (!tgzFileName.EndsWith(".tgz"))
         {
@@ -131,5 +136,13 @@ namespace CryptOneService
             AddDirectoryFilesToTGZ(tarArchive, sourceDirectory, directory);
         }
     }
+
+        public static byte[] concat(byte[] x, byte[] y)
+        {
+            var z = new byte[x.Length + y.Length];
+            x.CopyTo(z, 0);
+            y.CopyTo(z, x.Length);
+            return z;
+        }
 }
 }
