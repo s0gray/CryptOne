@@ -35,7 +35,6 @@ namespace CryptOneService
 
             Thread thread1 = new Thread(backgroundWorker1_DoWork);
             thread1.Start();
-
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -70,7 +69,8 @@ namespace CryptOneService
         public string getFolderStatus(MonitoredFolder monitoredFolder)
         {
             int value = 0;
-            for(int index = 0; index < cloudFolderContainer.getCount(); index++)
+            int nClouds = cloudFolderContainer.getCount();
+            for (int index = 0; index < nClouds; index++)
             {
                 bool present = this.isArchivePresentOnCloud(monitoredFolder, index);
                 if (present)
@@ -90,6 +90,8 @@ namespace CryptOneService
         {
             IniFile ini = new IniFile();
             applyButton.Enabled = false;
+            this.useButton.Enabled = false;
+            this.initButton.Enabled = false;
 
             // START INIT KeyFolder TAB
             keyStorageContainer.load(ini);
@@ -97,21 +99,19 @@ namespace CryptOneService
             updateKeyStatus();
             // END INIT KeyFolder TAB
 
-            // START INIT folders TAB
-            monitoredFoldersContainer.load(ini);
-            monitoredFoldersContainer.show(foldersList);
-            // END INIT folders TAB
 
             // START INIT cloudFolder TAB
             cloudFolderContainer.load(ini);
             cloudFolderContainer.show(cloudsList);
             // END INIT cloudFolder TAB
 
+            // START INIT folders TAB
+            monitoredFoldersContainer.load(ini);
+            monitoredFoldersContainer.show(foldersList);
+            // END INIT folders TAB
+
             updateRemovableList();
             startMainProcessing();
-
-            this.useButton.Enabled = false;
-            this.initButton.Enabled = false;
         }
            
         private void updateRemovableListFromOtherThread()
@@ -170,6 +170,15 @@ namespace CryptOneService
 
         private void startMainProcessing()
         {
+            string keyFolder = Tools.getKeyFolder();
+            if (keyFolder == null || keyFolder.Length == 0)
+            {
+                Debug.WriteLine("keyfolder not found");
+                return;
+            }
+            Debug.WriteLine("keyFolder = " + keyFolder);
+
+
             for (int index = 0; index < monitoredFoldersContainer.getCount(); index++)
             {
                 for (int cloudIndex = 0; cloudIndex < cloudFolderContainer.getCount(); cloudIndex++)
@@ -177,14 +186,26 @@ namespace CryptOneService
                     bool present = isArchivePresentOnCloud(index, cloudIndex);
                     if (!present)
                     {
-                        Debug.WriteLine("Folder ["+index+"] not present on cloud ["+cloudIndex+"] - will should upload");
+                        Log.Line("Folder ["+index+"] not present on cloud ["+cloudIndex+"] - will  upload");
 
-                       // cryptoOne.push(monitoredFoldersContainer.get(index), keyFile, cloudFolderContainer.get(cloudIndex)); // keyFolder
+                        string pass = getPass();
+                        cryptoOne.push(monitoredFoldersContainer.get(index), cloudFolderContainer.get(cloudIndex), keyFolder + Form1.KEY_FILENAME, pass);
+                    } else
+                    {
+                        Log.Line("Folder [" + index + "] present on cloud [" + cloudIndex + "] OK");
+
                     }
                 }
             }
         }
 
+        string pass = null;
+        string getPass()
+        {
+            if (pass != null) return pass;
+            pass = Tools.AskPassword();
+            return pass;
+        }
         private void autoDetectKeyFolderRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             onKeyStorageRadiobuttonClicked();
@@ -331,7 +352,6 @@ namespace CryptOneService
 
             updateRemovableListFromOtherThread();
         }
-
 
         private  void DeviceInsertedEvent(object sender, EventArrivedEventArgs e)
         {

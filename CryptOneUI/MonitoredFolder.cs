@@ -42,7 +42,7 @@ namespace CryptOneService
         // in which file this folder will be stored in cloud
         public string getCloudFileName()
         {      
-            return getArchiveFileName() + ".enc"; 
+            return getArchiveFileName() + ".tgz.enc"; 
         }
 
     }

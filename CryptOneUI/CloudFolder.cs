@@ -17,6 +17,9 @@ namespace CryptOneService
         {
             this.folder = folder;
             this.description = description;
+
+            if (!fullPath.EndsWith('\\'))
+                fullPath += "\\";
             this.fullPath = fullPath;
             this.index = index;
         }
@@ -26,6 +29,8 @@ namespace CryptOneService
             this.index = index;
             this.folder = cloudFolder;
             this.description = cloudFolderDescription;
+            if (!fullPath.EndsWith('\\'))
+                fullPath += "\\";
             this.fullPath = fullPath;
         }
     }
