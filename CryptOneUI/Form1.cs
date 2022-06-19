@@ -13,7 +13,6 @@ namespace CryptOneService
         public const string KEY_FOLDER = "keyFolder";
         public const string INI_FILENAME = "CryptOne.ini";
         public const string MONITOREDFOLDER_KEY = "monitoredFolder";
-
         public const string CLOUDFOLDER_KEY = "cloudFolder";
         public const string CLOUDDESCRIPTION_KEY = "cloudDescription";
         public const string KEY_FILENAME = "key0001.ekey";
@@ -69,7 +68,6 @@ namespace CryptOneService
         public string getFolderStatus(MonitoredFolder monitoredFolder)
         {
             int value = 0;
-
             for(int index = 0; index < cloudFolderContainer.getCount(); index++)
             {
                 bool present = this.isArchivePresentOnCloud(monitoredFolder, index);
@@ -78,7 +76,6 @@ namespace CryptOneService
                     value |= (1 << index);
                 }
             }
-
             return Convert.ToString(value, 2);
         }
 
@@ -108,9 +105,47 @@ namespace CryptOneService
             cloudFolderContainer.show(cloudsList);
             // END INIT cloudFolder TAB
 
+            updateRemovableList();
             startMainProcessing();
         }
+           
+        private void updateRemovableListFromOtherThread()
+        {
+            string[] removable = Tools.getRemovableDrives();
+            
+            this.removableList.Invoke((MethodInvoker)delegate {
+                this.removableList.Items.Clear();
+            });
 
+            for (int i = 0; i < removable.Length; i++)
+            {
+                string[] arr2 = new string[2];
+                arr2[0] = removable[i];
+                if (Tools.isKeyFileExistOnRemovableDrive(removable[i]))
+                    arr2[1] = "Present";
+                else
+                    arr2[1] = "Absent";
+
+                this.removableList.Invoke((MethodInvoker)delegate {
+                    this.removableList.Items.Add(new ListViewItem(arr2));
+                });
+            }
+        }
+        private void updateRemovableList()
+        {
+            string[] removable = Tools.getRemovableDrives();
+            this.removableList.Items.Clear();
+            for(int i=0; i< removable.Length; i++)
+            {
+                string[] arr2 = new string[2];
+                arr2[0] = removable[i];
+                if (Tools.isKeyFileExistOnRemovableDrive(removable[i]))
+                    arr2[1] = "Present";
+                else
+                    arr2[1] = "Absent";
+                this.removableList.Items.Add(new ListViewItem(arr2));
+            }
+        }
         private void showKeyTab()
         {
             if(keyStorageContainer.autodetectKeyStorage)
@@ -224,7 +259,6 @@ namespace CryptOneService
                 // todo detect changes
                 applyButton.Enabled = true;
             }
-
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -251,8 +285,12 @@ namespace CryptOneService
                 keyPath = keyFolderEdit.Text;
             }
             else
-            {
+            {   // auto-detect
                 keyPath = Tools.getKeyFolder();
+                if(keyPath==null || keyPath.Length == 0)
+                {
+                    return "Key file not found";//"No removable devices found";
+                }
             }
             Debug.WriteLine("keyPath = " + keyPath);
 
@@ -263,15 +301,13 @@ namespace CryptOneService
             {
                 return "Key file found at [" + keyFileName + "]";
             }
-            else
+                      
+            string msg = "Key file not found";
+            if (keyPath!=null && keyPath.Length > 0)
             {
-                string msg = "Key file not found";
-                if (keyPath.Length > 0)
-                {
-                    msg += " at [" + keyFileName + "]";
-                }
-                return msg;
+                msg += " at [" + keyFileName + "]";
             }
+            return msg;            
         }
 
         void updateKeyStatus()
@@ -287,6 +323,8 @@ namespace CryptOneService
                 // Running on the UI thread
                 keyStatusLabel.Text = msg;
             });
+
+            updateRemovableListFromOtherThread();
         }
 
 
@@ -299,7 +337,6 @@ namespace CryptOneService
                 // Debug.WriteLine(property.Name + " = " + property.Value);
              }*/
             updateKeyStatusFromOtherThread();
-
         }
 
         private  void DeviceRemovedEvent(object sender, EventArrivedEventArgs e)
@@ -329,7 +366,6 @@ namespace CryptOneService
               // Do something while waiting for events
               System.Threading.Thread.Sleep(3000);
         }
-
 
         private void addMonitoredFolderButton_Click(object sender, EventArgs e)
         {

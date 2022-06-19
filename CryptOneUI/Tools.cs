@@ -54,13 +54,17 @@ namespace CryptOneService
 
             for(int i=0; i< removable.Length; i++)
             {
-                string keyFileName = removable[i] + Form1.KEY_FILENAME;
-                if (File.Exists(keyFileName))
+                if (isKeyFileExistOnRemovableDrive(removable[i]))
                     return removable[i];
             }
             return "";
         }
 
+    public static bool isKeyFileExistOnRemovableDrive(string drive)
+    {
+         string keyFileName = drive + Form1.KEY_FILENAME;
+         return File.Exists(keyFileName);
+    }
 
     public static string CreateTGZ(string sourceDirectory, string tgzFileName, string targetDirectory, bool deleteSourceDirectoryUponCompletion = false)
     {

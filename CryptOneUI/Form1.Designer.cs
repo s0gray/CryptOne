@@ -35,6 +35,10 @@
             "~\\Google Drive"}, -1);
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.removableList = new System.Windows.Forms.ListView();
+            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            this.label3 = new System.Windows.Forms.Label();
             this.keyStatusLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.keyFolderEdit = new System.Windows.Forms.TextBox();
@@ -79,6 +83,8 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.removableList);
+            this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Controls.Add(this.keyStatusLabel);
             this.tabPage1.Controls.Add(this.label2);
             this.tabPage1.Controls.Add(this.keyFolderEdit);
@@ -93,11 +99,43 @@
             this.tabPage1.Text = "Key storage";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // removableList
+            // 
+            this.removableList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+            this.removableList.FullRowSelect = true;
+            this.removableList.Location = new System.Drawing.Point(191, 185);
+            this.removableList.Name = "removableList";
+            this.removableList.Size = new System.Drawing.Size(425, 92);
+            this.removableList.TabIndex = 7;
+            this.removableList.UseCompatibleStateImageBehavior = false;
+            this.removableList.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Drive";
+            this.columnHeader1.Width = 100;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Key";
+            this.columnHeader2.Width = 100;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(15, 185);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(156, 25);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Removable drives:";
+            // 
             // keyStatusLabel
             // 
             this.keyStatusLabel.AutoSize = true;
             this.keyStatusLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.keyStatusLabel.Location = new System.Drawing.Point(142, 166);
+            this.keyStatusLabel.Location = new System.Drawing.Point(185, 134);
             this.keyStatusLabel.Name = "keyStatusLabel";
             this.keyStatusLabel.Size = new System.Drawing.Size(166, 25);
             this.keyStatusLabel.TabIndex = 5;
@@ -106,7 +144,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 166);
+            this.label2.Location = new System.Drawing.Point(43, 133);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(126, 25);
             this.label2.TabIndex = 4;
@@ -114,7 +152,7 @@
             // 
             // keyFolderEdit
             // 
-            this.keyFolderEdit.Location = new System.Drawing.Point(342, 85);
+            this.keyFolderEdit.Location = new System.Drawing.Point(386, 40);
             this.keyFolderEdit.Name = "keyFolderEdit";
             this.keyFolderEdit.Size = new System.Drawing.Size(235, 31);
             this.keyFolderEdit.TabIndex = 3;
@@ -123,7 +161,7 @@
             // setKeyFolderRadioButton
             // 
             this.setKeyFolderRadioButton.AutoSize = true;
-            this.setKeyFolderRadioButton.Location = new System.Drawing.Point(142, 85);
+            this.setKeyFolderRadioButton.Location = new System.Drawing.Point(186, 40);
             this.setKeyFolderRadioButton.Name = "setKeyFolderRadioButton";
             this.setKeyFolderRadioButton.Size = new System.Drawing.Size(146, 29);
             this.setKeyFolderRadioButton.TabIndex = 2;
@@ -135,7 +173,7 @@
             // autoDetectKeyFolderRadioButton
             // 
             this.autoDetectKeyFolderRadioButton.AutoSize = true;
-            this.autoDetectKeyFolderRadioButton.Location = new System.Drawing.Point(142, 41);
+            this.autoDetectKeyFolderRadioButton.Location = new System.Drawing.Point(186, 86);
             this.autoDetectKeyFolderRadioButton.Name = "autoDetectKeyFolderRadioButton";
             this.autoDetectKeyFolderRadioButton.Size = new System.Drawing.Size(263, 29);
             this.autoDetectKeyFolderRadioButton.TabIndex = 1;
@@ -147,7 +185,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 42);
+            this.label1.Location = new System.Drawing.Point(49, 42);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(108, 25);
             this.label1.TabIndex = 0;
@@ -379,5 +417,9 @@
         private Label label2;
         private ColumnHeader statusColumn;
         private ColumnHeader cloudFileColumn;
+        private Label label3;
+        private ListView removableList;
+        private ColumnHeader columnHeader1;
+        private ColumnHeader columnHeader2;
     }
 }
