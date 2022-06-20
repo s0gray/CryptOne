@@ -41,8 +41,6 @@ namespace CryptOneService
             if (encryptedTgz != null && encryptedTgz.Length > 0)
             {
                 string fullTarget = cloudFolder.fullPath + targetFilename;
-                Log.Line("Copy ["+ encryptedTgz + "] to ["+ fullTarget + "]");
-
                 try
                 {                    
                     Tools.copyFile(encryptedTgz, fullTarget);
