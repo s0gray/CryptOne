@@ -22,12 +22,12 @@ namespace CryptOneService
             var keyFolder = ini.Read(Form1.KEY_FOLDER);
             if (keyFolder == null || keyFolder.Length == 0)
             {
-                Debug.WriteLine("Auto keyFolder");
+               // Debug.WriteLine("Auto keyFolder");
                 autodetectKeyStorage = true;
             }
             else
             {
-                Debug.WriteLine("keyFolder = [" + keyFolder + "]");
+               // Debug.WriteLine("keyFolder = [" + keyFolder + "]");
                 autodetectKeyStorage = false;
                 keyStorage = new KeyStorage(keyFolder);
 

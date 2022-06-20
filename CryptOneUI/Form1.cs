@@ -25,7 +25,6 @@ namespace CryptOneService
         KeyStorageContainer keyStorageContainer;
         CryptoOne cryptoOne = new CryptoOne();
 
-
         public Form1()
         {
             InitializeComponent();
@@ -90,6 +89,7 @@ namespace CryptOneService
         {
             IniFile ini = new IniFile();
             applyButton.Enabled = false;
+            pushButton.Enabled = false;
             this.useButton.Enabled = false;
             this.initButton.Enabled = false;
 
@@ -176,8 +176,7 @@ namespace CryptOneService
                 Debug.WriteLine("keyfolder not found");
                 return;
             }
-            Debug.WriteLine("keyFolder = " + keyFolder);
-
+            Log.Line("keyFolder = " + keyFolder);
 
             for (int index = 0; index < monitoredFoldersContainer.getCount(); index++)
             {
@@ -257,18 +256,18 @@ namespace CryptOneService
         {
             if (cloudsList.SelectedItems.Count == 0)
             {
-                Debug.WriteLine("Nothing selected");
+                Log.Line("Nothing selected");
                 return;
             }
 
             if (cloudsList.SelectedItems.Count > 1)
             {
-                Debug.WriteLine("Select only one row to edit");
+                Log.Line("Select only one row to edit");
                 return;
             }
       
             ListViewItem item = cloudsList.SelectedItems[0];
-            Debug.WriteLine("edit cloud #" + item.SubItems[0].Text);
+            Log.Line("edit cloud #" + item.SubItems[0].Text);
 
             // edit
             EditCloudFolder dlg = new EditCloudFolder();
@@ -303,7 +302,7 @@ namespace CryptOneService
 
         string getKeyStatusText()
         {
-            Debug.WriteLine("getKeyStatusText");
+            //Debug.WriteLine("getKeyStatusText");
 
             string keyPath = "";
             if (keyFolderEdit.Enabled)
@@ -315,7 +314,7 @@ namespace CryptOneService
                 keyPath = Tools.getKeyFolder();
                 if(keyPath==null || keyPath.Length == 0)
                 {
-                    return "Key file not found";//"No removable devices found";
+                    return "Key file not found";
                 }
             }
             Debug.WriteLine("keyPath = " + keyPath);
@@ -512,6 +511,39 @@ namespace CryptOneService
 
         private void useButton_Click(object sender, EventArgs e)
         {
+
+        }
+
+        private void foldersList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(foldersList.SelectedItems.Count==1)
+            {
+                this.pushButton.Enabled = true;
+            } else
+            {
+                this.pushButton.Enabled = false;
+            }
+        }
+
+        private void pushButton_Click(object sender, EventArgs e)
+        {
+            string keyFolder = Tools.getKeyFolder();
+            if (keyFolder == null || keyFolder.Length == 0)
+            {
+                Log.Line("keyfolder not found");
+                return;
+            }
+            Log.Line("keyFolder = " + keyFolder);
+
+            ListViewItem item = foldersList.SelectedItems[0];
+            Log.Line("push " + item.SubItems[1].Text);
+
+            string pass = getPass();
+
+            for (int cloudIndex = 0; cloudIndex < cloudFolderContainer.getCount(); cloudIndex++)
+            {
+                cryptoOne.push(monitoredFoldersContainer.get(item.Index), cloudFolderContainer.get(cloudIndex), keyFolder + Form1.KEY_FILENAME, pass);
+            }
 
         }
     }

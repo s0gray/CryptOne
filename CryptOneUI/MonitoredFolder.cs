@@ -31,12 +31,12 @@ namespace CryptOneService
         {
             string lastFolderName = Path.GetFileName(path);// Path.GetDirectoryName(path));
 
-            return lastFolderName;// + ".tar.gz";  
+            return lastFolderName;
         }
 
         private void fileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            Debug.WriteLine("File changed in folder ["+this.path+"]");
+            Log.Line("File changed in folder ["+this.path+"]");
         }
 
         // in which file this folder will be stored in cloud

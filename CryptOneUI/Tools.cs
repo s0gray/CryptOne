@@ -177,5 +177,17 @@ namespace CryptOneService
             }
             return "";
         }
+
+        // copy file and overwrite if needed
+        public static void copyFile(string from, string to)
+        {
+            Log.Line("COPY ["+from+"] -> ["+to+"]");
+            if(File.Exists(to))
+            {
+                File.Delete(to);
+            }
+            File.Copy(from, to);
+
+        }
     }
 }

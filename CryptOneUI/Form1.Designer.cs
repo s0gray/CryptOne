@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "0",
             "Google Cloud",
@@ -48,6 +48,7 @@
             this.autoDetectKeyFolderRadioButton = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.pushButton = new System.Windows.Forms.Button();
             this.removeMonitoredFolderButton = new System.Windows.Forms.Button();
             this.addMonitoredFolderButton = new System.Windows.Forms.Button();
             this.foldersList = new System.Windows.Forms.ListView();
@@ -219,6 +220,7 @@
             // tabPage2
             // 
             this.tabPage2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tabPage2.Controls.Add(this.pushButton);
             this.tabPage2.Controls.Add(this.removeMonitoredFolderButton);
             this.tabPage2.Controls.Add(this.addMonitoredFolderButton);
             this.tabPage2.Controls.Add(this.foldersList);
@@ -229,6 +231,16 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Folders";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // pushButton
+            // 
+            this.pushButton.Location = new System.Drawing.Point(787, 252);
+            this.pushButton.Name = "pushButton";
+            this.pushButton.Size = new System.Drawing.Size(112, 34);
+            this.pushButton.TabIndex = 3;
+            this.pushButton.Text = "Push";
+            this.pushButton.UseVisualStyleBackColor = true;
+            this.pushButton.Click += new System.EventHandler(this.pushButton_Click);
             // 
             // removeMonitoredFolderButton
             // 
@@ -265,6 +277,7 @@
             this.foldersList.TabIndex = 0;
             this.foldersList.UseCompatibleStateImageBehavior = false;
             this.foldersList.View = System.Windows.Forms.View.Details;
+            this.foldersList.SelectedIndexChanged += new System.EventHandler(this.foldersList_SelectedIndexChanged);
             // 
             // folderIdColumn
             // 
@@ -329,7 +342,7 @@
             this.cloudsList.FullRowSelect = true;
             this.cloudsList.GridLines = true;
             this.cloudsList.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem2});
+            listViewItem1});
             this.cloudsList.Location = new System.Drawing.Point(6, 35);
             this.cloudsList.Name = "cloudsList";
             this.cloudsList.Size = new System.Drawing.Size(936, 197);
@@ -448,5 +461,6 @@
         private ColumnHeader columnHeader2;
         private Button useButton;
         private Button initButton;
+        private Button pushButton;
     }
 }

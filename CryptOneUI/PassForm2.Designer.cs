@@ -1,6 +1,6 @@
 ﻿namespace CryptOneService
 {
-    partial class PassForm
+    partial class PassForm2
     {
         /// <summary>
         /// Required designer variable.
@@ -28,39 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.pass1Edit = new System.Windows.Forms.TextBox();
-            this.pass2Edit = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.passEdit = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(28, 52);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(192, 25);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Please enter password:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(28, 102);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(214, 25);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Please re-enter password:";
             // 
             // okButton
             // 
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okButton.Location = new System.Drawing.Point(283, 185);
+            this.okButton.Location = new System.Drawing.Point(188, 144);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(112, 34);
-            this.okButton.TabIndex = 2;
+            this.okButton.TabIndex = 0;
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
@@ -68,43 +48,43 @@
             // cancelButton
             // 
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(433, 185);
+            this.cancelButton.Location = new System.Drawing.Point(333, 144);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(112, 34);
-            this.cancelButton.TabIndex = 3;
+            this.cancelButton.TabIndex = 1;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
+            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
-            // pass1Edit
+            // label1
             // 
-            this.pass1Edit.Location = new System.Drawing.Point(283, 53);
-            this.pass1Edit.Name = "pass1Edit";
-            this.pass1Edit.PasswordChar = '*';
-            this.pass1Edit.Size = new System.Drawing.Size(262, 31);
-            this.pass1Edit.TabIndex = 0;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(29, 75);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(192, 25);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Please enter password:";
             // 
-            // pass2Edit
+            // passEdit
             // 
-            this.pass2Edit.Location = new System.Drawing.Point(283, 96);
-            this.pass2Edit.Name = "pass2Edit";
-            this.pass2Edit.PasswordChar = '*';
-            this.pass2Edit.Size = new System.Drawing.Size(262, 31);
-            this.pass2Edit.TabIndex = 5;
+            this.passEdit.Location = new System.Drawing.Point(249, 69);
+            this.passEdit.Name = "passEdit";
+            this.passEdit.PasswordChar = '*';
+            this.passEdit.Size = new System.Drawing.Size(196, 31);
+            this.passEdit.TabIndex = 0;
             // 
-            // PassForm
+            // PassForm2
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(573, 242);
-            this.Controls.Add(this.pass2Edit);
-            this.Controls.Add(this.pass1Edit);
+            this.ClientSize = new System.Drawing.Size(483, 200);
+            this.Controls.Add(this.passEdit);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Name = "PassForm";
-            this.Text = "Enter password for key encryption";
+            this.Name = "PassForm2";
+            this.Text = "CryptoOne";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -112,11 +92,9 @@
 
         #endregion
 
-        private Label label1;
-        private Label label2;
         private Button okButton;
         private Button cancelButton;
-        private TextBox pass1Edit;
-        private TextBox pass2Edit;
+        private Label label1;
+        private TextBox passEdit;
     }
 }
