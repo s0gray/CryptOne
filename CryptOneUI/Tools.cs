@@ -206,6 +206,23 @@ namespace CryptOneService
             File.Copy(from, to);
         }
 
+        // do not copy if target hash is same as source
+        public static void smartCopyFile(string src, string target)
+        {
+            string srcHash = Tools.calculateFileHash(src);
+            smartCopyFile(src, srcHash, target);
+        }
+        public static void smartCopyFile(string src, string srcHash, string target)
+        {
+            string dstHash = Tools.calculateFileHash(target);
+
+            if (srcHash != null && dstHash != null && srcHash.Equals(dstHash))
+            {
+                Log.Line("target file is same as source - do not copy");
+                return;
+            }
+            copyFile(src, target);
+        }
         public static string calculateFolderHash(string path)
         {
             string []files = getFilesRecursively(path);

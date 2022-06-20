@@ -15,6 +15,7 @@ namespace CryptOneService
         public const string MONITOREDFOLDER_KEY = "monitoredFolder";
         public const string CLOUDFOLDER_KEY = "cloudFolder";
         public const string CLOUDDESCRIPTION_KEY = "cloudDescription";
+        public const string TEMP_DIR_KEY = "tempDir";
         public const string KEY_FILENAME = "key0001.ekey";
 
         public const string STATUS_PRESENT = "Present";
@@ -41,29 +42,6 @@ namespace CryptOneService
             this.Close();
         }
 
-        private void removeCloudButton_Click(object sender, EventArgs e)
-        {
-            if (cloudsList.SelectedItems.Count > 0)
-            {
-                int deletedCount = 0;
-                for (int i = 0; i < cloudsList.SelectedItems.Count; i++)
-                {
-                    ListViewItem item = cloudsList.SelectedItems[i];
-                    Debug.WriteLine("deleting cloud folder #" + item.SubItems[0].Text);
-
-                    int index = int.Parse(item.SubItems[0].Text);
-                    cloudFolderContainer.remove(index - deletedCount);
-
-                    deletedCount++;
-                    applyButton.Enabled = true;
-                }
-                cloudFolderContainer.show( cloudsList );
-            }
-            else
-            {
-                Debug.WriteLine("Nothing selected");
-            }
-        }
 
         public string getFolderStatus(MonitoredFolder monitoredFolder)
         {
@@ -93,12 +71,21 @@ namespace CryptOneService
             this.useButton.Enabled = false;
             this.initButton.Enabled = false;
 
+            string tmpDir = ini.Read(TEMP_DIR_KEY);
+            if(tmpDir != null && tmpDir.Length>0)
+            {
+                CryptoOne.tempFolder = tmpDir;
+            } else
+            {
+                CryptoOne.tempFolder = Path.GetTempPath();
+            }
+            this.tempFolderEdit.Text = CryptoOne.tempFolder;
+
             // START INIT KeyFolder TAB
             keyStorageContainer.load(ini);
             showKeyTab();
             updateKeyStatus();
             // END INIT KeyFolder TAB
-
 
             // START INIT cloudFolder TAB
             cloudFolderContainer.load(ini);
@@ -212,6 +199,8 @@ namespace CryptOneService
             IniFile ini = new IniFile(INI_FILENAME);
             monitoredFoldersContainer.save(ini);
             cloudFolderContainer.save(ini);
+
+            ini.Write(TEMP_DIR_KEY, CryptoOne.tempFolder);
 
             if (this.setKeyFolderRadioButton.Checked)
             {
@@ -535,7 +524,40 @@ namespace CryptOneService
             {
                 cryptoOne.push(monitoredFoldersContainer.get(item.Index), cloudFolderContainer.get(cloudIndex), keyFolder + Form1.KEY_FILENAME);
             }
+        }
+        private void removeCloudButton_Click(object sender, EventArgs e)
+        {
+            if (cloudsList.SelectedItems.Count > 0)
+            {
+                int deletedCount = 0;
+                for (int i = 0; i < cloudsList.SelectedItems.Count; i++)
+                {
+                    ListViewItem item = cloudsList.SelectedItems[i];
+                    Debug.WriteLine("deleting cloud folder #" + item.SubItems[0].Text);
 
+                    int index = int.Parse(item.SubItems[0].Text);
+                    cloudFolderContainer.remove(index - deletedCount);
+
+                    deletedCount++;
+                    applyButton.Enabled = true;
+                }
+                cloudFolderContainer.show(cloudsList);
+            }
+            else
+            {
+                Debug.WriteLine("Nothing selected");
+            }
+        }
+
+        private void browseTempFolderButton_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
+            DialogResult res = folderBrowserDialog1.ShowDialog();
+            if (res == DialogResult.OK)
+            {
+                tempFolderEdit.Text = folderBrowserDialog1.SelectedPath;
+                CryptoOne.tempFolder = tempFolderEdit.Text;
+            }
         }
     }
 }

@@ -64,13 +64,18 @@
             this.localFolderColumn = new System.Windows.Forms.ColumnHeader();
             this.cloudFolderDescriptionColumn = new System.Windows.Forms.ColumnHeader();
             this.fullPathColumn = new System.Windows.Forms.ColumnHeader();
+            this.tabConfigPage = new System.Windows.Forms.TabPage();
+            this.tempFolderEdit = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.applyButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
+            this.browseTempFolderButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.tabConfigPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -78,6 +83,7 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabConfigPage);
             this.tabControl1.Location = new System.Drawing.Point(28, 22);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -371,6 +377,35 @@
             this.fullPathColumn.Text = "Full path";
             this.fullPathColumn.Width = 400;
             // 
+            // tabConfigPage
+            // 
+            this.tabConfigPage.Controls.Add(this.browseTempFolderButton);
+            this.tabConfigPage.Controls.Add(this.tempFolderEdit);
+            this.tabConfigPage.Controls.Add(this.label4);
+            this.tabConfigPage.Location = new System.Drawing.Point(4, 34);
+            this.tabConfigPage.Name = "tabConfigPage";
+            this.tabConfigPage.Padding = new System.Windows.Forms.Padding(3);
+            this.tabConfigPage.Size = new System.Drawing.Size(948, 304);
+            this.tabConfigPage.TabIndex = 3;
+            this.tabConfigPage.Text = "Config";
+            this.tabConfigPage.UseVisualStyleBackColor = true;
+            // 
+            // tempFolderEdit
+            // 
+            this.tempFolderEdit.Location = new System.Drawing.Point(184, 45);
+            this.tempFolderEdit.Name = "tempFolderEdit";
+            this.tempFolderEdit.Size = new System.Drawing.Size(453, 31);
+            this.tempFolderEdit.TabIndex = 1;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(19, 47);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(152, 25);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Temporary folder:";
+            // 
             // button2
             // 
             this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
@@ -403,6 +438,16 @@
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
+            // browseTempFolderButton
+            // 
+            this.browseTempFolderButton.Location = new System.Drawing.Point(696, 45);
+            this.browseTempFolderButton.Name = "browseTempFolderButton";
+            this.browseTempFolderButton.Size = new System.Drawing.Size(112, 34);
+            this.browseTempFolderButton.TabIndex = 2;
+            this.browseTempFolderButton.Text = "Browse";
+            this.browseTempFolderButton.UseVisualStyleBackColor = true;
+            this.browseTempFolderButton.Click += new System.EventHandler(this.browseTempFolderButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
@@ -422,6 +467,8 @@
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
+            this.tabConfigPage.ResumeLayout(false);
+            this.tabConfigPage.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -462,5 +509,9 @@
         private Button useButton;
         private Button initButton;
         private Button pushButton;
+        private TabPage tabConfigPage;
+        private TextBox tempFolderEdit;
+        private Label label4;
+        private Button browseTempFolderButton;
     }
 }

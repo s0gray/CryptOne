@@ -10,7 +10,7 @@ namespace CryptOneService
     public class CryptoOne
     {
         public Crypto crypto = new Crypto();
-        public static string tempFolder = Path.GetTempPath();
+        public static string tempFolder = null;
 
         public static string DIR_HASH_KEY = "dirHash";
         public static string TGZ_HASH_KEY = "tgzHash";
@@ -47,6 +47,7 @@ namespace CryptOneService
             bool reuseExistingArchive = false;
             bool reuseExistingEncryptedArchive = false;
             string encryptedTgz = "";
+            string encTgzHash = null;
 
             if (existingInfoFile != null)
             {
@@ -69,10 +70,10 @@ namespace CryptOneService
                         string oldEncrpytedArchiveHash = existingInfoFile[ENC_HASH_KEY];
                         Log.Line("Old encrypted archive hash is " + oldEncrpytedArchiveHash);
 
-                        string exsistingEncryptedArchiveHash = Tools.calculateFileHash(monitoredFolder.getFullEncryptedArchiveFileName());
-                        Log.Line("Existing encrypted archive hash is " + exsistingEncryptedArchiveHash);
+                        encTgzHash = Tools.calculateFileHash(monitoredFolder.getFullEncryptedArchiveFileName());
+                        Log.Line("Existing encrypted archive hash is " + encTgzHash);
 
-                        if (exsistingEncryptedArchiveHash != null && exsistingEncryptedArchiveHash.Equals(oldEncrpytedArchiveHash))
+                        if (encTgzHash != null && encTgzHash.Equals(oldEncrpytedArchiveHash))
                         {
                             Log.Line("Encrypted archive not changed");
                             reuseExistingEncryptedArchive = true;
@@ -101,7 +102,7 @@ namespace CryptOneService
 
                 string tgzHash = Tools.calculateFileHash(tgzFile);
                 Log.Line("Hash of TGZ is " + tgzHash);
-                string encTgzHash = Tools.calculateFileHash(encryptedTgz);
+                encTgzHash = Tools.calculateFileHash(encryptedTgz);
                 Log.Line("Hash of encTGZ is " + encTgzHash);
 
                 var info = new Dictionary<string, string>();
@@ -112,16 +113,16 @@ namespace CryptOneService
                 Tools.createInfoFile(infoFilename, info);
             }
 
-
             string targetFilename = Path.GetFileName(encryptedTgz);
             Log.Line("targetFilename = " + targetFilename);
+
             // upload
             if (encryptedTgz != null && encryptedTgz.Length > 0)
             {
                 string fullTarget = cloudFolder.fullPath + targetFilename;
                 try
                 {                    
-                    Tools.copyFile(encryptedTgz, fullTarget);
+                    Tools.smartCopyFile(encryptedTgz, encTgzHash, fullTarget);
                 } catch(IOException e)
                 {
                     Log.Line("Error during copy: " + e.ToString());
