@@ -52,12 +52,21 @@ namespace CryptOneService
                 return "";
             }
 
-            for(int i=0; i< removable.Length; i++)
+            for(int i=0; i < removable.Length; i++)
             {
                 if (isKeyFileExistOnRemovableDrive(removable[i]))
                     return removable[i];
             }
             return "";
+        }
+
+        public static void checkAndCreateIniFile()
+        {
+            if(!Directory.Exists(Form1.appDataFolder))
+            {
+                Directory.CreateDirectory(Form1.appDataFolder);
+                Log.Line("Creating app folder " + Form1.appDataFolder);
+            }
         }
 
         public static bool isKeyFileExistOnRemovableDrive(string drive)

@@ -23,13 +23,16 @@ namespace CryptOneService
 
         public static string cloudStorageFolder = "CryptOne";
 
+        public static string AppName = "CryptOne";
 
         MonitoredFoldersContainer monitoredFoldersContainer;
         CloudFolderContainer cloudFolderContainer;
         KeyStorageContainer keyStorageContainer;
 
         CryptoOne cryptoOne = new CryptoOne();
+        public static string appDataFolder =  Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\" + Form1.AppName;
 
+        static string IniFileName = Form1.appDataFolder + "\\" + AppName + ".ini";
         public Form1()
         {
             InitializeComponent();
@@ -39,6 +42,8 @@ namespace CryptOneService
 
             Thread thread1 = new Thread(backgroundWorker1_DoWork);
             thread1.Start();
+
+            Tools.checkAndCreateIniFile();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -47,21 +52,6 @@ namespace CryptOneService
         }
 
 
-        public string getFolderStatus(MonitoredFolder monitoredFolder)
-        {
-            int value = 0;
-            int nClouds = cloudFolderContainer.getCount();
-            for (int index = 0; index < nClouds; index++)
-            {
-                bool present = this.isArchivePresentOnCloud(monitoredFolder, index);
-                if (present)
-                {
-                    value |= (1 << index);
-                }
-            }
-            return Convert.ToString(value, 2);
-        }
-
         /// <summary>
         /// Initiliaze Form1
         /// </summary>
@@ -69,7 +59,7 @@ namespace CryptOneService
         /// <param name="e"></param>
         private void Form1_Shown(object sender, EventArgs e)
         {
-            IniFile ini = new IniFile();
+            IniFile ini = new IniFile(IniFileName);
             applyButton.Enabled = false;
             pushButton.Enabled = false;
             this.useButton.Enabled = false;
@@ -246,15 +236,13 @@ namespace CryptOneService
             Debug.WriteLine("save changes to ini file");
             File.Delete(INI_FILENAME);
 
-            IniFile ini = new IniFile(INI_FILENAME);
+            IniFile ini = new IniFile(IniFileName);
             monitoredFoldersContainer.save(ini);
             cloudFolderContainer.save(ini);
-
             ini.Write(TEMP_DIR_KEY, CryptoOne.tempFolder);
 
             if (this.setKeyFolderRadioButton.Checked)
             {
-                //ini.Write(KEY_FOLDER, this.keyFolderEdit.Text, SECTION);
                 keyStorageContainer.setKeyFolder(this.keyFolderEdit.Text);
             }     
             keyStorageContainer.save(ini);

@@ -2,7 +2,7 @@
    <Product Id="*" UpgradeCode="71345678-7634-9234-1834-101111511741" 
                 Name="CryptOne" 
 		Version="1.0.0" 
-		Manufacturer="sergey Salata" 
+		Manufacturer="Sergey Salata" 
 		Language="1033" Codepage="1252">
 
       <Package InstallerVersion="200" Compressed="yes" Comments="Windows Installer Package" InstallPrivileges="elevated"
