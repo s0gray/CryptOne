@@ -1,0 +1,153 @@
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+   <Product Id="*" UpgradeCode="71345678-7634-9234-1834-101111511741" 
+                Name="CryptOne" 
+		Version="1.0.0" 
+		Manufacturer="sergey Salata" 
+		Language="1033" Codepage="1252">
+
+      <Package InstallerVersion="200" Compressed="yes" Comments="Windows Installer Package" InstallPrivileges="elevated"
+	     InstallScope="perMachine" Platform="x64"
+	/>
+
+   <Condition Message="This application is only supported on Windows 7,  or higher.">
+    <![CDATA[Installed OR (VersionNT >= 601)]]>
+   </Condition>
+	<Icon Id="c1.ico" SourceFile="c1.ico" />
+
+
+      <Media Id="1" Cabinet="product.cab" EmbedCab="yes"/>
+
+      <Directory Id="TARGETDIR" Name="SourceDir">
+      
+
+        <Directory Id="ProgramFiles64Folder">	        
+                <Directory Id="INSTALLDIR" Name="CryptOne">
+                    <Component Id="ApplicationFiles" Guid="82345678-8234-1234-1234-422230622222" Win64="yes">
+
+                        <File Id="AppFile1" Source="../bin/Release/net6.0-windows/publish/CryptOneService.dll"/>
+                        <File Id="AppFile2" Source="../bin/Release/net6.0-windows/publish/CryptOneService.deps.json"/>
+                        <File Id="AppFile3" Source="../bin/Release/net6.0-windows/publish/CryptOneService.runtimeconfig.json"/>
+                        <File Id="AppFile4" Source="../bin/Release/net6.0-windows/publish/BouncyCastle.Crypto.dll"/>
+                        <File Id="AppFile5" Source="../bin/Release/net6.0-windows/publish/ICSharpCode.SharpZipLib.dll"/>
+                        <File Id="AppFile6" Source="../bin/Release/net6.0-windows/publish/System.Management.dll"/>
+
+                        <File Id="AppFile11" Source="../bin/Release/net6.0-windows/publish/CryptOneService.exe" KeyPath="yes">
+                                    <Shortcut Id="startMenuShotcut" Directory="ApplicationProgramsFolder"
+                                                Name="CryptOne" WorkingDirectory="INSTALLDIR" Advertise="yes" 
+                                Icon ="c1.ico"   />
+                        </File>
+
+
+                
+                        <RemoveFile Id="PurgeAppFolder" Name="*.*" On="uninstall" />
+                        <RemoveFolder Id="ProgramMenuDir" Directory="ApplicationProgramsFolder" On="uninstall"/>	
+                    </Component>
+
+                        <Directory Id="SubFolder1" Name="runtimes"> 
+                            <Directory Id="SubFolder2" Name="win"> 
+                            <Directory Id="SubFolder3" Name="lib"> 
+                                <Directory Id="SubFolder4" Name="net6.0">
+                                    
+                                    <Component Id="Component1" Guid="92345678-8234-1234-1234-422230622222" Win64="yes">
+
+                                        <File Id="AppFile7" Source="../bin/Release/net6.0-windows/publish/runtimes/win/lib/net6.0/System.Management.dll"/>
+                                     </Component>   
+                                </Directory> 
+                            </Directory> 
+                            </Directory> 
+                        </Directory>
+
+            </Directory>         
+       </Directory>
+
+    <Directory Id="DesktopFolder" Name="Desktop">
+        <Component Id="ApplicationShortcutDesktop" Guid="12345678-5934-1234-4234-252288222228">
+            <Shortcut Id="ApplicationDesktopShortcut"
+                Name="CryptOne"
+                Description="Launch CryptOne"
+                Target="[INSTALLDIR]CryptOneService.exe"
+                WorkingDirectory="INSTALLDIR" 
+		        Icon ="c1.ico" />
+
+      <RegistryValue Root='HKCU' Key='Software\ssa\CryptOne'
+                     Name='InstallFolder'
+                     Value='[INSTALLDIR]'
+                     Type='string'
+                     KeyPath='yes' />
+
+            <RemoveFolder Id="DesktopFolder" On="uninstall"/>
+        </Component>
+    </Directory>
+
+    <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ApplicationProgramsFolder" Name="CryptOne" />
+    </Directory>
+
+</Directory>
+
+ <DirectoryRef Id="ProgramFiles64Folder">
+  <Component Id="CryptOne_RegistryEntries" Guid="72345678-0034-1234-2234-222227252224" 
+	Win64="yes">
+	<RegistryKey 	Root="HKLM"
+                     	Key="SOFTWARE\ssa\CryptOne"
+              		ForceCreateOnInstall="yes"
+              		ForceDeleteOnUninstall="yes">
+      	<RegistryValue 	
+			Name="InstallFolder" 			
+			Value="[INSTALLFOLDER]" 
+			Type="string" 
+			KeyPath="yes" />      
+
+	</RegistryKey>
+  </Component>
+  <Component Id="CryptOne_RegistryEntries2" Guid="12345678-0034-1234-2234-222227252225" Win64="yes">
+        <RegistryKey Root="HKCU"
+                     Key="Software\Microsoft\Windows\CurrentVersion\Run"
+              >
+          <RegistryValue Type="string" Name="CryptOneConfig" 
+		        Value="[INSTALLDIR]CryptOneService.exe" KeyPath="yes" Action="write"/>
+        </RegistryKey>
+  </Component>
+ </DirectoryRef>
+
+      <Feature Id="DefaultFeature" Level="1">
+            <ComponentRef Id="ApplicationFiles"/>
+            <ComponentRef Id="ApplicationShortcutDesktop" />
+            <ComponentRef Id="CryptOne_RegistryEntries" />
+            <ComponentRef Id="CryptOne_RegistryEntries2" />
+            <ComponentRef Id="Component1" />
+
+      </Feature>
+
+	<CustomAction Id="Stop_CryptOne" 
+		Directory="TARGETDIR" 
+    		ExeCommand="cmd /C &quot; taskkill /IM &quot;CryptOneService.exe&quot; /F  &quot;"
+    		Execute="immediate" Return="ignore" HideTarget="no" Impersonate="no" />
+
+	    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+
+<UI>
+  <UIRef Id="WixUI_InstallDir" />
+  <Publish Dialog="WelcomeDlg"
+        Control="Next"
+        Event="NewDialog"
+        Value="InstallDirDlg"
+        Order="2">1</Publish>
+  <Publish Dialog="InstallDirDlg"
+        Control="Back"
+        Event="NewDialog"
+        Value="WelcomeDlg"
+        Order="2">1</Publish>
+</UI>
+
+<InstallExecuteSequence>
+<Custom Action="Stop_CryptOne" Before='InstallValidate' >
+        	REMOVE="ALL"
+      </Custom>
+
+
+</InstallExecuteSequence>
+
+
+   </Product>
+</Wix>
