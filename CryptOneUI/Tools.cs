@@ -242,27 +242,33 @@ namespace CryptOneService
             return Tools.bytesToHex(sha256);
         }
 
+        // return hex string
         public static string calculateFileHash(string path)
         {
+            return Tools.bytesToHex(calculateFileHashBytes(path));
+        }
+
+        public static byte[] calculateFileHashBytes(string path)
+        {
+            byte[] content = null;
             if (!File.Exists(path))
             {
-                if(Directory.Exists(path))
-                {
-                    //
-                    string fullPath = Path.GetFullPath(path);
-                    byte[] content1 = Encoding.ASCII.GetBytes(fullPath);
-                    byte[] hash1 = Crypto.hashSHA256bytes(content1);
-                    return Tools.bytesToHex(hash1);
+                if (Directory.Exists(path))
+                {   // for empty folders take full name as content
+                    content = Encoding.ASCII.GetBytes(Path.GetFullPath(path));
                 }
-                return null;
+            }
+            else
+            {
+                content = File.ReadAllBytes(path);
             }
 
-            byte[] content = File.ReadAllBytes(path);
-            byte[] hash = Crypto.hashSHA256bytes(content);
-            string result = Tools.bytesToHex(hash);
+            if (content == null)
+                return null;
 
-            return result;
+            return Crypto.hashSHA256bytes(content);
         }
+
 
         public static string[] getFilesRecursively(string path)
         {
