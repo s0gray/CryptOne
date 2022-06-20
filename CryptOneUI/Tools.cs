@@ -245,7 +245,17 @@ namespace CryptOneService
         public static string calculateFileHash(string path)
         {
             if (!File.Exists(path))
+            {
+                if(Directory.Exists(path))
+                {
+                    //
+                    string fullPath = Path.GetFullPath(path);
+                    byte[] content1 = Encoding.ASCII.GetBytes(fullPath);
+                    byte[] hash1 = Crypto.hashSHA256bytes(content1);
+                    return Tools.bytesToHex(hash1);
+                }
                 return null;
+            }
 
             byte[] content = File.ReadAllBytes(path);
             byte[] hash = Crypto.hashSHA256bytes(content);
@@ -268,7 +278,8 @@ namespace CryptOneService
 
             for(int i = 0; i < dirs.Length; i++)
             {
-                allFiles.AddRange (  getFilesRecursively(dirs[i]) );
+                allFiles.Add(dirs[i]);
+                allFiles.AddRange ( getFilesRecursively(dirs[i]) );
             }
             return allFiles.ToArray();
         }
