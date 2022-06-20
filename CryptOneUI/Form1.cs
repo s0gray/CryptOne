@@ -171,7 +171,7 @@ namespace CryptOneService
         private void startMainProcessing()
         {
             updateFolderStatus();
-            string keyFolder = Tools.getKeyFolder();
+          /*  string keyFolder = Tools.getKeyFolder();
             if (keyFolder == null || keyFolder.Length == 0)
             {
                 Log.Line("keyfolder not found");
@@ -195,7 +195,7 @@ namespace CryptOneService
 
                     }
                 }
-            }
+            }*/
         }
 
             
@@ -206,19 +206,25 @@ namespace CryptOneService
                 for (int cloudIndex = 0; cloudIndex < cloudFolderContainer.getCount(); cloudIndex++)
                 {
                     bool present = isArchivePresentOnCloud(index, cloudIndex);
+                    string msg = "";
                     if (!present)
                     {
                         Log.Line("Folder [" + index + "] not present on cloud [" + cloudIndex + "] - will  upload");
 
-                        foldersList.Items[index].SubItems[3 + cloudIndex].Text = "NO";
+                        msg = "NO";
                         //cryptoOne.push(monitoredFoldersContainer.get(index), cloudFolderContainer.get(cloudIndex), keyFolder + Form1.KEY_FILENAME);
                     }
                     else
                     {
-                        foldersList.Items[index].SubItems[3 + cloudIndex].Text = "OK";
+                        msg = "OK" ;
                         Log.Line("Folder [" + index + "] present on cloud [" + cloudIndex + "] OK");
 
                     }
+
+                    if (!monitoredFoldersContainer.get(index).changed) msg += "+"; else msg += "-";
+
+                    foldersList.Items[index].SubItems[3 + cloudIndex].Text = msg;
+
                 }
             }
         }

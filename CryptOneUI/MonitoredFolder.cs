@@ -14,6 +14,7 @@ namespace CryptOneService
 
         FileSystemWatcher fileSystemWatcher;
         Form1 mainForm;
+        public bool changed = false;
 
         public MonitoredFolder(string p, Form1 form)
         {
@@ -22,7 +23,16 @@ namespace CryptOneService
 
             this.fileSystemWatcher = new FileSystemWatcher(p);
             this.fileSystemWatcher.EnableRaisingEvents = true;
-            this.fileSystemWatcher.NotifyFilter = System.IO.NotifyFilters.LastWrite; //LastAccess;
+            this.fileSystemWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName; //LastAccess;
+                                /*    NotifyFilters.Attributes
+                                 | NotifyFilters.CreationTime
+                                 | NotifyFilters.DirectoryName
+                                 | NotifyFilters.FileName
+                                 | NotifyFilters.LastAccess
+                                 | NotifyFilters.LastWrite
+                                 | NotifyFilters.Security
+                                 | NotifyFilters.Size;*/
+
             this.fileSystemWatcher.SynchronizingObject = mainForm;
             this.fileSystemWatcher.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcher_Changed);
         }
@@ -77,6 +87,7 @@ namespace CryptOneService
         private void fileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             Log.Line("File changed in folder ["+this.path+"]");
+            changed = true;
         }
 
         // in which file this folder will be stored in cloud
