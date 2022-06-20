@@ -187,8 +187,7 @@ namespace CryptOneService
                     {
                         Log.Line("Folder ["+index+"] not present on cloud ["+cloudIndex+"] - will  upload");
 
-                        string pass = getPass();
-                        cryptoOne.push(monitoredFoldersContainer.get(index), cloudFolderContainer.get(cloudIndex), keyFolder + Form1.KEY_FILENAME, pass);
+                        cryptoOne.push(monitoredFoldersContainer.get(index), cloudFolderContainer.get(cloudIndex), keyFolder + Form1.KEY_FILENAME);
                     } else
                     {
                         Log.Line("Folder [" + index + "] present on cloud [" + cloudIndex + "] OK");
@@ -198,13 +197,7 @@ namespace CryptOneService
             }
         }
 
-        string pass = null;
-        string getPass()
-        {
-            if (pass != null) return pass;
-            pass = Tools.AskPassword();
-            return pass;
-        }
+
         private void autoDetectKeyFolderRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             onKeyStorageRadiobuttonClicked();
@@ -538,11 +531,9 @@ namespace CryptOneService
             ListViewItem item = foldersList.SelectedItems[0];
             Log.Line("push " + item.SubItems[1].Text);
 
-            string pass = getPass();
-
             for (int cloudIndex = 0; cloudIndex < cloudFolderContainer.getCount(); cloudIndex++)
             {
-                cryptoOne.push(monitoredFoldersContainer.get(item.Index), cloudFolderContainer.get(cloudIndex), keyFolder + Form1.KEY_FILENAME, pass);
+                cryptoOne.push(monitoredFoldersContainer.get(item.Index), cloudFolderContainer.get(cloudIndex), keyFolder + Form1.KEY_FILENAME);
             }
 
         }

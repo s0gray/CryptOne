@@ -69,6 +69,12 @@ namespace CryptOneService
         public static void createInfoFile(string filename, Dictionary<string, string> info)
         {
             Log.Line("Creating info file at "+filename);
+
+            if(File.Exists(filename))
+            {
+                File.Delete(filename);
+            }
+
             IniFile file = new IniFile(filename);
 
             foreach (KeyValuePair<string, string> entry in info)
@@ -221,15 +227,12 @@ namespace CryptOneService
 
         public static string calculateFileHash(string path)
         {
-//            Log.Line("calculateFileHash " + path);
             if (!File.Exists(path))
-                return "";
+                return null;
 
             byte[] content = File.ReadAllBytes(path);
             byte[] hash = Crypto.hashSHA256bytes(content);
             string result = Tools.bytesToHex(hash);
-
-//            Log.Line("file hash of ["+ path + "] is "+ result);
 
             return result;
         }

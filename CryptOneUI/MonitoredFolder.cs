@@ -82,8 +82,12 @@ namespace CryptOneService
         // in which file this folder will be stored in cloud
         public string getCloudFileName()
         {      
-            return getArchiveFileName() + ".tgz.enc"; 
+            return getArchiveFileName() + ".enc"; 
         }
 
+        public string getFullEncryptedArchiveFileName()
+        {
+            return CryptoOne.tempFolder + getCloudFileName();
+        }
     }
 }

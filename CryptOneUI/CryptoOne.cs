@@ -15,6 +15,7 @@ namespace CryptOneService
         public static string DIR_HASH_KEY = "dirHash";
         public static string TGZ_HASH_KEY = "tgzHash";
         public static string ENC_HASH_KEY = "encHash";
+        string pass = null;
 
 
         public CryptoOne()
@@ -27,7 +28,7 @@ namespace CryptOneService
          * Compress, encrypt, upload
          */
 
-        public void push(MonitoredFolder monitoredFolder, CloudFolder cloudFolder, string keyFile, string pass)
+        public void push(MonitoredFolder monitoredFolder, CloudFolder cloudFolder, string keyFile)
         {
             Log.Line("push ["+ monitoredFolder.path + "] ["+cloudFolder.folder+ "] keyFile = [" + keyFile+"]");
 
@@ -44,6 +45,8 @@ namespace CryptOneService
             string folderHash = Tools.calculateFolderHash(monitoredFolder.path);
             Log.Line("Current hash of ["+ monitoredFolder.path + "] is ["+folderHash+"]");
             bool reuseExistingArchive = false;
+            bool reuseExistingEncryptedArchive = false;
+            string encryptedTgz = "";
 
             if (existingInfoFile != null)
             {
@@ -53,18 +56,31 @@ namespace CryptOneService
                 if(oldFolderHash != null && folderHash.Equals(oldFolderHash))
                 {
                     Log.Line("Files are not changed in folder ["+ monitoredFolder.path + "] we can reuse archive");
-                    reuseExistingArchive = true;
+
+                    string oldArchiveHash = existingInfoFile[TGZ_HASH_KEY];
+                    Log.Line("Old archive hash is " + oldArchiveHash);
+
+                    string exsistingArchiveHash = Tools.calculateFileHash(monitoredFolder.getFullArchiveFileName());
+                    if(exsistingArchiveHash!=null && exsistingArchiveHash.Equals(oldArchiveHash))
+                    {
+                        Log.Line("Archive not changed");
+                        reuseExistingArchive = true;
+
+                        string oldEncrpytedArchiveHash = existingInfoFile[ENC_HASH_KEY];
+                        Log.Line("Old encrypted archive hash is " + oldEncrpytedArchiveHash);
+
+                        string exsistingEncryptedArchiveHash = Tools.calculateFileHash(monitoredFolder.getFullEncryptedArchiveFileName());
+                        Log.Line("Existing encrypted archive hash is " + exsistingEncryptedArchiveHash);
+
+                        if (exsistingEncryptedArchiveHash != null && exsistingEncryptedArchiveHash.Equals(oldEncrpytedArchiveHash))
+                        {
+                            Log.Line("Encrypted archive not changed");
+                            reuseExistingEncryptedArchive = true;
+
+                            encryptedTgz = monitoredFolder.getFullEncryptedArchiveFileName();
+                        }
+                    }
                 }
-
-                string oldArchiveHash = existingInfoFile[TGZ_HASH_KEY];
-                Log.Line("Old archive hash is " + oldArchiveHash);
-
-                /*if (oldArchiveHash != null && folderHash.Equals(oldArchiveHash))
-                {
-                    Log.Line("Files are not changed in folder [" + monitoredFolder.path + "] we can reuse archive");
-                    reuseExistingArchive = true;
-                }*/
-
             }
 
             string tgzFile = monitoredFolder.getFullArchiveFileName();
@@ -76,23 +92,25 @@ namespace CryptOneService
 
                 Log.Line("Created TGZ: [" + tgzFile + "] for " + (endTime - startTime) / 1000 + "s");
             }
-            
-            string tgzHash = Tools.calculateFileHash(tgzFile);
-            Log.Line("Hash of TGZ is " + tgzHash);
 
-            // encrypt
-            string encryptedTgz = encryptFileWithPassKey(tgzFile, keyFile, pass, tgzFile + ".enc");
-            Log.Line("Created encrypted TGZ: " + encryptedTgz);
+            if (!reuseExistingEncryptedArchive)
+            {
+                // encrypt
+                encryptedTgz = encryptFileWithPassKey(tgzFile, keyFile, getPass(), tgzFile + ".enc");
+                Log.Line("Created encrypted TGZ: " + encryptedTgz);
 
-            string encTgzHash = Tools.calculateFileHash(encryptedTgz);
-            Log.Line("Hash of encTGZ is " + encTgzHash);
+                string tgzHash = Tools.calculateFileHash(tgzFile);
+                Log.Line("Hash of TGZ is " + tgzHash);
+                string encTgzHash = Tools.calculateFileHash(encryptedTgz);
+                Log.Line("Hash of encTGZ is " + encTgzHash);
 
-            var info = new Dictionary<string, string>();
-            info.Add(DIR_HASH_KEY, folderHash);
-            info.Add(TGZ_HASH_KEY, tgzHash);
-            info.Add(ENC_HASH_KEY, encTgzHash);
+                var info = new Dictionary<string, string>();
+                info.Add(DIR_HASH_KEY, folderHash);
+                info.Add(TGZ_HASH_KEY, tgzHash);
+                info.Add(ENC_HASH_KEY, encTgzHash);
 
-            Tools.createInfoFile(infoFilename, info);
+                Tools.createInfoFile(infoFilename, info);
+            }
 
 
             string targetFilename = Path.GetFileName(encryptedTgz);
@@ -149,7 +167,12 @@ namespace CryptOneService
             File.WriteAllBytes(outputFile, encryptedData);
             return outputFile;
         }
-
+        string getPass()
+        {
+            if (pass != null) return pass;
+            pass = Tools.AskPassword();
+            return pass;
+        }
         public void generateEncryptedKeyFile(string drive, string password)
         {
             byte[] secret = Crypto.generateSecureRandomBytes(32);
