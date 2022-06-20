@@ -57,6 +57,7 @@
             this.folderNameColumn = new System.Windows.Forms.ColumnHeader();
             this.cloudFileColumn = new System.Windows.Forms.ColumnHeader();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.getButton = new System.Windows.Forms.Button();
             this.removeCloudButton = new System.Windows.Forms.Button();
             this.addCloudButton = new System.Windows.Forms.Button();
             this.cloudsList = new System.Windows.Forms.ListView();
@@ -65,14 +66,14 @@
             this.cloudFolderDescriptionColumn = new System.Windows.Forms.ColumnHeader();
             this.fullPathColumn = new System.Windows.Forms.ColumnHeader();
             this.tabConfigPage = new System.Windows.Forms.TabPage();
+            this.cloudStorageEdit = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.browseTempFolderButton = new System.Windows.Forms.Button();
             this.tempFolderEdit = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.applyButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
-            this.label5 = new System.Windows.Forms.Label();
-            this.cloudStorageEdit = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -314,6 +315,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.getButton);
             this.tabPage3.Controls.Add(this.removeCloudButton);
             this.tabPage3.Controls.Add(this.addCloudButton);
             this.tabPage3.Controls.Add(this.cloudsList);
@@ -324,6 +326,16 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Clouds";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // getButton
+            // 
+            this.getButton.Location = new System.Drawing.Point(830, 251);
+            this.getButton.Name = "getButton";
+            this.getButton.Size = new System.Drawing.Size(112, 34);
+            this.getButton.TabIndex = 3;
+            this.getButton.Text = "Get";
+            this.getButton.UseVisualStyleBackColor = true;
+            this.getButton.Click += new System.EventHandler(this.getButton_Click);
             // 
             // removeCloudButton
             // 
@@ -362,6 +374,7 @@
             this.cloudsList.TabIndex = 0;
             this.cloudsList.UseCompatibleStateImageBehavior = false;
             this.cloudsList.View = System.Windows.Forms.View.Details;
+            this.cloudsList.SelectedIndexChanged += new System.EventHandler(this.cloudsList_SelectedIndexChanged);
             this.cloudsList.DoubleClick += new System.EventHandler(this.cloudsList_DoubleClick);
             // 
             // cloudId
@@ -398,6 +411,23 @@
             this.tabConfigPage.TabIndex = 3;
             this.tabConfigPage.Text = "Config";
             this.tabConfigPage.UseVisualStyleBackColor = true;
+            // 
+            // cloudStorageEdit
+            // 
+            this.cloudStorageEdit.Enabled = false;
+            this.cloudStorageEdit.Location = new System.Drawing.Point(260, 113);
+            this.cloudStorageEdit.Name = "cloudStorageEdit";
+            this.cloudStorageEdit.Size = new System.Drawing.Size(453, 31);
+            this.cloudStorageEdit.TabIndex = 4;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(20, 118);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(180, 25);
+            this.label5.TabIndex = 3;
+            this.label5.Text = "Cloud storage folder:";
             // 
             // browseTempFolderButton
             // 
@@ -456,23 +486,6 @@
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(20, 118);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(180, 25);
-            this.label5.TabIndex = 3;
-            this.label5.Text = "Cloud storage folder:";
-            // 
-            // cloudStorageEdit
-            // 
-            this.cloudStorageEdit.Enabled = false;
-            this.cloudStorageEdit.Location = new System.Drawing.Point(260, 113);
-            this.cloudStorageEdit.Name = "cloudStorageEdit";
-            this.cloudStorageEdit.Size = new System.Drawing.Size(453, 31);
-            this.cloudStorageEdit.TabIndex = 4;
             // 
             // Form1
             // 
@@ -541,5 +554,6 @@
         private Button refreshButton;
         private TextBox cloudStorageEdit;
         private Label label5;
+        private Button getButton;
     }
 }

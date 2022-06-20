@@ -74,6 +74,7 @@ namespace CryptOneService
             pushButton.Enabled = false;
             this.useButton.Enabled = false;
             this.initButton.Enabled = false;
+            this.getButton.Enabled = false;
 
             string tmpDir = ini.Read(TEMP_DIR_KEY);
             if(tmpDir != null && tmpDir.Length>0)
@@ -609,6 +610,26 @@ namespace CryptOneService
         private void refreshButton_Click(object sender, EventArgs e)
         {
             updateFolderStatus();
+        }
+
+        private void getButton_Click(object sender, EventArgs e)
+        {
+            string cloudIndex = cloudsList.SelectedItems[0].SubItems[0].Text;            
+
+            RemoteFolder form = new RemoteFolder(this.cloudFolderContainer.get(int.Parse(cloudIndex)));
+            form.ShowDialog();
+        }
+
+        private void cloudsList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if( cloudsList.SelectedItems.Count==1)
+            {
+                getButton.Enabled = true;
+            } else
+            {
+                getButton.Enabled = false;
+
+            }
         }
     }
 }
