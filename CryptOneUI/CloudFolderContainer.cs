@@ -63,7 +63,6 @@ namespace CryptOneService
                 arr1[3] = cloudFolders[i].fullPath;
 
                 view.Items.Add(new ListViewItem(arr1));
-
             }
         }
 
@@ -75,7 +74,7 @@ namespace CryptOneService
             }
             else
             {
-                Debug.WriteLine("Index out of bounds: " + index);
+                Log.Line("Index out of bounds: " + index);
             }
         }
 
@@ -104,6 +103,16 @@ namespace CryptOneService
         public CloudFolder get(int cloudIndex)
         {
             return cloudFolders[cloudIndex];
+        }
+
+        // create folders 'CryptOne' on clouds if not present
+        public void initCloudStorages()
+        {
+            for(int i = 0; i < cloudFolders.Count; i++)
+            {
+                CloudFolder cloudFolder = cloudFolders[i];
+                cloudFolder.initStorage();
+            }
         }
     }
 }

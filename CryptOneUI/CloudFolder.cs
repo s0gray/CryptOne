@@ -13,6 +13,7 @@ namespace CryptOneService
         public string fullPath;
         public int index;
 
+
         public CloudFolder(string folder, string description, string fullPath, int index)
         {
             this.folder = folder;
@@ -32,6 +33,18 @@ namespace CryptOneService
             if (!fullPath.EndsWith('\\'))
                 fullPath += "\\";
             this.fullPath = fullPath;
+
+        }
+
+        public void initStorage()
+        {
+            string cloudStorageFolder = fullPath + Form1.cloudStorageFolder;
+            if ( !Directory.Exists(cloudStorageFolder) )
+            {
+                Log.Line("Creating cloud storage folder [" + cloudStorageFolder + "]");
+                Directory.CreateDirectory(cloudStorageFolder);
+            }
+
         }
     }
 }

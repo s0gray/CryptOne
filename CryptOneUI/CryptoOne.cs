@@ -119,7 +119,7 @@ namespace CryptOneService
             // upload
             if (encryptedTgz != null && encryptedTgz.Length > 0)
             {
-                string fullTarget = cloudFolder.fullPath + targetFilename;
+                string fullTarget = cloudFolder.fullPath + Form1.cloudStorageFolder + "\\" + targetFilename;
                 try
                 {                    
                     Tools.smartCopyFile(encryptedTgz, encTgzHash, fullTarget);

@@ -21,9 +21,13 @@ namespace CryptOneService
         public const string STATUS_PRESENT = "Present";
         public const string STATUS_ABSENT = "Absent";
 
+        public static string cloudStorageFolder = "CryptOne";
+
+
         MonitoredFoldersContainer monitoredFoldersContainer;
         CloudFolderContainer cloudFolderContainer;
         KeyStorageContainer keyStorageContainer;
+
         CryptoOne cryptoOne = new CryptoOne();
 
         public Form1()
@@ -80,6 +84,7 @@ namespace CryptOneService
                 CryptoOne.tempFolder = Path.GetTempPath();
             }
             this.tempFolderEdit.Text = CryptoOne.tempFolder;
+            this.cloudStorageEdit.Text = Form1.cloudStorageFolder;
 
             // START INIT KeyFolder TAB
             keyStorageContainer.load(ini);
@@ -92,6 +97,7 @@ namespace CryptOneService
             cloudFolderContainer.show(cloudsList);
 
             addCloudFolderColumns();
+            cloudFolderContainer.initCloudStorages();
             // END INIT cloudFolder TAB
 
             // START INIT folders TAB
@@ -469,7 +475,8 @@ namespace CryptOneService
             }
 
             string filename = folder.getCloudFileName();
-            string cloudFileName = cloudFolderContainer.get(cloudIndex).fullPath + filename;
+            string cloudFileName = cloudFolderContainer.get(cloudIndex).fullPath +
+                Form1.cloudStorageFolder + "\\" + filename;
             return File.Exists(cloudFileName);
         }
 

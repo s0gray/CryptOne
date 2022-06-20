@@ -48,6 +48,7 @@
             this.autoDetectKeyFolderRadioButton = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.refreshButton = new System.Windows.Forms.Button();
             this.pushButton = new System.Windows.Forms.Button();
             this.removeMonitoredFolderButton = new System.Windows.Forms.Button();
             this.addMonitoredFolderButton = new System.Windows.Forms.Button();
@@ -70,7 +71,8 @@
             this.button2 = new System.Windows.Forms.Button();
             this.applyButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
-            this.refreshButton = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.cloudStorageEdit = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -239,6 +241,16 @@
             this.tabPage2.Text = "Folders";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // refreshButton
+            // 
+            this.refreshButton.Location = new System.Drawing.Point(718, 252);
+            this.refreshButton.Name = "refreshButton";
+            this.refreshButton.Size = new System.Drawing.Size(112, 34);
+            this.refreshButton.TabIndex = 4;
+            this.refreshButton.Text = "Refresh";
+            this.refreshButton.UseVisualStyleBackColor = true;
+            this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
+            // 
             // pushButton
             // 
             this.pushButton.Location = new System.Drawing.Point(864, 252);
@@ -374,6 +386,8 @@
             // 
             // tabConfigPage
             // 
+            this.tabConfigPage.Controls.Add(this.cloudStorageEdit);
+            this.tabConfigPage.Controls.Add(this.label5);
             this.tabConfigPage.Controls.Add(this.browseTempFolderButton);
             this.tabConfigPage.Controls.Add(this.tempFolderEdit);
             this.tabConfigPage.Controls.Add(this.label4);
@@ -387,7 +401,7 @@
             // 
             // browseTempFolderButton
             // 
-            this.browseTempFolderButton.Location = new System.Drawing.Point(696, 45);
+            this.browseTempFolderButton.Location = new System.Drawing.Point(745, 45);
             this.browseTempFolderButton.Name = "browseTempFolderButton";
             this.browseTempFolderButton.Size = new System.Drawing.Size(112, 34);
             this.browseTempFolderButton.TabIndex = 2;
@@ -397,7 +411,7 @@
             // 
             // tempFolderEdit
             // 
-            this.tempFolderEdit.Location = new System.Drawing.Point(184, 45);
+            this.tempFolderEdit.Location = new System.Drawing.Point(260, 48);
             this.tempFolderEdit.Name = "tempFolderEdit";
             this.tempFolderEdit.Size = new System.Drawing.Size(453, 31);
             this.tempFolderEdit.TabIndex = 1;
@@ -443,15 +457,22 @@
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
-            // refreshButton
+            // label5
             // 
-            this.refreshButton.Location = new System.Drawing.Point(718, 252);
-            this.refreshButton.Name = "refreshButton";
-            this.refreshButton.Size = new System.Drawing.Size(112, 34);
-            this.refreshButton.TabIndex = 4;
-            this.refreshButton.Text = "Refresh";
-            this.refreshButton.UseVisualStyleBackColor = true;
-            this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(20, 118);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(180, 25);
+            this.label5.TabIndex = 3;
+            this.label5.Text = "Cloud storage folder:";
+            // 
+            // cloudStorageEdit
+            // 
+            this.cloudStorageEdit.Enabled = false;
+            this.cloudStorageEdit.Location = new System.Drawing.Point(260, 113);
+            this.cloudStorageEdit.Name = "cloudStorageEdit";
+            this.cloudStorageEdit.Size = new System.Drawing.Size(453, 31);
+            this.cloudStorageEdit.TabIndex = 4;
             // 
             // Form1
             // 
@@ -518,5 +539,7 @@
         private Label label4;
         private Button browseTempFolderButton;
         private Button refreshButton;
+        private TextBox cloudStorageEdit;
+        private Label label5;
     }
 }
