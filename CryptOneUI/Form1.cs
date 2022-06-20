@@ -90,6 +90,8 @@ namespace CryptOneService
             // START INIT cloudFolder TAB
             cloudFolderContainer.load(ini);
             cloudFolderContainer.show(cloudsList);
+
+            addCloudFolderColumns();
             // END INIT cloudFolder TAB
 
             // START INIT folders TAB
@@ -100,7 +102,18 @@ namespace CryptOneService
             updateRemovableList();
             startMainProcessing();
         }
-           
+
+        private void addCloudFolderColumns()
+        {
+            int nClouds = cloudFolderContainer.getCount();
+
+            for(int i = 0; i < nClouds; i++)
+            {
+                CloudFolder cloudFolder = cloudFolderContainer.get(i);
+                foldersList.Columns.Add(cloudFolder.description, 140, HorizontalAlignment.Left);
+            }
+        }
+
         private void updateRemovableListFromOtherThread()
         {
             string[] removable = Tools.getRemovableDrives();
@@ -157,10 +170,11 @@ namespace CryptOneService
 
         private void startMainProcessing()
         {
+            updateFolderStatus();
             string keyFolder = Tools.getKeyFolder();
             if (keyFolder == null || keyFolder.Length == 0)
             {
-                Debug.WriteLine("keyfolder not found");
+                Log.Line("keyfolder not found");
                 return;
             }
             Log.Line("keyFolder = " + keyFolder);
@@ -184,7 +198,30 @@ namespace CryptOneService
             }
         }
 
+            
+        private void updateFolderStatus()
+        {
+            for (int index = 0; index < monitoredFoldersContainer.getCount(); index++)
+            {
+                for (int cloudIndex = 0; cloudIndex < cloudFolderContainer.getCount(); cloudIndex++)
+                {
+                    bool present = isArchivePresentOnCloud(index, cloudIndex);
+                    if (!present)
+                    {
+                        Log.Line("Folder [" + index + "] not present on cloud [" + cloudIndex + "] - will  upload");
 
+                        foldersList.Items[index].SubItems[3 + cloudIndex].Text = "NO";
+                        //cryptoOne.push(monitoredFoldersContainer.get(index), cloudFolderContainer.get(cloudIndex), keyFolder + Form1.KEY_FILENAME);
+                    }
+                    else
+                    {
+                        foldersList.Items[index].SubItems[3 + cloudIndex].Text = "OK";
+                        Log.Line("Folder [" + index + "] present on cloud [" + cloudIndex + "] OK");
+
+                    }
+                }
+            }
+        }
         private void autoDetectKeyFolderRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             onKeyStorageRadiobuttonClicked();
@@ -284,8 +321,6 @@ namespace CryptOneService
 
         string getKeyStatusText()
         {
-            //Debug.WriteLine("getKeyStatusText");
-
             string keyPath = "";
             if (keyFolderEdit.Enabled)
             {
@@ -299,10 +334,10 @@ namespace CryptOneService
                     return "Key file not found";
                 }
             }
-            Debug.WriteLine("keyPath = " + keyPath);
+            // Debug.WriteLine("keyPath = " + keyPath);
 
             string keyFileName = keyPath + KEY_FILENAME;
-            Debug.WriteLine("keyFileName = " + keyFileName);
+            // Debug.WriteLine("keyFileName = " + keyFileName);
 
             if (keyPath != null && keyPath.Length > 0 && File.Exists(keyFileName))
             {
@@ -336,7 +371,7 @@ namespace CryptOneService
 
         private  void DeviceInsertedEvent(object sender, EventArrivedEventArgs e)
         {
-           Debug.WriteLine("DeviceInsertedEvent");
+           Log.Line("DeviceInsertedEvent");
             /*ManagementBaseObject instance = (ManagementBaseObject)e.NewEvent["TargetInstance"];
              foreach (var property in instance.Properties)
              {
@@ -347,7 +382,7 @@ namespace CryptOneService
 
         private  void DeviceRemovedEvent(object sender, EventArrivedEventArgs e)
         {
-           Debug.WriteLine("DeviceRemovedEvent");
+           Log.Line("DeviceRemovedEvent");
 
             /*ManagementBaseObject instance = (ManagementBaseObject)e.NewEvent["TargetInstance"];
             foreach (var property in instance.Properties)
@@ -407,7 +442,7 @@ namespace CryptOneService
             }
             else
             {
-                Debug.WriteLine("Nothing selected");
+                Log.Line("Nothing selected");
             }
         }
         public bool isArchivePresentOnCloud(int folderIndex, int cloudIndex)
@@ -459,7 +494,7 @@ namespace CryptOneService
                 ListViewItem selected = this.removableList.SelectedItems[0];
                 string drive = selected.SubItems[0].Text;
                 string status = selected.SubItems[1].Text;
-                Debug.WriteLine("[" + drive +"] "+status);
+                Log.Line("[" + drive +"] "+status);
 
                 if(STATUS_PRESENT.Equals(status))
                 {
@@ -478,10 +513,8 @@ namespace CryptOneService
         {
             PassForm form = new PassForm();
             DialogResult result = form.ShowDialog();
-            Debug.WriteLine("result = " + result);
             if(result == DialogResult.OK)
             {
-                Debug.WriteLine("Entered password = " + form.password);
                 // generate and store key 
                 ListViewItem selected = this.removableList.SelectedItems[0];
                 string drive = selected.SubItems[0].Text;
@@ -533,7 +566,7 @@ namespace CryptOneService
                 for (int i = 0; i < cloudsList.SelectedItems.Count; i++)
                 {
                     ListViewItem item = cloudsList.SelectedItems[i];
-                    Debug.WriteLine("deleting cloud folder #" + item.SubItems[0].Text);
+                    Log.Line("deleting cloud folder #" + item.SubItems[0].Text);
 
                     int index = int.Parse(item.SubItems[0].Text);
                     cloudFolderContainer.remove(index - deletedCount);
@@ -545,7 +578,7 @@ namespace CryptOneService
             }
             else
             {
-                Debug.WriteLine("Nothing selected");
+                Log.Line("Nothing selected");
             }
         }
 
@@ -558,6 +591,11 @@ namespace CryptOneService
                 tempFolderEdit.Text = folderBrowserDialog1.SelectedPath;
                 CryptoOne.tempFolder = tempFolderEdit.Text;
             }
+        }
+
+        private void refreshButton_Click(object sender, EventArgs e)
+        {
+            updateFolderStatus();
         }
     }
 }

@@ -54,7 +54,6 @@
             this.foldersList = new System.Windows.Forms.ListView();
             this.folderIdColumn = new System.Windows.Forms.ColumnHeader();
             this.folderNameColumn = new System.Windows.Forms.ColumnHeader();
-            this.statusColumn = new System.Windows.Forms.ColumnHeader();
             this.cloudFileColumn = new System.Windows.Forms.ColumnHeader();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.removeCloudButton = new System.Windows.Forms.Button();
@@ -65,12 +64,13 @@
             this.cloudFolderDescriptionColumn = new System.Windows.Forms.ColumnHeader();
             this.fullPathColumn = new System.Windows.Forms.ColumnHeader();
             this.tabConfigPage = new System.Windows.Forms.TabPage();
+            this.browseTempFolderButton = new System.Windows.Forms.Button();
             this.tempFolderEdit = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.applyButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
-            this.browseTempFolderButton = new System.Windows.Forms.Button();
+            this.refreshButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -87,7 +87,7 @@
             this.tabControl1.Location = new System.Drawing.Point(28, 22);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(956, 342);
+            this.tabControl1.Size = new System.Drawing.Size(1001, 342);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -105,7 +105,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 34);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(948, 304);
+            this.tabPage1.Size = new System.Drawing.Size(993, 304);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Key storage";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -226,6 +226,7 @@
             // tabPage2
             // 
             this.tabPage2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tabPage2.Controls.Add(this.refreshButton);
             this.tabPage2.Controls.Add(this.pushButton);
             this.tabPage2.Controls.Add(this.removeMonitoredFolderButton);
             this.tabPage2.Controls.Add(this.addMonitoredFolderButton);
@@ -233,14 +234,14 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 34);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(948, 304);
+            this.tabPage2.Size = new System.Drawing.Size(993, 304);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Folders";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // pushButton
             // 
-            this.pushButton.Location = new System.Drawing.Point(787, 252);
+            this.pushButton.Location = new System.Drawing.Point(864, 252);
             this.pushButton.Name = "pushButton";
             this.pushButton.Size = new System.Drawing.Size(112, 34);
             this.pushButton.TabIndex = 3;
@@ -273,13 +274,12 @@
             this.foldersList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.folderIdColumn,
             this.folderNameColumn,
-            this.statusColumn,
             this.cloudFileColumn});
             this.foldersList.FullRowSelect = true;
             this.foldersList.GridLines = true;
             this.foldersList.Location = new System.Drawing.Point(6, 35);
             this.foldersList.Name = "foldersList";
-            this.foldersList.Size = new System.Drawing.Size(893, 199);
+            this.foldersList.Size = new System.Drawing.Size(970, 199);
             this.foldersList.TabIndex = 0;
             this.foldersList.UseCompatibleStateImageBehavior = false;
             this.foldersList.View = System.Windows.Forms.View.Details;
@@ -293,17 +293,12 @@
             // folderNameColumn
             // 
             this.folderNameColumn.Text = "Path";
-            this.folderNameColumn.Width = 300;
-            // 
-            // statusColumn
-            // 
-            this.statusColumn.Text = "Status";
-            this.statusColumn.Width = 80;
+            this.folderNameColumn.Width = 275;
             // 
             // cloudFileColumn
             // 
             this.cloudFileColumn.Text = "Cloud filename";
-            this.cloudFileColumn.Width = 400;
+            this.cloudFileColumn.Width = 150;
             // 
             // tabPage3
             // 
@@ -313,7 +308,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 34);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(948, 304);
+            this.tabPage3.Size = new System.Drawing.Size(993, 304);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Clouds";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -385,10 +380,20 @@
             this.tabConfigPage.Location = new System.Drawing.Point(4, 34);
             this.tabConfigPage.Name = "tabConfigPage";
             this.tabConfigPage.Padding = new System.Windows.Forms.Padding(3);
-            this.tabConfigPage.Size = new System.Drawing.Size(948, 304);
+            this.tabConfigPage.Size = new System.Drawing.Size(993, 304);
             this.tabConfigPage.TabIndex = 3;
             this.tabConfigPage.Text = "Config";
             this.tabConfigPage.UseVisualStyleBackColor = true;
+            // 
+            // browseTempFolderButton
+            // 
+            this.browseTempFolderButton.Location = new System.Drawing.Point(696, 45);
+            this.browseTempFolderButton.Name = "browseTempFolderButton";
+            this.browseTempFolderButton.Size = new System.Drawing.Size(112, 34);
+            this.browseTempFolderButton.TabIndex = 2;
+            this.browseTempFolderButton.Text = "Browse";
+            this.browseTempFolderButton.UseVisualStyleBackColor = true;
+            this.browseTempFolderButton.Click += new System.EventHandler(this.browseTempFolderButton_Click);
             // 
             // tempFolderEdit
             // 
@@ -438,21 +443,21 @@
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
-            // browseTempFolderButton
+            // refreshButton
             // 
-            this.browseTempFolderButton.Location = new System.Drawing.Point(696, 45);
-            this.browseTempFolderButton.Name = "browseTempFolderButton";
-            this.browseTempFolderButton.Size = new System.Drawing.Size(112, 34);
-            this.browseTempFolderButton.TabIndex = 2;
-            this.browseTempFolderButton.Text = "Browse";
-            this.browseTempFolderButton.UseVisualStyleBackColor = true;
-            this.browseTempFolderButton.Click += new System.EventHandler(this.browseTempFolderButton_Click);
+            this.refreshButton.Location = new System.Drawing.Point(718, 252);
+            this.refreshButton.Name = "refreshButton";
+            this.refreshButton.Size = new System.Drawing.Size(112, 34);
+            this.refreshButton.TabIndex = 4;
+            this.refreshButton.Text = "Refresh";
+            this.refreshButton.UseVisualStyleBackColor = true;
+            this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(994, 424);
+            this.ClientSize = new System.Drawing.Size(1041, 424);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.applyButton);
             this.Controls.Add(this.button2);
@@ -500,7 +505,6 @@
         private Button okButton;
         private Label keyStatusLabel;
         private Label label2;
-        private ColumnHeader statusColumn;
         private ColumnHeader cloudFileColumn;
         private Label label3;
         private ListView removableList;
@@ -513,5 +517,6 @@
         private TextBox tempFolderEdit;
         private Label label4;
         private Button browseTempFolderButton;
+        private Button refreshButton;
     }
 }

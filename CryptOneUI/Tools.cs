@@ -76,7 +76,6 @@ namespace CryptOneService
             }
 
             IniFile file = new IniFile(filename);
-
             foreach (KeyValuePair<string, string> entry in info)
             {
                 file.Write(entry.Key, entry.Value);
@@ -214,6 +213,7 @@ namespace CryptOneService
         }
         public static void smartCopyFile(string src, string srcHash, string target)
         {
+            Log.Line("smartCopyFile "+src+" -> "+target);
             string dstHash = Tools.calculateFileHash(target);
 
             if (srcHash != null && dstHash != null && srcHash.Equals(dstHash))
@@ -269,10 +269,8 @@ namespace CryptOneService
             return Crypto.hashSHA256bytes(content);
         }
 
-
         public static string[] getFilesRecursively(string path)
         {
-//            Log.Line("getFilesRecursively " + path);
             List<string> allFiles = new List<string>();
             string[] files = Directory.GetFiles(path);
             string[] dirs = Directory.GetDirectories(path);
@@ -292,6 +290,7 @@ namespace CryptOneService
 
         public static string bytesToHex(byte[] data)
         {
+            if (data == null || data.Length == 0) return "";
             return BitConverter.ToString(data).Replace("-", string.Empty);
         }
     }

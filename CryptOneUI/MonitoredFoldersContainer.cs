@@ -49,13 +49,23 @@ namespace CryptOneService
 
             for(int i=0;i<monitoredFolders.Count;i++)
             {
-                string[] arr2 = new string[4];
-                arr2[0] = "" + i;
-                arr2[1] = monitoredFolders[i].path;
-                arr2[2] = mainForm.getFolderStatus(monitoredFolders[i]);
-                arr2[3] = monitoredFolders[i].getCloudFileName();
-                foldersList.Items.Add(new ListViewItem(arr2));
+                foldersList.Items.Add(makeFolderListViewItem(i, foldersList.Columns.Count));
             }
+        }
+
+
+        ListViewItem makeFolderListViewItem(int i, int columns)
+        {
+            string[] arr2 = new string[columns];
+            arr2[0] = "" + i;
+            arr2[1] = monitoredFolders[i].path;
+            arr2[2] = monitoredFolders[i].getCloudFileName();
+
+            for(int j=3; j < columns; j++)
+            {
+                arr2[j] = "";
+            }
+            return new ListViewItem(arr2);
         }
 
         public void add(string selectedPath)
