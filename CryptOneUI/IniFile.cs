@@ -30,7 +30,7 @@ namespace CryptOneService
         public string Read(string Key, string Section = null)
         {
             var RetVal = new StringBuilder(255);
-            GetPrivateProfileString(Form1.SECTION, Key, "", RetVal, 255, Path);
+            GetPrivateProfileString(Section ?? Form1.SECTION , Key, "", RetVal, 255, Path);
             return RetVal.ToString();
         }
 

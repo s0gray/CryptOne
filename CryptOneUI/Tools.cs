@@ -66,6 +66,17 @@ namespace CryptOneService
              return File.Exists(keyFileName);
         }
 
+        public static void createInfoFile(string filename, Dictionary<string, string> info)
+        {
+            Log.Line("Creating info file at "+filename);
+            IniFile file = new IniFile(filename);
+
+            foreach (KeyValuePair<string, string> entry in info)
+            {
+                file.Write(entry.Key, entry.Value);
+            }
+        }
+
         public static void WriteFile(byte[] data, string filename)
         {
             File.WriteAllBytes(filename, data);
@@ -187,7 +198,64 @@ namespace CryptOneService
                 File.Delete(to);
             }
             File.Copy(from, to);
+        }
 
+        public static string calculateFolderHash(string path)
+        {
+            string []files = getFilesRecursively(path);
+            if (files == null || files.Length == 0)
+                return "";
+
+            string result = "";
+            for(int i = 0; i<files.Length; i++)
+            {
+                string hash = Tools.calculateFileHash(files[i]);
+                result += hash;
+            }
+
+//            Log.Line("folder hash material " + result);
+            byte[] sha256 = Crypto.hashSHA256(result);
+
+            return Tools.bytesToHex(sha256);
+        }
+
+        public static string calculateFileHash(string path)
+        {
+//            Log.Line("calculateFileHash " + path);
+            if (!File.Exists(path))
+                return "";
+
+            byte[] content = File.ReadAllBytes(path);
+            byte[] hash = Crypto.hashSHA256bytes(content);
+            string result = Tools.bytesToHex(hash);
+
+//            Log.Line("file hash of ["+ path + "] is "+ result);
+
+            return result;
+        }
+
+        public static string[] getFilesRecursively(string path)
+        {
+//            Log.Line("getFilesRecursively " + path);
+            List<string> allFiles = new List<string>();
+            string[] files = Directory.GetFiles(path);
+            string[] dirs = Directory.GetDirectories(path);
+
+            if (dirs == null || dirs.Length == 0)
+                return files;
+
+            allFiles.AddRange(files);
+
+            for(int i = 0; i < dirs.Length; i++)
+            {
+                allFiles.AddRange (  getFilesRecursively(dirs[i]) );
+            }
+            return allFiles.ToArray();
+        }
+
+        public static string bytesToHex(byte[] data)
+        {
+            return BitConverter.ToString(data).Replace("-", string.Empty);
         }
     }
 }

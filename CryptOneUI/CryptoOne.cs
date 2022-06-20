@@ -10,6 +10,12 @@ namespace CryptOneService
     public class CryptoOne
     {
         public Crypto crypto = new Crypto();
+        public static string tempFolder = Path.GetTempPath();
+
+        public static string DIR_HASH_KEY = "dirHash";
+        public static string TGZ_HASH_KEY = "tgzHash";
+        public static string ENC_HASH_KEY = "encHash";
+
 
         public CryptoOne()
         {
@@ -25,15 +31,69 @@ namespace CryptOneService
         {
             Log.Line("push ["+ monitoredFolder.path + "] ["+cloudFolder.folder+ "] keyFile = [" + keyFile+"]");
 
-            long startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            string tgzFile = Tools.CreateTGZ(monitoredFolder.path, monitoredFolder.getArchiveFileName(), Path.GetTempPath());
-            long endTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            string infoFilename = tempFolder + monitoredFolder.getInfoFileName();
+            var existingInfoFile = monitoredFolder.loadInfoFile();
+            if(existingInfoFile != null)
+            {
+                Log.Line("Loaded .info file " + infoFilename);
+            } else
+            {
+                Log.Line(".info file not found at " + infoFilename);
+            }
 
-            Log.Line("Created TGZ: [" + tgzFile + "] for " + (endTime - startTime)/1000 + "s");
+            string folderHash = Tools.calculateFolderHash(monitoredFolder.path);
+            Log.Line("Current hash of ["+ monitoredFolder.path + "] is ["+folderHash+"]");
+            bool reuseExistingArchive = false;
+
+            if (existingInfoFile != null)
+            {
+                string oldFolderHash = existingInfoFile[DIR_HASH_KEY];
+                Log.Line("Old folder hash is " + oldFolderHash);
+
+                if(oldFolderHash != null && folderHash.Equals(oldFolderHash))
+                {
+                    Log.Line("Files are not changed in folder ["+ monitoredFolder.path + "] we can reuse archive");
+                    reuseExistingArchive = true;
+                }
+
+                string oldArchiveHash = existingInfoFile[TGZ_HASH_KEY];
+                Log.Line("Old archive hash is " + oldArchiveHash);
+
+                /*if (oldArchiveHash != null && folderHash.Equals(oldArchiveHash))
+                {
+                    Log.Line("Files are not changed in folder [" + monitoredFolder.path + "] we can reuse archive");
+                    reuseExistingArchive = true;
+                }*/
+
+            }
+
+            string tgzFile = monitoredFolder.getFullArchiveFileName();
+            if (!reuseExistingArchive)
+            {
+                long startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                Tools.CreateTGZ(monitoredFolder.path, monitoredFolder.getArchiveFileNameWithoutExtension(), tempFolder);
+                long endTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+                Log.Line("Created TGZ: [" + tgzFile + "] for " + (endTime - startTime) / 1000 + "s");
+            }
+            
+            string tgzHash = Tools.calculateFileHash(tgzFile);
+            Log.Line("Hash of TGZ is " + tgzHash);
 
             // encrypt
             string encryptedTgz = encryptFileWithPassKey(tgzFile, keyFile, pass, tgzFile + ".enc");
             Log.Line("Created encrypted TGZ: " + encryptedTgz);
+
+            string encTgzHash = Tools.calculateFileHash(encryptedTgz);
+            Log.Line("Hash of encTGZ is " + encTgzHash);
+
+            var info = new Dictionary<string, string>();
+            info.Add(DIR_HASH_KEY, folderHash);
+            info.Add(TGZ_HASH_KEY, tgzHash);
+            info.Add(ENC_HASH_KEY, encTgzHash);
+
+            Tools.createInfoFile(infoFilename, info);
+
 
             string targetFilename = Path.GetFileName(encryptedTgz);
             Log.Line("targetFilename = " + targetFilename);
@@ -48,7 +108,6 @@ namespace CryptOneService
                 {
                     Log.Line("Error during copy: " + e.ToString());
                 }
-
             } else
             {
                 Log.Line("encryptFileWithPassKey failed");

@@ -27,11 +27,51 @@ namespace CryptOneService
             this.fileSystemWatcher.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcher_Changed);
         }
 
-        internal string getArchiveFileName()
+        public string getArchiveFileNameWithoutExtension()
         {
-            string lastFolderName = Path.GetFileName(path);// Path.GetDirectoryName(path));
-
+            string lastFolderName = Path.GetFileName(path);
             return lastFolderName;
+        }
+
+        public string getArchiveFileName()
+        {
+            return getArchiveFileNameWithoutExtension() + ".tgz";
+        }
+        public string getInfoFileName()
+        {
+            return getArchiveFileName() + ".info";
+        }
+        public string getFullInfoFileName()
+        {
+            return CryptoOne.tempFolder + getInfoFileName();
+        }
+        public Dictionary<string,string> loadInfoFile()
+        {
+            string file = getFullInfoFileName();
+            if (!File.Exists(file))
+                return null;
+
+            IniFile ini = new IniFile(file);
+            Dictionary<string, string> dict = new Dictionary<string, string>();
+
+            string tmp = ini.Read(CryptoOne.DIR_HASH_KEY, "CryptOne");
+            if(tmp!=null)
+                dict.Add(CryptoOne.DIR_HASH_KEY, tmp);
+
+            tmp = ini.Read(CryptoOne.TGZ_HASH_KEY, "CryptOne");
+            if (tmp != null)
+                dict.Add(CryptoOne.TGZ_HASH_KEY, tmp);
+
+            tmp = ini.Read(CryptoOne.ENC_HASH_KEY, "CryptOne");
+            if (tmp != null)
+                dict.Add(CryptoOne.ENC_HASH_KEY, tmp);
+
+            return dict;
+        }
+
+        public string getFullArchiveFileName()
+        {
+            return CryptoOne.tempFolder + getArchiveFileName();
         }
 
         private void fileSystemWatcher_Changed(object sender, FileSystemEventArgs e)

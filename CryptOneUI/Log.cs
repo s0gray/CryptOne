@@ -16,11 +16,11 @@ namespace CryptOneService
 
         public static void Data(byte[] data)
         {
-            Line( Crypto.bytesToHex(data) );
+            Line( Tools.bytesToHex(data) );
         }
         public static void Data(string msg, byte[] data)
         {
-            Line(msg + " [" + Crypto.bytesToHex(data) + "]");
+            Line(msg + " [" + Tools.bytesToHex(data) + "]");
         }
     }
 }

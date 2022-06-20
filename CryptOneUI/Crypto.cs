@@ -27,12 +27,9 @@ namespace CryptOneService
         public static string hashSHA256hex(string str)
         {
             byte[] hash = hashSHA256(str);
-            return bytesToHex(hash);
+            return Tools.bytesToHex(hash);
         }
-        public static string bytesToHex(byte[] data)
-        {
-            return BitConverter.ToString(data).Replace("-", string.Empty);
-        }
+
 
         public static byte[] hashSHA256(string str)
         {
@@ -99,7 +96,7 @@ namespace CryptOneService
         public static string hashSHA1hex(string str)
         {
             byte[] hash = hashSHA1(str);
-            return bytesToHex(hash);
+            return Tools.bytesToHex(hash);
         }
 
         /// <summary>
