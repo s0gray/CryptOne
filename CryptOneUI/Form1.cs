@@ -16,13 +16,14 @@ namespace CryptOneService
         public const string CLOUDFOLDER_KEY = "cloudFolder";
         public const string CLOUDDESCRIPTION_KEY = "cloudDescription";
         public const string TEMP_DIR_KEY = "tempDir";
+        public const string ROOT_DIR_KEY = "rootDir";
+
         public const string KEY_FILENAME = "key0001.ekey";
 
         public const string STATUS_PRESENT = "Present";
         public const string STATUS_ABSENT = "Absent";
 
         public static string cloudStorageFolder = "CryptOne";
-
         public static string AppName = "CryptOne";
 
         MonitoredFoldersContainer monitoredFoldersContainer;
@@ -33,6 +34,9 @@ namespace CryptOneService
         public static string appDataFolder =  Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\" + Form1.AppName;
 
         static string IniFileName = Form1.appDataFolder + "\\" + AppName + ".ini";
+
+        // root for monitored folders
+        public static string localFolderRoot = null;// Form1.appDataFolder + "\\Clouds\\";
         public Form1()
         {
             InitializeComponent();
@@ -43,7 +47,6 @@ namespace CryptOneService
             Thread thread1 = new Thread(backgroundWorker1_DoWork);
             thread1.Start();
 
-            Tools.checkAndCreateIniFile();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -74,8 +77,21 @@ namespace CryptOneService
             {
                 CryptoOne.tempFolder = Path.GetTempPath();
             }
+
+            string rootDir = ini.Read(ROOT_DIR_KEY);
+            if (rootDir != null && rootDir.Length > 0)
+            {
+                Form1.localFolderRoot = rootDir;
+            }
+            else
+            {
+                Form1.localFolderRoot = Form1.appDataFolder + "\\Clouds\\";
+            }
+            Tools.checkAndCreateIniFiles();
+
             this.tempFolderEdit.Text = CryptoOne.tempFolder;
             this.cloudStorageEdit.Text = Form1.cloudStorageFolder;
+            this.localFolderRootEdit.Text = Form1.localFolderRoot;
 
             // START INIT KeyFolder TAB
             keyStorageContainer.load(ini);
@@ -240,6 +256,7 @@ namespace CryptOneService
             monitoredFoldersContainer.save(ini);
             cloudFolderContainer.save(ini);
             ini.Write(TEMP_DIR_KEY, CryptoOne.tempFolder);
+            ini.Write(ROOT_DIR_KEY, Form1.localFolderRoot);
 
             if (this.setKeyFolderRadioButton.Checked)
             {
@@ -592,6 +609,8 @@ namespace CryptOneService
             {
                 tempFolderEdit.Text = folderBrowserDialog1.SelectedPath;
                 CryptoOne.tempFolder = tempFolderEdit.Text;
+                applyButton.Enabled = true;
+
             }
         }
 
@@ -617,6 +636,19 @@ namespace CryptOneService
             {
                 getButton.Enabled = false;
 
+            }
+        }
+
+        private void browseRootFolderButton_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
+            DialogResult res = folderBrowserDialog1.ShowDialog();
+            if (res == DialogResult.OK)
+            {
+                localFolderRootEdit.Text = folderBrowserDialog1.SelectedPath;
+                Form1.localFolderRoot = localFolderRootEdit.Text;
+
+                applyButton.Enabled = true;
             }
         }
     }

@@ -30,24 +30,20 @@ namespace CryptOneService
         public string Read(string Key, string Section = null)
         {
             var RetVal = new StringBuilder(255);
-            GetPrivateProfileString(Section ?? Form1.SECTION , Key, "", RetVal, 255, Path);
+            GetPrivateProfileString(Form1.SECTION , Key, "", RetVal, 255, Path);
             return RetVal.ToString();
         }
 
         public void Write(string Key, string Value, string Section = null)
         {
-            WritePrivateProfileString(Section ?? name, Key, Value, Path);
+            WritePrivateProfileString(Form1.SECTION, Key, Value, Path);
         }
 
         public void DeleteKey(string Key, string Section = null)
         {
-            Write(Key, null, Section ?? name);
+            Write(Key, null, Form1.SECTION);
         }
 
-        public void DeleteSection(string Section = null)
-        {
-            Write(null, null, Section ?? name);
-        }
 
         public bool KeyExists(string Key, string Section = null)
         {

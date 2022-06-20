@@ -60,13 +60,20 @@ namespace CryptOneService
             return "";
         }
 
-        public static void checkAndCreateIniFile()
+        public static void checkAndCreateIniFiles()
         {
             if(!Directory.Exists(Form1.appDataFolder))
             {
                 Directory.CreateDirectory(Form1.appDataFolder);
                 Log.Line("Creating app folder " + Form1.appDataFolder);
             }
+
+            if (!Directory.Exists(Form1.localFolderRoot))
+            {
+                Directory.CreateDirectory(Form1.localFolderRoot);
+                Log.Line("Creating local root " + Form1.localFolderRoot);
+            }
+            
         }
 
         public static bool isKeyFileExistOnRemovableDrive(string drive)
