@@ -621,9 +621,18 @@ namespace CryptOneService
 
         private void getButton_Click(object sender, EventArgs e)
         {
-            string cloudIndex = cloudsList.SelectedItems[0].SubItems[0].Text;            
+            string cloudIndex = cloudsList.SelectedItems[0].SubItems[0].Text;
 
-            RemoteFolder form = new RemoteFolder(this.cloudFolderContainer.get(int.Parse(cloudIndex)));
+            string keyFolder = Tools.getKeyFolder();
+            if (keyFolder == null || keyFolder.Length == 0)
+            {
+                Log.Line("keyfolder not found");
+                return;
+            }
+            Log.Line("keyFolder = " + keyFolder);
+
+            RemoteFolder form = new RemoteFolder(this.cloudFolderContainer.get(int.Parse(cloudIndex)), 
+                cryptoOne, keyFolder + Form1.KEY_FILENAME);
             form.ShowDialog();
         }
 

@@ -92,7 +92,7 @@
             this.getButton.Name = "getButton";
             this.getButton.Size = new System.Drawing.Size(112, 34);
             this.getButton.TabIndex = 4;
-            this.getButton.Text = "Get";
+            this.getButton.Text = "Pull";
             this.getButton.UseVisualStyleBackColor = true;
             this.getButton.Click += new System.EventHandler(this.getButton_Click);
             // 

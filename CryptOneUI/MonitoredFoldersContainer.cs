@@ -30,9 +30,15 @@ namespace CryptOneService
 
                 if (monitoredFolder != null && monitoredFolder.Length > 0)
                 {
-                    Debug.WriteLine("monitoredFolder [" + index + "] = [" + monitoredFolder + "]");
+                    Log.Line("monitoredFolder [" + index + "] = [" + monitoredFolder + "]");
 
-                    monitoredFolders.Add(new MonitoredFolder(monitoredFolder, mainForm));
+                    if (Directory.Exists(monitoredFolder))
+                    {
+                        monitoredFolders.Add(new MonitoredFolder(monitoredFolder, mainForm));
+                    } else
+                    {
+                        Log.Line("Folder ["+ monitoredFolder + "] not exists");
+                    }
                 }
                 else
                 {

@@ -87,11 +87,18 @@ namespace CryptOneService
             string tgzFile = monitoredFolder.getFullArchiveFileName();
             if (!reuseExistingArchive)
             {
-                long startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-                Tools.CreateTGZ(monitoredFolder.path, monitoredFolder.getArchiveFileNameWithoutExtension(), tempFolder);
-                long endTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                /* long startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                 Tools.CreateTGZ(monitoredFolder.path, monitoredFolder.getArchiveFileNameWithoutExtension(), tempFolder);
+                 long endTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                */
+                bool ok = Tools.compressTgzWithShell(tgzFile, monitoredFolder.path);
+                if(!ok)
+                {
+                    Log.Line("Compress failed");
+                    return;
+                }
 
-                Log.Line("Created TGZ: [" + tgzFile + "] for " + (endTime - startTime) / 1000 + "s");
+               // Log.Line("Created TGZ: [" + tgzFile + "] for " + (endTime - startTime) / 1000 + "s");
             }
 
             if (!reuseExistingEncryptedArchive)
@@ -133,6 +140,33 @@ namespace CryptOneService
             }
         }
 
+        public void pull(string fullname, string dstFolder, string keyFile)
+        {
+            Log.Line("pull ["+ fullname + "] from cloud to ["+ dstFolder + "]");
+
+            string filename = Path.GetFileName(fullname);
+            string dst = tempFolder + filename;
+
+            Tools.smartCopyFile(fullname, dst);
+
+            string outputFile = dst.Substring(0, dst.Length-4);
+            string archiveName = decryptFileWithPassKey(dst, keyFile, getPass(), outputFile);
+            if(archiveName == null)
+            {
+                Log.Line("Can not decrypt file "+dst);
+                return;
+            }
+
+            bool ok = Tools.decompressTgzWithShell(outputFile, dstFolder);// Path.GetDirectoryName(outputFile));
+            if(!ok)
+            {
+                Log.Line("Decompress ["+ outputFile + "] failed");
+                return;
+            }
+
+            //Log.Line("Uncompressed TGZ: [" + outputFile + "] for " + (endTime - startTime) / 1000 + "s");
+        }
+
         /**
          * encrypt 'inputFile' to 'outputFile' using key in 'keyFile'
          */
@@ -144,7 +178,6 @@ namespace CryptOneService
             if(inputData==null)
             {
                 Log.Line("File not loaded " + inputFile);
-
                 return "";
             }
             Log.Line("Loaded "+ inputData.Length+" bytes from " + inputFile);
@@ -168,7 +201,39 @@ namespace CryptOneService
             File.WriteAllBytes(outputFile, encryptedData);
             return outputFile;
         }
-        string getPass()
+
+        public string decryptFileWithPassKey(string inputFile, string keyFile, string pass, string outputFile)
+        {
+            Log.Line("decryptFileWithPassKey inputFile=" + inputFile + " " + keyFile + " outputFile=" + outputFile);
+
+            byte[] inputData = File.ReadAllBytes(inputFile);
+            if (inputData == null)
+            {
+                Log.Line("File not loaded " + inputFile);
+                return "";
+            }
+            Log.Line("Loaded " + inputData.Length + " bytes from " + inputFile);
+
+            byte[] key = crypto.loadEncryptedKey(keyFile, pass);
+            if (key == null)
+            {
+                Log.Line("Can not load encrypted key from " + keyFile);
+                return "";
+            }
+            Log.Line("Loaded key from " + keyFile);
+
+            byte[] decryptedData = crypto.decryptAES256(key, inputData);
+            if (decryptedData == null)
+            {
+                Log.Line("Can not decrypt data");
+                return "";
+            }
+            Log.Line("Decrypted data size is " + decryptedData.Length + " bytes");
+
+            File.WriteAllBytes(outputFile, decryptedData);
+            return outputFile;
+        }
+            string getPass()
         {
             if (pass != null) return pass;
             pass = Tools.AskPassword();

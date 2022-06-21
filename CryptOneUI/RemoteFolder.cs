@@ -13,16 +13,18 @@ namespace CryptOneService
     public partial class RemoteFolder : Form
     {
         private CloudFolder cloudFolder;
-
-        public RemoteFolder(CloudFolder cloudFolder)
+        private CryptoOne cryptoOne;
+        private string keyFolder;
+        public RemoteFolder(CloudFolder cloudFolder, CryptoOne cryptoOne, string keyFolder)
         {
             InitializeComponent();
 
             this.cloudFolder = cloudFolder;
+            this.cryptoOne = cryptoOne;
+            this.keyFolder = keyFolder;
             Log.Line("RemoteFolder " + cloudFolder.fullPath);
 
             updateRemoteFolderList();
-
             this.getButton.Enabled = false;
         }
 
@@ -32,17 +34,15 @@ namespace CryptOneService
             Log.Line("cloud-folder: " + folder);
 
             if (!Directory.Exists(folder)) return;
-
             string [] files = Directory.GetFiles(folder, "*.tgz.enc");
 
             folderList.Items.Clear();
-
             if(files!=null && files.Length>0)
             {
                 for(int i=0; i<files.Length;i++)
                 {
                     //var attr = File.GetAttributes(files[i]);
-                    long size = new System.IO.FileInfo(files[i]).Length;
+                    long size = new FileInfo(files[i]).Length;
                     Log.Line("size = " + size);
 
                     DateTime dt = File.GetLastWriteTime(files[i]);
@@ -70,7 +70,19 @@ namespace CryptOneService
 
         private void getButton_Click(object sender, EventArgs e)
         {
+            // TODO move it to CryptoOne class
 
+            // get file from cloud to local
+            string filename = folderList.SelectedItems[0].Text;
+            string fullname = cloudFolder.fullPath + Form1.cloudStorageFolder + "\\" + filename;
+           // string dst = CryptoOne.tempFolder + "\\" + filename;
+
+            //Log.Line("Getting file ["+ fullname + "] from cloud to ["+dst+"]");
+            //Tools.smartCopyFile(fullname, dst);
+
+            cryptoOne.pull(fullname, Form1.localFolderRoot, keyFolder);
+
+            this.Close();
         }
     }
 }

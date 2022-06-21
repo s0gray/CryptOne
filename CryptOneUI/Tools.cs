@@ -9,6 +9,7 @@ using ICSharpCode.SharpZipLib.Zip;
 
 using System.IO;
 using System.Diagnostics;
+using System.IO.Compression;
 
 namespace CryptOneService
 {
@@ -22,7 +23,6 @@ namespace CryptOneService
             {
                 result[i] = drives[i].Name;
             }
-
             return result;
         }
 
@@ -72,8 +72,7 @@ namespace CryptOneService
             {
                 Directory.CreateDirectory(Form1.localFolderRoot);
                 Log.Line("Creating local root " + Form1.localFolderRoot);
-            }
-            
+            }      
         }
 
         public static bool isKeyFileExistOnRemovableDrive(string drive)
@@ -169,6 +168,73 @@ namespace CryptOneService
             }
         }
 
+        public static void UncompressTGZ(string filename)
+        {
+            string outputDir = Path.GetDirectoryName(filename);
+            ExtractTarGz(filename, outputDir);
+
+         /*   Stream inStream = new MemoryStream(byteArray);
+            Stream gzipStream = new GZipInputStream(inStream);
+
+            TarArchive tarArchive = TarArchive.CreateInputTarArchive(gzipStream);
+            tarArchive.ExtractContents(@".");
+            tarArchive.Close();
+
+            gzipStream.Close();
+            inStream.Close();*/
+
+            /*     Stream inStream = new MemoryStream(byteArray);
+                 Stream gzipStream = new GZipInputStream(inStream);
+
+                 using (var tarInputStream = new TarInputStream(gzipStream))
+                 {
+                     TarEntry entry;
+                     while ((entry = tarInputStream.GetNextEntry()) != null)
+                     {
+                         var fileName = entry.File;
+                         using (var fileContents = new MemoryStream())
+                         {
+                             tarInputStream.CopyEntryContents(fileContents);
+
+                             // use entry, fileName or fileContents here
+                         }
+                     }
+                 }*/
+        }
+
+        public static void ExtractTarGz(string filename, string outputDir)
+        {
+            using (var stream = File.OpenRead(filename))
+                ExtractTarGz(stream, outputDir);
+        }
+
+        public static void ExtractTarGz(Stream stream, string outputDir)
+        {
+            // A GZipStream is not seekable, so copy it first to a MemoryStream
+            using (var gzip = new GZipStream(stream, CompressionMode.Decompress))
+            {
+                const int chunk = 4096;
+                using (var memStr = new MemoryStream())
+                {
+                    int read;
+                    var buffer = new byte[chunk];
+                    do
+                    {
+                        read = gzip.Read(buffer, 0, chunk);
+                        memStr.Write(buffer, 0, read);
+                    } while (read == chunk);
+
+                    memStr.Seek(0, SeekOrigin.Begin);
+                    ExtractTarGz(memStr, outputDir);
+                }
+            }
+        }
+
+        public static void ExtractTar(string filename, string outputDir)
+        {
+            using (var stream = File.OpenRead(filename))
+                ExtractTarGz(stream, outputDir);
+        }
         public static byte[] concat(byte[] x, byte[] y)
         {
             var z = new byte[x.Length + y.Length];
@@ -308,6 +374,73 @@ namespace CryptOneService
         {
             if (data == null || data.Length == 0) return "";
             return BitConverter.ToString(data).Replace("-", string.Empty);
+        }
+
+        // tested
+        public static bool decompressTgzWithShell(string file, string outputFolder)
+        {
+            if(!File.Exists(file))
+            {
+                Log.Line("Decompress: File ["+file+"] not exist");
+                return false;
+            }
+            long size = new FileInfo(file).Length;
+            long startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            execShell("tar xf " +file+" -C "+outputFolder);
+            long endTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+            long deltaMs = (endTime - startTime);
+            double speed = 0;
+            if(deltaMs > 0)
+            {
+                speed = size / deltaMs;
+            }
+
+            Log.Line("Decompressed TGZ: [" + file + "] for " + deltaMs / 1000 
+                + "s "+ speed + " bytes/ms");
+            return true;
+        }
+
+        
+        public static bool compressTgzWithShell(string compressedFile, string folderFullPath)
+        {
+            if (folderFullPath==null || !Directory.Exists(folderFullPath))
+            {
+                Log.Line("Compress: Folder [" + folderFullPath + "] not exist");
+                return false;
+            }
+
+            string basePath = Directory.GetParent(folderFullPath).FullName;
+            string folder = Path.GetFileName(folderFullPath);
+
+            long startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+//            execShell("tar -czf " + compressedFile + " " + folder + " -C " + basePath);
+            execShell("tar -czf " + compressedFile + " " + folder, basePath);
+
+            long endTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+            long deltaMs = (endTime - startTime);
+
+            Log.Line("Compressed TGZ: [" + folder + "] to ["+ compressedFile + "] for " + deltaMs / 1000
+                + "s ");
+            return true;
+        }
+
+        public static void execShell(string cmd, string workingDirectory = null)
+        {
+            Log.Line("execShell ["+cmd+"]");
+
+            Process process = new Process();
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            startInfo.FileName = "cmd.exe";
+            startInfo.Arguments = "/C \"" + cmd + "\"";
+            if (workingDirectory != null && workingDirectory.Length > 0)
+            {
+                startInfo.WorkingDirectory = workingDirectory;
+            }
+            process.StartInfo = startInfo;
+            process.Start();
         }
     }
 }
