@@ -15,13 +15,15 @@ namespace CryptOneService
         private CloudFolder cloudFolder;
         private CryptoOne cryptoOne;
         private string keyFolder;
-        public RemoteFolder(CloudFolder cloudFolder, CryptoOne cryptoOne, string keyFolder)
+        private MonitoredFoldersContainer monitoredFoldersContainer;
+        public RemoteFolder(CloudFolder cloudFolder, CryptoOne cryptoOne, string keyFolder, MonitoredFoldersContainer monitoredFoldersContainer)
         {
             InitializeComponent();
 
             this.cloudFolder = cloudFolder;
             this.cryptoOne = cryptoOne;
             this.keyFolder = keyFolder;
+            this.monitoredFoldersContainer = monitoredFoldersContainer;
             Log.Line("RemoteFolder " + cloudFolder.fullPath);
 
             updateRemoteFolderList();
@@ -75,12 +77,25 @@ namespace CryptOneService
             // get file from cloud to local
             string filename = folderList.SelectedItems[0].Text;
             string fullname = cloudFolder.fullPath + Form1.cloudStorageFolder + "\\" + filename;
-           // string dst = CryptoOne.tempFolder + "\\" + filename;
+            // string dst = CryptoOne.tempFolder + "\\" + filename;
 
             //Log.Line("Getting file ["+ fullname + "] from cloud to ["+dst+"]");
             //Tools.smartCopyFile(fullname, dst);
 
-            cryptoOne.pull(fullname, Form1.localFolderRoot, keyFolder);
+            FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
+            DialogResult res = folderBrowserDialog1.ShowDialog();
+            if (res == DialogResult.OK)
+            {
+                string targetFolder = folderBrowserDialog1.SelectedPath;
+
+                bool ok = cryptoOne.pull(fullname, targetFolder, keyFolder);
+                if(ok)
+                {
+                    monitoredFoldersContainer.add(targetFolder + "\\" +
+                        Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension( filename )));
+                    monitoredFoldersContainer.updateUI();
+                }
+            }
 
             this.Close();
         }

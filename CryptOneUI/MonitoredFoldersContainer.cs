@@ -59,6 +59,11 @@ namespace CryptOneService
             }
         }
 
+        public void updateUI()
+        {
+            show(mainForm.foldersList);
+            mainForm.applyButton.Enabled = true;
+        }
 
         ListViewItem makeFolderListViewItem(int i, int columns)
         {
@@ -76,6 +81,7 @@ namespace CryptOneService
 
         public void add(string selectedPath)
         {
+            Log.Line("monitoredFolders add: ["+ selectedPath + "]");
             monitoredFolders.Add(new MonitoredFolder(selectedPath, mainForm));
         }
 
@@ -87,7 +93,7 @@ namespace CryptOneService
             }
             else
             {
-                Debug.WriteLine("Index out of bounds: " + index);
+                Log.Line("Index out of bounds: " + index);
             }
         }
 

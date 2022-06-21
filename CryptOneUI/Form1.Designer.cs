@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "0",
             "Google Cloud",
@@ -66,8 +66,6 @@
             this.cloudFolderDescriptionColumn = new System.Windows.Forms.ColumnHeader();
             this.fullPathColumn = new System.Windows.Forms.ColumnHeader();
             this.tabConfigPage = new System.Windows.Forms.TabPage();
-            this.localFolderRootEdit = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
             this.cloudStorageEdit = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.browseTempFolderButton = new System.Windows.Forms.Button();
@@ -76,7 +74,6 @@
             this.button2 = new System.Windows.Forms.Button();
             this.applyButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
-            this.browseRootFolderButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -370,7 +367,7 @@
             this.cloudsList.FullRowSelect = true;
             this.cloudsList.GridLines = true;
             this.cloudsList.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem2});
+            listViewItem1});
             this.cloudsList.Location = new System.Drawing.Point(6, 35);
             this.cloudsList.Name = "cloudsList";
             this.cloudsList.Size = new System.Drawing.Size(936, 197);
@@ -402,9 +399,6 @@
             // 
             // tabConfigPage
             // 
-            this.tabConfigPage.Controls.Add(this.browseRootFolderButton);
-            this.tabConfigPage.Controls.Add(this.localFolderRootEdit);
-            this.tabConfigPage.Controls.Add(this.label6);
             this.tabConfigPage.Controls.Add(this.cloudStorageEdit);
             this.tabConfigPage.Controls.Add(this.label5);
             this.tabConfigPage.Controls.Add(this.browseTempFolderButton);
@@ -417,22 +411,6 @@
             this.tabConfigPage.TabIndex = 3;
             this.tabConfigPage.Text = "Config";
             this.tabConfigPage.UseVisualStyleBackColor = true;
-            // 
-            // localFolderRootEdit
-            // 
-            this.localFolderRootEdit.Location = new System.Drawing.Point(260, 186);
-            this.localFolderRootEdit.Name = "localFolderRootEdit";
-            this.localFolderRootEdit.Size = new System.Drawing.Size(453, 31);
-            this.localFolderRootEdit.TabIndex = 6;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(24, 189);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(155, 25);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "Local folders root:";
             // 
             // cloudStorageEdit
             // 
@@ -509,16 +487,6 @@
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
-            // browseRootFolderButton
-            // 
-            this.browseRootFolderButton.Location = new System.Drawing.Point(745, 189);
-            this.browseRootFolderButton.Name = "browseRootFolderButton";
-            this.browseRootFolderButton.Size = new System.Drawing.Size(112, 34);
-            this.browseRootFolderButton.TabIndex = 7;
-            this.browseRootFolderButton.Text = "Browse";
-            this.browseRootFolderButton.UseVisualStyleBackColor = true;
-            this.browseRootFolderButton.Click += new System.EventHandler(this.browseRootFolderButton_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
@@ -562,12 +530,12 @@
         private ColumnHeader localFolderColumn;
         private Button removeMonitoredFolderButton;
         private Button addMonitoredFolderButton;
-        private ListView foldersList;
+        public  ListView foldersList;
         private ColumnHeader folderIdColumn;
         private ColumnHeader folderNameColumn;
         private ColumnHeader cloudFolderDescriptionColumn;
         private ColumnHeader fullPathColumn;
-        private Button applyButton;
+        public  Button applyButton;
         private Button okButton;
         private Label keyStatusLabel;
         private Label label2;
@@ -587,8 +555,5 @@
         private TextBox cloudStorageEdit;
         private Label label5;
         private Button getButton;
-        private TextBox localFolderRootEdit;
-        private Label label6;
-        private Button browseRootFolderButton;
     }
 }

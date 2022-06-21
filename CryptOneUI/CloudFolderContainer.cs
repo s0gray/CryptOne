@@ -30,7 +30,7 @@ namespace CryptOneService
 
                 if (cloudFolder != null && cloudFolder.Length > 0)
                 {
-                    Debug.WriteLine("cloudFolder [" + index + "] = [" + cloudFolder + "]");
+                    Log.Line("cloudFolder [" + index + "] = [" + cloudFolder + "]");
 
                     /*  string[] arr1 = new string[4];
                       arr1[0] = "" + index;

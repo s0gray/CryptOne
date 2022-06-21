@@ -140,7 +140,7 @@ namespace CryptOneService
             }
         }
 
-        public void pull(string fullname, string dstFolder, string keyFile)
+        public bool pull(string fullname, string dstFolder, string keyFile)
         {
             Log.Line("pull ["+ fullname + "] from cloud to ["+ dstFolder + "]");
 
@@ -154,17 +154,17 @@ namespace CryptOneService
             if(archiveName == null)
             {
                 Log.Line("Can not decrypt file "+dst);
-                return;
+                return false;
             }
 
             bool ok = Tools.decompressTgzWithShell(outputFile, dstFolder);// Path.GetDirectoryName(outputFile));
             if(!ok)
             {
                 Log.Line("Decompress ["+ outputFile + "] failed");
-                return;
+                return false;
             }
 
-            //Log.Line("Uncompressed TGZ: [" + outputFile + "] for " + (endTime - startTime) / 1000 + "s");
+            return true;
         }
 
         /**

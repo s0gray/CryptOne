@@ -36,7 +36,7 @@ namespace CryptOneService
         static string IniFileName = Form1.appDataFolder + "\\" + AppName + ".ini";
 
         // root for monitored folders
-        public static string localFolderRoot = null;// Form1.appDataFolder + "\\Clouds\\";
+//        public static string localFolderRoot = null;
         public Form1()
         {
             InitializeComponent();
@@ -78,7 +78,7 @@ namespace CryptOneService
                 CryptoOne.tempFolder = Path.GetTempPath();
             }
 
-            string rootDir = ini.Read(ROOT_DIR_KEY);
+           /* string rootDir = ini.Read(ROOT_DIR_KEY);
             if (rootDir != null && rootDir.Length > 0)
             {
                 Form1.localFolderRoot = rootDir;
@@ -86,12 +86,12 @@ namespace CryptOneService
             else
             {
                 Form1.localFolderRoot = Form1.appDataFolder + "\\Clouds\\";
-            }
+            }*/
             Tools.checkAndCreateIniFiles();
 
             this.tempFolderEdit.Text = CryptoOne.tempFolder;
             this.cloudStorageEdit.Text = Form1.cloudStorageFolder;
-            this.localFolderRootEdit.Text = Form1.localFolderRoot;
+//            this.localFolderRootEdit.Text = Form1.localFolderRoot;
 
             // START INIT KeyFolder TAB
             keyStorageContainer.load(ini);
@@ -168,12 +168,12 @@ namespace CryptOneService
         {
             if(keyStorageContainer.autodetectKeyStorage)
             {
-                Debug.WriteLine("Auto keyFolder");
+                //Debug.WriteLine("Auto keyFolder");
                 autoDetectKeyFolderRadioButton.Select();
                 keyFolderEdit.Enabled = false;
             } else
             {
-                Debug.WriteLine("keyFolder = [" + keyStorageContainer.getKeyFolder() + "]");
+//                Debug.WriteLine("keyFolder = [" + keyStorageContainer.getKeyFolder() + "]");
 
                 setKeyFolderRadioButton.Select();
                 keyFolderEdit.Enabled = true;
@@ -223,9 +223,7 @@ namespace CryptOneService
                     if (!present)
                     {
                         Log.Line("Folder [" + index + "] not present on cloud [" + cloudIndex + "] - will  upload");
-
                         msg = "NO";
-                        //cryptoOne.push(monitoredFoldersContainer.get(index), cloudFolderContainer.get(cloudIndex), keyFolder + Form1.KEY_FILENAME);
                     }
                     else
                     {
@@ -249,14 +247,14 @@ namespace CryptOneService
 
         void saveChanges()
         {
-            Debug.WriteLine("save changes to ini file");
+            Log.Line("save changes to ini file");
             File.Delete(INI_FILENAME);
 
             IniFile ini = new IniFile(IniFileName);
             monitoredFoldersContainer.save(ini);
             cloudFolderContainer.save(ini);
             ini.Write(TEMP_DIR_KEY, CryptoOne.tempFolder);
-            ini.Write(ROOT_DIR_KEY, Form1.localFolderRoot);
+            //ini.Write(ROOT_DIR_KEY, Form1.localFolderRoot);
 
             if (this.setKeyFolderRadioButton.Checked)
             {
@@ -613,7 +611,6 @@ namespace CryptOneService
 
             }
         }
-
         private void refreshButton_Click(object sender, EventArgs e)
         {
             updateFolderStatus();
@@ -631,8 +628,11 @@ namespace CryptOneService
             }
             Log.Line("keyFolder = " + keyFolder);
 
-            RemoteFolder form = new RemoteFolder(this.cloudFolderContainer.get(int.Parse(cloudIndex)), 
-                cryptoOne, keyFolder + Form1.KEY_FILENAME);
+            RemoteFolder form = new RemoteFolder(
+                this.cloudFolderContainer.get(int.Parse(cloudIndex)), 
+                cryptoOne, 
+                keyFolder + Form1.KEY_FILENAME,
+                monitoredFoldersContainer);
             form.ShowDialog();
         }
 
@@ -648,7 +648,7 @@ namespace CryptOneService
             }
         }
 
-        private void browseRootFolderButton_Click(object sender, EventArgs e)
+       /* private void browseRootFolderButton_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
             DialogResult res = folderBrowserDialog1.ShowDialog();
@@ -659,6 +659,6 @@ namespace CryptOneService
 
                 applyButton.Enabled = true;
             }
-        }
+        }*/
     }
 }

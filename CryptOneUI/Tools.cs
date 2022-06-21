@@ -68,11 +68,11 @@ namespace CryptOneService
                 Log.Line("Creating app folder " + Form1.appDataFolder);
             }
 
-            if (!Directory.Exists(Form1.localFolderRoot))
+           /* if (!Directory.Exists(Form1.localFolderRoot))
             {
                 Directory.CreateDirectory(Form1.localFolderRoot);
                 Log.Line("Creating local root " + Form1.localFolderRoot);
-            }      
+            }*/      
         }
 
         public static bool isKeyFileExistOnRemovableDrive(string drive)
