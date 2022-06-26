@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "0",
             "Google Cloud",
@@ -74,6 +74,8 @@
             this.button2 = new System.Windows.Forms.Button();
             this.applyButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
+            this.helpProvider1 = new System.Windows.Forms.HelpProvider();
+            this.helpButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -367,7 +369,7 @@
             this.cloudsList.FullRowSelect = true;
             this.cloudsList.GridLines = true;
             this.cloudsList.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1});
+            listViewItem2});
             this.cloudsList.Location = new System.Drawing.Point(6, 35);
             this.cloudsList.Name = "cloudsList";
             this.cloudsList.Size = new System.Drawing.Size(936, 197);
@@ -487,18 +489,29 @@
             this.okButton.UseVisualStyleBackColor = true;
             this.okButton.Click += new System.EventHandler(this.okButton_Click);
             // 
+            // helpButton
+            // 
+            this.helpButton.Location = new System.Drawing.Point(32, 370);
+            this.helpButton.Name = "helpButton";
+            this.helpButton.Size = new System.Drawing.Size(112, 34);
+            this.helpButton.TabIndex = 5;
+            this.helpButton.Text = "Help";
+            this.helpButton.UseVisualStyleBackColor = true;
+            this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1041, 424);
+            this.Controls.Add(this.helpButton);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.applyButton);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "Form1";
-            this.Text = "CryptOne Configuration";
+            this.Text = "CryptOne";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.Form1_Shown);
             this.tabControl1.ResumeLayout(false);
@@ -535,7 +548,7 @@
         private ColumnHeader folderNameColumn;
         private ColumnHeader cloudFolderDescriptionColumn;
         private ColumnHeader fullPathColumn;
-        public  Button applyButton;
+        private Button applyButton;
         private Button okButton;
         private Label keyStatusLabel;
         private Label label2;
@@ -555,5 +568,7 @@
         private TextBox cloudStorageEdit;
         private Label label5;
         private Button getButton;
+        private HelpProvider helpProvider1;
+        private Button helpButton;
     }
 }

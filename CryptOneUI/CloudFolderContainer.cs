@@ -32,14 +32,6 @@ namespace CryptOneService
                 {
                     Log.Line("cloudFolder [" + index + "] = [" + cloudFolder + "]");
 
-                    /*  string[] arr1 = new string[4];
-                      arr1[0] = "" + index;
-                      arr1[1] = cloudFolder;
-                      arr1[2] = cloudFolderDescription;
-                      arr1[3] = decodeFolder(cloudFolder);
-                      ListViewItem item1 = new ListViewItem(arr1);
-                      cloudsList.Items.Add(item1);*/
-
                     cloudFolders.Add(new CloudFolder(index, cloudFolder, cloudFolderDescription, Tools.decodeFolder(cloudFolder)));
                 }
                 else

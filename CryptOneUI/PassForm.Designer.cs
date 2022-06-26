@@ -89,7 +89,7 @@
             this.pass2Edit.Name = "pass2Edit";
             this.pass2Edit.PasswordChar = '*';
             this.pass2Edit.Size = new System.Drawing.Size(262, 31);
-            this.pass2Edit.TabIndex = 5;
+            this.pass2Edit.TabIndex = 1;
             // 
             // PassForm
             // 

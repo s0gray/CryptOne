@@ -63,7 +63,7 @@ namespace CryptOneService
         private void Form1_Shown(object sender, EventArgs e)
         {
             IniFile ini = new IniFile(IniFileName);
-            applyButton.Enabled = false;
+            this.applyButton.Enabled = false;
             pushButton.Enabled = false;
             this.useButton.Enabled = false;
             this.initButton.Enabled = false;
@@ -214,8 +214,10 @@ namespace CryptOneService
             
         private void updateFolderStatus()
         {
+            Log.Line("monitoredFoldersContainer : "+ monitoredFoldersContainer.getCount()+", sz = "+ foldersList.Items.Count);
             for (int index = 0; index < monitoredFoldersContainer.getCount(); index++)
             {
+                MonitoredFolder fld = monitoredFoldersContainer.get(index);
                 for (int cloudIndex = 0; cloudIndex < cloudFolderContainer.getCount(); cloudIndex++)
                 {
                     bool present = isArchivePresentOnCloud(index, cloudIndex);
@@ -232,12 +234,24 @@ namespace CryptOneService
 
                     }
 
-                    if (!monitoredFoldersContainer.get(index).changed) msg += "+"; else msg += "-";
+                    if (!fld.changed) 
+                            msg += "+"; else msg += "-";
 
-                    foldersList.Items[index].SubItems[3 + cloudIndex].Text = msg;
+                    if (index < foldersList.Items.Count) {
+                        ListViewItem item = foldersList.Items[index];
 
-                }
-            }
+                        Log.Line( "subitems: "  + item.SubItems.Count);
+
+                        if((3 + cloudIndex) < item.SubItems.Count)
+                            item.SubItems[3 + cloudIndex].Text = msg;
+
+                    }  else
+                    {
+                        Log.Line("~ index is "+index+", count is " + foldersList.Items.Count);
+                    }
+
+                } // for cloudIndex
+            } // for index
         }
         private void autoDetectKeyFolderRadioButton_CheckedChanged(object sender, EventArgs e)
         {
@@ -276,9 +290,8 @@ namespace CryptOneService
             if( dlg.ShowDialog() == DialogResult.OK)
             {
                 cloudFolderContainer.add(encodeFolder(dlg.folder), dlg.description, dlg.folder);
-
                 cloudFolderContainer.show(cloudsList);
-                applyButton.Enabled = true;
+                onDataChanged();
             }
         }
 
@@ -317,7 +330,7 @@ namespace CryptOneService
                 item.SubItems[1].Text = encodeFolder(dlg.folder);
 
                 // todo detect changes
-                applyButton.Enabled = true;
+                onDataChanged();
             }
         }
 
@@ -350,7 +363,6 @@ namespace CryptOneService
                     return "Key file not found";
                 }
             }
-            // Debug.WriteLine("keyPath = " + keyPath);
 
             string keyFileName = keyPath + KEY_FILENAME;
             // Debug.WriteLine("keyFileName = " + keyFileName);
@@ -433,7 +445,7 @@ namespace CryptOneService
                 monitoredFoldersContainer.add(folderBrowserDialog1.SelectedPath);
                 monitoredFoldersContainer.show(foldersList);
 
-                applyButton.Enabled = true;
+                onDataChanged();
             }
         }
 
@@ -452,7 +464,7 @@ namespace CryptOneService
                     monitoredFoldersContainer.remove(index - deletedCount);
 
                     deletedCount++;
-                    applyButton.Enabled = true;
+                    onDataChanged();
                 }
                 monitoredFoldersContainer.show(foldersList);
             }
@@ -473,6 +485,9 @@ namespace CryptOneService
 
         public bool isArchivePresentOnCloud(MonitoredFolder folder, int cloudIndex)
         {
+            if (folder == null)
+                return false;
+
             if (cloudIndex < 0 || cloudIndex >= cloudFolderContainer.getCount())
             {
                 return false;
@@ -501,7 +516,7 @@ namespace CryptOneService
                 keyStorageContainer.setAutodetectKeyStorage(false, keyFolderEdit.Text);
                 keyFolderEdit.Enabled = true;
             }
-            applyButton.Enabled = true;
+            onDataChanged();
         }
 
         private void removableList_SelectedIndexChanged(object sender, EventArgs e)
@@ -589,7 +604,7 @@ namespace CryptOneService
                     cloudFolderContainer.remove(index - deletedCount);
 
                     deletedCount++;
-                    applyButton.Enabled = true;
+                    onDataChanged();
                 }
                 cloudFolderContainer.show(cloudsList);
             }
@@ -607,8 +622,7 @@ namespace CryptOneService
             {
                 tempFolderEdit.Text = folderBrowserDialog1.SelectedPath;
                 CryptoOne.tempFolder = tempFolderEdit.Text;
-                applyButton.Enabled = true;
-
+                onDataChanged();
             }
         }
         private void refreshButton_Click(object sender, EventArgs e)
@@ -648,17 +662,28 @@ namespace CryptOneService
             }
         }
 
-       /* private void browseRootFolderButton_Click(object sender, EventArgs e)
+        private void helpButton_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
-            DialogResult res = folderBrowserDialog1.ShowDialog();
-            if (res == DialogResult.OK)
-            {
-                localFolderRootEdit.Text = folderBrowserDialog1.SelectedPath;
-                Form1.localFolderRoot = localFolderRootEdit.Text;
+            //helpProvider1.
+        }
 
-                applyButton.Enabled = true;
-            }
-        }*/
+        public void onDataChanged()
+        {
+            Log.Line("onDataChanged");
+            this.applyButton.Enabled = true;
+        }
+
+        /* private void browseRootFolderButton_Click(object sender, EventArgs e)
+         {
+             FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
+             DialogResult res = folderBrowserDialog1.ShowDialog();
+             if (res == DialogResult.OK)
+             {
+                 localFolderRootEdit.Text = folderBrowserDialog1.SelectedPath;
+                 Form1.localFolderRoot = localFolderRootEdit.Text;
+
+                 onDataChanged();
+             }
+         }*/
     }
 }

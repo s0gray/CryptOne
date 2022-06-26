@@ -61,8 +61,9 @@ namespace CryptOneService
 
         public void updateUI()
         {
+            Log.Line("monitoredFoldersContainer.updateUI");
             show(mainForm.foldersList);
-            mainForm.applyButton.Enabled = true;
+            mainForm.onDataChanged();
         }
 
         ListViewItem makeFolderListViewItem(int i, int columns)
