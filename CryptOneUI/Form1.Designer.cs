@@ -28,13 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
             "",
             "0",
             "Google Cloud",
             "~\\Google Drive"}, -1);
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.browseKeyLocationButton = new System.Windows.Forms.Button();
             this.useButton = new System.Windows.Forms.Button();
             this.initButton = new System.Windows.Forms.Button();
             this.removableList = new System.Windows.Forms.ListView();
@@ -76,6 +77,8 @@
             this.okButton = new System.Windows.Forms.Button();
             this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.helpButton = new System.Windows.Forms.Button();
+            this.logBox = new System.Windows.Forms.TextBox();
+            this.clearLogButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -97,6 +100,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.browseKeyLocationButton);
             this.tabPage1.Controls.Add(this.useButton);
             this.tabPage1.Controls.Add(this.initButton);
             this.tabPage1.Controls.Add(this.removableList);
@@ -114,6 +118,16 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Key storage";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // browseKeyLocationButton
+            // 
+            this.browseKeyLocationButton.Location = new System.Drawing.Point(622, 42);
+            this.browseKeyLocationButton.Name = "browseKeyLocationButton";
+            this.browseKeyLocationButton.Size = new System.Drawing.Size(112, 34);
+            this.browseKeyLocationButton.TabIndex = 10;
+            this.browseKeyLocationButton.Text = "Browse";
+            this.browseKeyLocationButton.UseVisualStyleBackColor = true;
+            this.browseKeyLocationButton.Click += new System.EventHandler(this.browseKeyLocationButton_Click);
             // 
             // useButton
             // 
@@ -191,7 +205,7 @@
             // 
             this.keyFolderEdit.Location = new System.Drawing.Point(386, 40);
             this.keyFolderEdit.Name = "keyFolderEdit";
-            this.keyFolderEdit.Size = new System.Drawing.Size(235, 31);
+            this.keyFolderEdit.Size = new System.Drawing.Size(230, 31);
             this.keyFolderEdit.TabIndex = 3;
             this.keyFolderEdit.Text = "D:\\";
             // 
@@ -369,7 +383,7 @@
             this.cloudsList.FullRowSelect = true;
             this.cloudsList.GridLines = true;
             this.cloudsList.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem2});
+            listViewItem1});
             this.cloudsList.Location = new System.Drawing.Point(6, 35);
             this.cloudsList.Name = "cloudsList";
             this.cloudsList.Size = new System.Drawing.Size(936, 197);
@@ -460,7 +474,7 @@
             // button2
             // 
             this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button2.Location = new System.Drawing.Point(872, 370);
+            this.button2.Location = new System.Drawing.Point(904, 495);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(112, 34);
             this.button2.TabIndex = 2;
@@ -470,7 +484,7 @@
             // 
             // applyButton
             // 
-            this.applyButton.Location = new System.Drawing.Point(583, 370);
+            this.applyButton.Location = new System.Drawing.Point(615, 495);
             this.applyButton.Name = "applyButton";
             this.applyButton.Size = new System.Drawing.Size(112, 34);
             this.applyButton.TabIndex = 3;
@@ -481,7 +495,7 @@
             // okButton
             // 
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okButton.Location = new System.Drawing.Point(739, 370);
+            this.okButton.Location = new System.Drawing.Point(771, 495);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(112, 34);
             this.okButton.TabIndex = 4;
@@ -491,7 +505,7 @@
             // 
             // helpButton
             // 
-            this.helpButton.Location = new System.Drawing.Point(32, 370);
+            this.helpButton.Location = new System.Drawing.Point(32, 495);
             this.helpButton.Name = "helpButton";
             this.helpButton.Size = new System.Drawing.Size(112, 34);
             this.helpButton.TabIndex = 5;
@@ -499,11 +513,34 @@
             this.helpButton.UseVisualStyleBackColor = true;
             this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
             // 
+            // logBox
+            // 
+            this.logBox.Location = new System.Drawing.Point(32, 380);
+            this.logBox.Multiline = true;
+            this.logBox.Name = "logBox";
+            this.logBox.ReadOnly = true;
+            this.logBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.logBox.Size = new System.Drawing.Size(993, 99);
+            this.logBox.TabIndex = 6;
+            this.logBox.TextChanged += new System.EventHandler(this.logBox_TextChanged);
+            // 
+            // clearLogButton
+            // 
+            this.clearLogButton.Location = new System.Drawing.Point(186, 495);
+            this.clearLogButton.Name = "clearLogButton";
+            this.clearLogButton.Size = new System.Drawing.Size(112, 34);
+            this.clearLogButton.TabIndex = 7;
+            this.clearLogButton.Text = "Clear log";
+            this.clearLogButton.UseVisualStyleBackColor = true;
+            this.clearLogButton.Click += new System.EventHandler(this.clearLogButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1041, 424);
+            this.ClientSize = new System.Drawing.Size(1041, 547);
+            this.Controls.Add(this.clearLogButton);
+            this.Controls.Add(this.logBox);
             this.Controls.Add(this.helpButton);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.applyButton);
@@ -522,6 +559,7 @@
             this.tabConfigPage.ResumeLayout(false);
             this.tabConfigPage.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -570,5 +608,8 @@
         private Button getButton;
         private HelpProvider helpProvider1;
         private Button helpButton;
+        private Button browseKeyLocationButton;
+        private TextBox logBox;
+        private Button clearLogButton;
     }
 }

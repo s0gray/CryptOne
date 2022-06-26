@@ -19,7 +19,6 @@ namespace CryptOneService
         public const string ROOT_DIR_KEY = "rootDir";
 
         public const string KEY_FILENAME = "key0001.ekey";
-
         public const string STATUS_PRESENT = "Present";
         public const string STATUS_ABSENT = "Absent";
 
@@ -32,11 +31,8 @@ namespace CryptOneService
 
         CryptoOne cryptoOne = new CryptoOne();
         public static string appDataFolder =  Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\" + Form1.AppName;
-
         static string IniFileName = Form1.appDataFolder + "\\" + AppName + ".ini";
 
-        // root for monitored folders
-//        public static string localFolderRoot = null;
         public Form1()
         {
             InitializeComponent();
@@ -46,6 +42,8 @@ namespace CryptOneService
 
             Thread thread1 = new Thread(backgroundWorker1_DoWork);
             thread1.Start();
+
+            Log.setTextBox(this.logBox);
 
         }
 
@@ -68,6 +66,7 @@ namespace CryptOneService
             this.useButton.Enabled = false;
             this.initButton.Enabled = false;
             this.getButton.Enabled = false;
+            this.browseKeyLocationButton.Enabled = false;  
 
             string tmpDir = ini.Read(TEMP_DIR_KEY);
             if(tmpDir != null && tmpDir.Length>0)
@@ -240,7 +239,7 @@ namespace CryptOneService
                     if (index < foldersList.Items.Count) {
                         ListViewItem item = foldersList.Items[index];
 
-                        Log.Line( "subitems: "  + item.SubItems.Count);
+                        // Log.Line( "subitems: "  + item.SubItems.Count);
 
                         if((3 + cloudIndex) < item.SubItems.Count)
                             item.SubItems[3 + cloudIndex].Text = msg;
@@ -510,11 +509,13 @@ namespace CryptOneService
             {
                 keyFolderEdit.Enabled = false;
                 keyStorageContainer.setAutodetectKeyStorage(true, "");
+                this.browseKeyLocationButton.Enabled = false;
             }
             else
             {
                 keyStorageContainer.setAutodetectKeyStorage(false, keyFolderEdit.Text);
                 keyFolderEdit.Enabled = true;
+                this.browseKeyLocationButton.Enabled = true;
             }
             onDataChanged();
         }
@@ -671,6 +672,28 @@ namespace CryptOneService
         {
             Log.Line("onDataChanged");
             this.applyButton.Enabled = true;
+        }
+
+        private void browseKeyLocationButton_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
+            DialogResult res = folderBrowserDialog1.ShowDialog();
+            if (res == DialogResult.OK)
+            {
+                keyFolderEdit.Text = folderBrowserDialog1.SelectedPath;
+                onDataChanged();
+            }
+        }
+
+        private void logBox_TextChanged(object sender, EventArgs e)
+        {
+            logBox.SelectionStart = logBox.Text.Length;
+            logBox.ScrollToCaret();
+        }
+
+        private void clearLogButton_Click(object sender, EventArgs e)
+        {
+            this.logBox.Text = "";
         }
 
         /* private void browseRootFolderButton_Click(object sender, EventArgs e)
