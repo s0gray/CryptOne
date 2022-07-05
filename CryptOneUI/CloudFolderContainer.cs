@@ -103,7 +103,11 @@ namespace CryptOneService
             for(int i = 0; i < cloudFolders.Count; i++)
             {
                 CloudFolder cloudFolder = cloudFolders[i];
-                cloudFolder.initStorage();
+                bool ok = cloudFolder.initStorage();
+                if(!ok)
+                {
+                    Log.Line("Init storage #"+i+" failed");
+                }
             }
         }
     }

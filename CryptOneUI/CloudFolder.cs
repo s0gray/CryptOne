@@ -36,15 +36,24 @@ namespace CryptOneService
 
         }
 
-        public void initStorage()
+        /**
+         * return 'true' if OK
+         * */
+        public bool initStorage()
         {
             string cloudStorageFolder = fullPath + Form1.cloudStorageFolder;
             if ( !Directory.Exists(cloudStorageFolder) )
             {
                 Log.Line("Creating cloud storage folder [" + cloudStorageFolder + "]");
-                Directory.CreateDirectory(cloudStorageFolder);
+                try
+                {
+                    Directory.CreateDirectory(cloudStorageFolder);
+                } catch (System.IO.DirectoryNotFoundException e) {
+                    Log.Line("Error during CreateDirectory: "+ e.Message);
+                    return false;
+                }
             }
-
+            return true;
         }
     }
 }
