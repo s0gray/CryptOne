@@ -157,7 +157,7 @@ namespace CryptOneService
                 return false;
             }
 
-            bool ok = Tools.decompressTgzWithShell(outputFile, dstFolder);// Path.GetDirectoryName(outputFile));
+            bool ok = Tools.decompressTgzWithShell(outputFile, dstFolder);
             if(!ok)
             {
                 Log.Line("Decompress ["+ outputFile + "] failed");

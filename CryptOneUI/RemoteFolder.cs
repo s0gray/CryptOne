@@ -77,10 +77,6 @@ namespace CryptOneService
             // get file from cloud to local
             string filename = folderList.SelectedItems[0].Text;
             string fullname = cloudFolder.fullPath + Form1.cloudStorageFolder + "\\" + filename;
-            // string dst = CryptoOne.tempFolder + "\\" + filename;
-
-            //Log.Line("Getting file ["+ fullname + "] from cloud to ["+dst+"]");
-            //Tools.smartCopyFile(fullname, dst);
 
             FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
             DialogResult res = folderBrowserDialog1.ShowDialog();

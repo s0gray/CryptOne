@@ -83,6 +83,12 @@ namespace CryptOneService
         public void add(string selectedPath)
         {
             Log.Line("monitoredFolders add: ["+ selectedPath + "]");
+            if( !Directory.Exists(selectedPath))
+            {
+                Log.Line("Directory ["+ selectedPath + "] not exists");
+                return;
+            }
+
             monitoredFolders.Add(new MonitoredFolder(selectedPath, mainForm));
         }
 

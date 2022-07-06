@@ -2,8 +2,6 @@
 using System.Text;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
-
-using System.IO;
 using System.Diagnostics;
 using System.IO.Compression;
 
@@ -437,6 +435,8 @@ namespace CryptOneService
             }
             process.StartInfo = startInfo;
             process.Start();
+
+            process.WaitForExit();
         }
     }
 }

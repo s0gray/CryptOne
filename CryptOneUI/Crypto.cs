@@ -49,26 +49,24 @@ namespace CryptOneService
                 Log.Line("Can not load file "+keyFile);
                 return null; 
             }
-
-            Log.Data("Loaded encrypted key data", encryptedKeyData);
+//            Log.Data("Loaded encrypted key data", encryptedKeyData);
 
             byte[] salt = new byte[32];
             Array.Copy(encryptedKeyData, salt, 32);
-
-            Log.Data("Loaded salt", salt);
+//            Log.Data("Loaded salt", salt);
 
             byte[] xored = new byte[32];
             Array.Copy(encryptedKeyData, 32, xored, 0, 32);
-            Log.Data("Loaded xored key", salt);
+//            Log.Data("Loaded xored key", salt);
 
             byte[] material = Tools.concat(salt, Encoding.ASCII.GetBytes(pass));
-            Log.Data("material", material);
+//            Log.Data("material", material);
 
             byte[] hashed = Crypto.hashSHA256bytes(material);
-            Log.Data("hashed", hashed);
+//            Log.Data("hashed", hashed);
 
             byte[] decrypted = Crypto.xorArray(xored, hashed, xored.Length);
-            Log.Data("decrypted", decrypted);
+//            Log.Data("decrypted", decrypted);
 
             return decrypted;
         }
