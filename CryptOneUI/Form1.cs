@@ -641,7 +641,7 @@ namespace CryptOneService
                 Log.Line("keyfolder not found");
                 return;
             }
-            Log.Line("keyFolder = " + keyFolder);
+            //Log.Line("keyFolder = " + keyFolder);
 
             RemoteFolder form = new RemoteFolder(
                 this.cloudFolderContainer.get(int.Parse(cloudIndex)), 

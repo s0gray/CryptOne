@@ -9,6 +9,9 @@ namespace CryptOneService
 {
     public class Tools
     {
+        static int KB = 1024 * 1024;
+        static int MB = KB * 1024;
+
         public static string[] getAvailableDrives()
         {
             DriveInfo[] drives = DriveInfo.GetDrives();
@@ -380,7 +383,7 @@ namespace CryptOneService
             }
             long size = new FileInfo(file).Length;
             long startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            execShell("tar xf " +file+" -C "+outputFolder);
+            execShellSync("tar xf " +file+" -C "+outputFolder);
             long endTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
             long deltaMs = (endTime - startTime);
@@ -408,19 +411,19 @@ namespace CryptOneService
             string folder = Path.GetFileName(folderFullPath);
 
             long startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-//            execShell("tar -czf " + compressedFile + " " + folder + " -C " + basePath);
-            execShell("tar -czf " + compressedFile + " " + folder, basePath);
+
+            execShellSync("tar -czf " + compressedFile + " " + folder, basePath);
 
             long endTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-
             long deltaMs = (endTime - startTime);
 
             Log.Line("Compressed TGZ: [" + folder + "] to ["+ compressedFile + "] for " + deltaMs / 1000
                 + "s ");
+
             return true;
         }
 
-        public static void execShell(string cmd, string workingDirectory = null)
+        public static void execShellSync(string cmd, string workingDirectory = null)
         {
             Log.Line("execShell ["+cmd+"]");
 
@@ -437,6 +440,27 @@ namespace CryptOneService
             process.Start();
 
             process.WaitForExit();
+        }
+
+        public static string getSizeString(long size)
+        {
+            if(size < 1024)
+            {
+                return size.ToString("N") + " B";
+            }
+            if(size < KB)
+            {
+                float kB = size / 1024;
+                return kB.ToString("N") + " KB";
+            }
+            if (size < MB)
+            {
+                float kB = (float) size / (float) (KB);
+                return kB.ToString("N") + " MB";
+            }
+            float mB = size / (MB);
+
+            return mB.ToString("N") + " GB";
         }
     }
 }

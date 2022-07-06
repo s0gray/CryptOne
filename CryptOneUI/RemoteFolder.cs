@@ -28,6 +28,9 @@ namespace CryptOneService
 
             updateRemoteFolderList();
             this.getButton.Enabled = false;
+            this.deleteButton.Enabled = false;
+
+            this.labelCloud.Text = cloudFolder.description;
         }
 
         private void updateRemoteFolderList()
@@ -43,15 +46,13 @@ namespace CryptOneService
             {
                 for(int i=0; i<files.Length;i++)
                 {
-                    //var attr = File.GetAttributes(files[i]);
                     long size = new FileInfo(files[i]).Length;
-                    Log.Line("size = " + size);
 
                     DateTime dt = File.GetLastWriteTime(files[i]);
 
                     string[] arr = new string[3];
                     arr[0] = Path.GetFileName(files[i]);
-                    arr[1] = "" +size;
+                    arr[1] = Tools.getSizeString(size);
                     arr[2] = dt.ToString();
                     folderList.Items.Add( new ListViewItem(arr) );
                 }
@@ -64,9 +65,11 @@ namespace CryptOneService
             if( folderList.SelectedItems.Count==1)
             {
                 getButton.Enabled = true;
+                this.deleteButton.Enabled = true;
             } else
             {
                 getButton.Enabled = false;
+                this.deleteButton.Enabled = false;
             }
         }
 
@@ -92,8 +95,26 @@ namespace CryptOneService
                     monitoredFoldersContainer.updateUI();
                 }
             }
-
             this.Close();
+        }
+
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            string filename = folderList.SelectedItems[0].Text;
+            string msg = "Delete archive ["+ filename + "] from ["+ this.labelCloud.Text
+                +"] ?";
+
+            DialogResult dialogResult = MessageBox.Show(msg, "Delete", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+            {
+                string fullname = cloudFolder.fullPath + Form1.cloudStorageFolder + "\\" + filename;
+
+                File.Delete(fullname);
+
+                Log.Line("Deleted ["+fullname+"]");
+
+                updateRemoteFolderList();
+            }
         }
     }
 }

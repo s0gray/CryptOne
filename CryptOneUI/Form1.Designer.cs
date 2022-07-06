@@ -345,8 +345,11 @@
             // 
             // getButton
             // 
+            this.helpProvider1.SetHelpNavigator(this.getButton, System.Windows.Forms.HelpNavigator.Index);
+            this.helpProvider1.SetHelpString(this.getButton, "Get archive from cloud to local folder");
             this.getButton.Location = new System.Drawing.Point(830, 251);
             this.getButton.Name = "getButton";
+            this.helpProvider1.SetShowHelp(this.getButton, true);
             this.getButton.Size = new System.Drawing.Size(112, 34);
             this.getButton.TabIndex = 3;
             this.getButton.Text = "Get";
