@@ -64,12 +64,7 @@ namespace CryptOneService
                 Directory.CreateDirectory(Form1.appDataFolder);
                 Log.Line("Creating app folder " + Form1.appDataFolder);
             }
-
-           /* if (!Directory.Exists(Form1.localFolderRoot))
-            {
-                Directory.CreateDirectory(Form1.localFolderRoot);
-                Log.Line("Creating local root " + Form1.localFolderRoot);
-            }*/      
+     
         }
 
         public static bool isKeyFileExistOnRemovableDrive(string drive)
@@ -169,34 +164,6 @@ namespace CryptOneService
         {
             string outputDir = Path.GetDirectoryName(filename);
             ExtractTarGz(filename, outputDir);
-
-         /*   Stream inStream = new MemoryStream(byteArray);
-            Stream gzipStream = new GZipInputStream(inStream);
-
-            TarArchive tarArchive = TarArchive.CreateInputTarArchive(gzipStream);
-            tarArchive.ExtractContents(@".");
-            tarArchive.Close();
-
-            gzipStream.Close();
-            inStream.Close();*/
-
-            /*     Stream inStream = new MemoryStream(byteArray);
-                 Stream gzipStream = new GZipInputStream(inStream);
-
-                 using (var tarInputStream = new TarInputStream(gzipStream))
-                 {
-                     TarEntry entry;
-                     while ((entry = tarInputStream.GetNextEntry()) != null)
-                     {
-                         var fileName = entry.File;
-                         using (var fileContents = new MemoryStream())
-                         {
-                             tarInputStream.CopyEntryContents(fileContents);
-
-                             // use entry, fileName or fileContents here
-                         }
-                     }
-                 }*/
         }
 
         public static void ExtractTarGz(string filename, string outputDir)
@@ -315,7 +282,6 @@ namespace CryptOneService
                 result += hash;
             }
 
-//            Log.Line("folder hash material " + result);
             byte[] sha256 = Crypto.hashSHA256(result);
 
             return Tools.bytesToHex(sha256);

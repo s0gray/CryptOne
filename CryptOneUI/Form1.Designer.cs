@@ -352,7 +352,7 @@
             this.helpProvider1.SetShowHelp(this.getButton, true);
             this.getButton.Size = new System.Drawing.Size(112, 34);
             this.getButton.TabIndex = 3;
-            this.getButton.Text = "Get";
+            this.getButton.Text = "Browse";
             this.getButton.UseVisualStyleBackColor = true;
             this.getButton.Click += new System.EventHandler(this.getButton_Click);
             // 

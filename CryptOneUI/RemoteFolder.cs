@@ -24,7 +24,7 @@ namespace CryptOneService
             this.cryptoOne = cryptoOne;
             this.keyFolder = keyFolder;
             this.monitoredFoldersContainer = monitoredFoldersContainer;
-            Log.Line("RemoteFolder " + cloudFolder.fullPath);
+            Log.Line("RemoteFolder [" + cloudFolder.fullPath +"]");
 
             updateRemoteFolderList();
             this.getButton.Enabled = false;

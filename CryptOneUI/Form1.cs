@@ -66,7 +66,9 @@ namespace CryptOneService
             this.useButton.Enabled = false;
             this.initButton.Enabled = false;
             this.getButton.Enabled = false;
-            this.browseKeyLocationButton.Enabled = false;  
+            this.removeCloudButton.Enabled = false;
+            this.browseKeyLocationButton.Enabled = false;
+            this.removeMonitoredFolderButton.Enabled = false;
 
             string tmpDir = ini.Read(TEMP_DIR_KEY);
             if(tmpDir != null && tmpDir.Length>0)
@@ -567,9 +569,12 @@ namespace CryptOneService
             if(foldersList.SelectedItems.Count==1)
             {
                 this.pushButton.Enabled = true;
+                this.removeMonitoredFolderButton.Enabled = true;
             } else
             {
                 this.pushButton.Enabled = false;
+                this.removeMonitoredFolderButton.Enabled = false;
+
             }
         }
 
@@ -656,10 +661,11 @@ namespace CryptOneService
             if( cloudsList.SelectedItems.Count==1)
             {
                 getButton.Enabled = true;
+                removeCloudButton.Enabled = true;
             } else
             {
                 getButton.Enabled = false;
-
+                removeCloudButton.Enabled = false;
             }
         }
 
